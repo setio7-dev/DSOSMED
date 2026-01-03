@@ -1,71 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
+import React from 'react';
 import { Eye, EyeOff, Zap, Lock, User, ArrowRight, CheckCircle } from 'lucide-react';
+import useAuthHooks from '@/hooks/authHooks';
 
 export default function Auth() {
-  type Errors = {
-    username?: string;
-    password?: string;
-    confirmPassword?: string;
-  };
-
-  const [isLogin, setIsLogin] = useState(true);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState<any>({
-    username: '',
-    password: '',
-    confirmPassword: ''
-  });
-  const [errors, setErrors] = useState<Errors | any>({});
-
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    setFormData((prev: any) => ({ ...prev, [name]: value }));
-    if (errors[name]) {
-      setErrors((prev: any) => ({ ...prev, [name]: '' }));
-    }
-  };
-
-  const validateForm = () => {
-    const newErrors: Errors = {}; // <-- pakai tipe Errors
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username harus diisi';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username minimal 3 karakter';
-    }
-
-    if (!formData.password) {
-      newErrors.password = 'Password harus diisi';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password minimal 6 karakter';
-    }
-
-    if (!isLogin) {
-      if (!formData.confirmPassword) {
-        newErrors.confirmPassword = 'Konfirmasi password harus diisi';
-      } else if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Password tidak cocok';
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    if (validateForm()) {
-      console.log('Form submitted:', formData);
-      alert(isLogin ? 'Login berhasil!' : 'Registrasi berhasil!');
-    }
-  };
-
-  const toggleMode = () => {
-    setIsLogin(!isLogin);
-    setFormData({ username: '', password: '', confirmPassword: '' });
-    setErrors({});
-  };
-
+  const { isLogin, showPassword, setShowPassword, toggleMode, handleChange, handleSubmit, setIsLogin, formData, errors } = useAuthHooks();
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white flex items-center justify-center p-4">
       <div className="absolute top-20 left-20 w-72 h-72 bg-purple-600/20 rounded-full blur-3xl animate-float"></div>
