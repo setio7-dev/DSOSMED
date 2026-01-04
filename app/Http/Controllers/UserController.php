@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
@@ -13,7 +15,7 @@ class UserController extends Controller
         try {
             $query = User::where('username', $request->name)->first();
 
-             if ($query) return response()->json(['message' => 'Username is already in use'], 401);
+             if ($query) return response()->json(['message' => 'Username sudah digunakan!'], 401);
 
              $data = new User();
              $data->username = $request->username;
@@ -23,7 +25,7 @@ class UserController extends Controller
              $data->save();
 
              return response()->json([
-                'message' => "Register successfully!",
+                'message' => "Daftar akun berhasil!",
                 'user' => $data
             ], 201);
 
@@ -38,7 +40,7 @@ class UserController extends Controller
         try {
             $query = User::where('name', $request->name)->first();
 
-             if ($query) return response()->json(['message' => 'name is already in use'], 401);
+             if ($query) return response()->json(['message' => 'Username sudah digunakan'], 401);
 
              $data = new User();
              $data->username = $request->username;
@@ -48,8 +50,8 @@ class UserController extends Controller
              $data->save();
 
              return response()->json([
-                'message' => "Register successfully!",
-                'user' => $data
+                'message' => "Daftar akun admin bergasil!",
+                'admin' => $data
             ], 201);
 
         } catch(Exception $e) {
@@ -76,7 +78,7 @@ class UserController extends Controller
             return response()->json([
                 'user' => $user,
                 'token' => $token,
-                "message" => "Login Berhasil!"
+                "message" => "Masuk akun Berhasil!"
             ], 201);
         } catch(Exception $e) {
             return response()->json([
@@ -85,59 +87,32 @@ class UserController extends Controller
         }
     }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    public function me() {
+        try {
+            $user = Auth::user();
+            return response()->json([
+                'message' => "Mengambil data behasil!",
+                'user' => $user
+            ]);
+        } catch(Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        } 
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    public function logout(Request $request) {
+        try {
+            $token = PersonalAccessToken::findToken($request->bearerToken());
+            $token->delete();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            return response()->json([
+                'message' => 'Logout successfully'
+            ], 200);
+        } catch(Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

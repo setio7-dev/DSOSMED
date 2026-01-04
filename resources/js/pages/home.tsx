@@ -3,9 +3,11 @@ import { Menu, X, ChevronRight, Zap, ArrowRight } from 'lucide-react';
 import useHomeHooks from '@/hooks/homeHooks';
 import home from "../../../public/image/home/welcome.png"
 import { Link } from '@inertiajs/react';
+import useAuthHooks from '@/hooks/authHooks';
 
 export default function Home() {
     const { isMobileMenuOpen, isScrolled, activeSection, scrollToSection, setIsMobileMenuOpen, featureData, iconData, serviceData, planData, testimonialsData } = useHomeHooks();
+    const { user } = useAuthHooks();
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
             <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
@@ -28,11 +30,11 @@ export default function Home() {
                                     {item}
                                 </button>
                             ))}
-                            <Link href="/auth">
+                            <Link href={user ? "/profile" : "auth"}>
                                 <button
                                     className="bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-2.5 rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 animate-fadeInUp delay-400 cursor-pointer"
                                 >
-                                    Login
+                                    {user ? "Profile" : "Login"}
                                 </button>
                             </Link>
                         </div>

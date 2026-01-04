@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { SwalMessage } from "@/utils/SwalMessage";
+import { usePage } from "@inertiajs/react";
 import API from "@/server/API";
 
 export default function useAuthHooks() {
@@ -12,11 +13,13 @@ export default function useAuthHooks() {
 
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const [user, setUser] = useState<any>(null);
     const [formData, setFormData] = useState<any>({
         username: '',
         password: '',
         confirmPassword: ''
     });
+    const { url } = usePage();
     const [errors, setErrors] = useState<Errors | any>({});
     const iconData = [
         { icon: CheckCircle, text: 'Proses otomatis 24/7' },
@@ -24,6 +27,34 @@ export default function useAuthHooks() {
         { icon: CheckCircle, text: 'Support responsif' },
         { icon: CheckCircle, text: '50+ layanan tersedia' }
     ]
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const response = await API.get("/me", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const userData = response.data.user;
+                // if (url === "/auth" && userData) {
+                //     window.location.href = "/";
+                //     return;
+                // }
+
+                setUser(userData);
+            } catch (error: any) {
+                SwalMessage({
+                    title: error.response.data.message,
+                    icon: "error"
+                })
+            }
+        }
+
+        fetchUser();
+    });
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;
@@ -101,6 +132,7 @@ export default function useAuthHooks() {
         formData,
         setIsLogin,
         errors,
-        iconData
+        iconData,
+        user
     }
 }
