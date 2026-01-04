@@ -2,8 +2,9 @@ import React from 'react';
 import { Menu, X, ChevronRight, Zap, ArrowRight } from 'lucide-react';
 import useHomeHooks from '@/hooks/homeHooks';
 import home from "../../../public/image/home/welcome.png"
+import { Link } from '@inertiajs/react';
 
-export default function LandingPage() {
+export default function Home() {
     const { isMobileMenuOpen, isScrolled, activeSection, scrollToSection, setIsMobileMenuOpen, featureData, iconData, serviceData, planData, testimonialsData } = useHomeHooks();
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
@@ -27,12 +28,13 @@ export default function LandingPage() {
                                     {item}
                                 </button>
                             ))}
-                            <button
-                                onClick={() => scrollToSection('cta')}
-                                className="bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-2.5 rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 animate-fadeInUp delay-400"
-                            >
-                                Get Started
-                            </button>
+                            <Link href="/auth">
+                                <button
+                                    className="bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-2.5 rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 animate-fadeInUp delay-400 cursor-pointer"
+                                >
+                                    Login
+                                </button>
+                            </Link>
                         </div>
                         <button
                             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -54,12 +56,14 @@ export default function LandingPage() {
                                     {item}
                                 </button>
                             ))}
-                            <button
-                                onClick={() => scrollToSection('cta')}
-                                className="w-full bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
-                            >
-                                Get Started
-                            </button>
+                            <Link href="/auth">
+                                <button
+                                    onClick={() => scrollToSection('cta')}
+                                    className="w-full bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+                                >
+                                    Login
+                                </button>
+                            </Link>
                         </div>
                     </div>
                 )}
@@ -206,8 +210,8 @@ export default function LandingPage() {
                             <div
                                 key={idx}
                                 className={`relative p-8 rounded-2xl ${plan.popular
-                                        ? 'bg-gradient-to-br from-purple-600/20 to-purple-800/20 border-2 border-purple-500 shadow-2xl shadow-purple-500/20 scale-105'
-                                        : 'bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50'
+                                    ? 'bg-gradient-to-br from-purple-600/20 to-purple-800/20 border-2 border-purple-500 shadow-2xl shadow-purple-500/20 scale-105'
+                                    : 'bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50'
                                     } hover:-translate-y-2 transition-all duration-300 animate-fadeInUp delay-${plan.delay}`}
                             >
                                 {plan.popular && (
@@ -232,8 +236,8 @@ export default function LandingPage() {
                                 </ul>
 
                                 <button className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${plan.popular
-                                        ? 'bg-gradient-to-r from-purple-600 to-purple-800 hover:shadow-lg hover:shadow-purple-500/50'
-                                        : 'border-2 border-purple-500 hover:bg-purple-500/10'
+                                    ? 'bg-gradient-to-r from-purple-600 to-purple-800 hover:shadow-lg hover:shadow-purple-500/50'
+                                    : 'border-2 border-purple-500 hover:bg-purple-500/10'
                                     } hover:scale-105`}>
                                     Get Started
                                 </button>

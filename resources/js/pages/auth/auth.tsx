@@ -1,9 +1,9 @@
 import React from 'react';
-import { Eye, EyeOff, Zap, Lock, User, ArrowRight, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Zap, Lock, User, ArrowRight } from 'lucide-react';
 import useAuthHooks from '@/hooks/authHooks';
 
 export default function Auth() {
-  const { isLogin, showPassword, setShowPassword, toggleMode, handleChange, handleSubmit, setIsLogin, formData, errors } = useAuthHooks();
+  const { isLogin, showPassword, setShowPassword, toggleMode, handleChange, handleSubmit, setIsLogin, formData, errors, iconData } = useAuthHooks();
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white flex items-center justify-center p-4">
       <div className="absolute top-20 left-20 w-72 h-72 bg-purple-600/20 rounded-full blur-3xl animate-float"></div>
@@ -33,12 +33,7 @@ export default function Auth() {
             </p>
 
             <div className="space-y-4 pt-4">
-              {[
-                { icon: CheckCircle, text: 'Proses otomatis 24/7' },
-                { icon: CheckCircle, text: 'Harga kompetitif & fleksibel' },
-                { icon: CheckCircle, text: 'Support responsif' },
-                { icon: CheckCircle, text: '50+ layanan tersedia' }
-              ].map((item, idx) => (
+              {iconData.map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3">
                   <item.icon className="w-6 h-6 text-purple-400 flex-shrink-0" />
                   <span className="text-gray-300">{item.text}</span>
@@ -144,32 +139,6 @@ export default function Auth() {
                   <p className="mt-1.5 text-sm text-red-400">{errors.password}</p>
                 )}
               </div>
-
-              {!isLogin && (
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-300">
-                    Konfirmasi Password
-                  </label>
-                  <div className="relative">
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                      <Lock className="w-5 h-5" />
-                    </div>
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      className={`w-full bg-gray-900/50 border ${errors.confirmPassword ? 'border-red-500' : 'border-gray-700'
-                        } rounded-xl pl-12 pr-4 py-3.5 text-white placeholder-gray-500 focus:outline-none input-focus transition-all`}
-                      placeholder="Ulangi password"
-                    />
-                  </div>
-                  {errors.confirmPassword && (
-                    <p className="mt-1.5 text-sm text-red-400">{errors.confirmPassword}</p>
-                  )}
-                </div>
-              )}
-
               {isLogin && (
                 <div className="flex items-center justify-between">
                   <label className="flex items-center gap-2 cursor-pointer">

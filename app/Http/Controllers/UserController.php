@@ -63,11 +63,11 @@ class UserController extends Controller
         try {
             $user = User::where('username', $request->username)->first();
 
-            if (!$user) return response()->json(['message' => 'invalid credential'], 401);
+            if (!$user) return response()->json(['message' => 'Nama Pengguna / Kata Sandi Salah!'], 401);
 
             if ($request->password !== $user->password) {
                 return response()->json([
-                    'message' => 'invalid credential'
+                    'message' => 'Nama Pengguna / Kata Sandi Salah!'
                 ], 401);
             }
 
@@ -75,7 +75,8 @@ class UserController extends Controller
 
             return response()->json([
                 'user' => $user,
-                'token' => $token
+                'token' => $token,
+                "message" => "Login Berhasil!"
             ], 201);
         } catch(Exception $e) {
             return response()->json([
