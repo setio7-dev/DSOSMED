@@ -14,3 +14,8 @@ Route::get('/auth', function () {
 Route::get('/admin/home', function () {
     return Inertia::render('admin/home');
 });
+
+Route::get('/home', function () {
+    return Inertia::render('customer/home');
+});
+
