@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-
+    'medanpedia' => [
+        'url' => env('MEDANPEDIA_URL'),
+        'id' => env('MEDANPEDIA_ID'),
+        'key' => env('MEDANPEDIA_KEY'),
+    ],
 ];
