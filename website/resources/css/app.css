@@ -7,6 +7,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 @font-face {
     font-family: "poppins-semibold";
     src: url("../../public/font/Poppins-SemiBold.ttf");
@@ -30,8 +31,24 @@
     --color-secondary: #8F5CB3;
 }
 
+
 * {
     font-family: 'Poppins', sans-serif;
+}
+
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+}
+
+.sidebar-enter {
+    animation: slideIn 0.3s ease-out;
 }
 
 @keyframes fadeInUp {
