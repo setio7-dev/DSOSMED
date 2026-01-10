@@ -141,7 +141,7 @@ export default function AdminDashboard({ children, title }: any) {
 
         <main className="p-4 md:p-8">
           <div className="space-y-6">
-            <h1 className="text-3xl font-bold">{title}</h1>
+            <h1 className="lg:text-3xl text-2xl font-bold">{title}</h1>
             <div className="bg-gray-800/50 border border-gray-700/50 rounded-2xl p-6">
               {children}
             </div>
