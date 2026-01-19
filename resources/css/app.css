@@ -8,6 +8,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
 @font-face {
     font-family: "poppins-semibold";
     src: url("../../public/font/Poppins-SemiBold.ttf");
@@ -31,24 +32,22 @@
     --color-secondary: #8F5CB3;
 }
 
-
 * {
     font-family: 'Poppins', sans-serif;
 }
 
+/* ================= ANIMATIONS ================= */
 
-@keyframes slideIn {
+@keyframes fadeIn {
     from {
-        transform: translateX(-100%);
+        opacity: 0;
+        transform: translateY(20px);
     }
 
     to {
-        transform: translateX(0);
+        opacity: 1;
+        transform: translateY(0);
     }
-}
-
-.sidebar-enter {
-    animation: slideIn 0.3s ease-out;
 }
 
 @keyframes fadeInUp {
@@ -87,42 +86,6 @@
     }
 }
 
-@keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-20px);
-    }
-}
-
-@keyframes pulse {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -147,21 +110,26 @@
     }
 }
 
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ================= ANIMATION CLASSES ================= */
+
 .animate-fadeIn {
     animation: fadeIn 0.6s ease-out;
 }
 
 .animate-slideIn {
     animation: slideIn 0.5s ease-out;
-}
-
-.animate-float {
-    animation: float 3s ease-in-out infinite;
-}
-
-.input-focus:focus {
-    border-color: #7017B0;
-    box-shadow: 0 0 0 3px rgba(112, 23, 176, 0.1);
 }
 
 .animate-fadeInUp {
@@ -184,6 +152,17 @@
     animation: pulse 2s ease-in-out infinite;
 }
 
+/* ================= UTILITIES ================= */
+
+.sidebar-enter {
+    animation: slideIn 0.3s ease-out;
+}
+
+.input-focus:focus {
+    border-color: #7017B0;
+    box-shadow: 0 0 0 3px rgba(112, 23, 176, 0.1);
+}
+
 .delay-100 {
     animation-delay: 0.1s;
     opacity: 0;
@@ -204,6 +183,8 @@
     opacity: 0;
 }
 
+/* ================= GRADIENT BORDER ================= */
+
 .gradient-border {
     position: relative;
     background: linear-gradient(145deg, rgba(112, 23, 176, 0.1), rgba(143, 92, 179, 0.1));
@@ -214,10 +195,7 @@
 .gradient-border::before {
     content: '';
     position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    inset: 0;
     z-index: -1;
     margin: -2px;
     border-radius: inherit;

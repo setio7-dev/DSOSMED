@@ -9,10 +9,15 @@ Route::post('/register', [UserController::class, 'register']); //all
 Route::post('/register/admin', [UserController::class, 'registerAdmin']); //admin
 Route::post('/login', [UserController::class, 'login']); //all
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
+
+    Route::middleware("role:1")->prefix("/admin")->group(function () {
+        Route::get("/user", [UserController::class, "index"]);
+    });
 });
+
 
 Route::prefix('medanpedia')->group(function () {
     Route::get('/profile', [MedanPediaController::class, 'profile']);

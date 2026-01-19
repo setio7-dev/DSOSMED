@@ -16,6 +16,10 @@ Route::get('/admin/home', function () {
     return Inertia::render('admin/home');
 });
 
+Route::get('/admin/pengguna', function () {
+    return Inertia::render('admin/userManagement');
+});
+
 Route::get('/admin/layanan/nokos-ada-otp', function () {
     return Inertia::render('admin/serviceNokosAdaOtp');
 });

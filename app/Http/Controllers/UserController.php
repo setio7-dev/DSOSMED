@@ -11,8 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
-{
-
+{      
     public function register(Request $request) {
         try {
             $validateData = Validator::make($request->all(), [
@@ -151,5 +150,14 @@ class UserController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function index()
+    {
+        $data = User::all();
+        return response()->json([
+            "message" => "Mengambil data berhasil!",
+            "data" => $data
+        ]);
     }
 }
