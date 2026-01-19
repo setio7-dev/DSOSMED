@@ -19,7 +19,7 @@ export default function useAuthHooks() {
         password: '',
         confirmPassword: ''
     });
-    const { url } = usePage();
+    // const { url } = usePage();
     const [errors, setErrors] = useState<Errors | any>({});
     const iconData = [
         { icon: CheckCircle, text: 'Proses otomatis 24/7' },
@@ -54,7 +54,7 @@ export default function useAuthHooks() {
         }
 
         fetchUser();
-    });
+    }, []);
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;

@@ -2,11 +2,10 @@
 import AdminDashboard from '@/components/admin/adminDashboard'
 import useAdaOtpHooks from '@/hooks/adaOtpHooks';
 import SpinnerLoader from '@/utils/SpinnerLoader';
-import { RefreshCwIcon, Plus, Search, CheckCircle, Clock, Package, TrendingUp, X, } from 'lucide-react';
+import { RefreshCwIcon, Plus, Search, CheckCircle, Clock, Package, TrendingUp, X, PhoneIcon } from 'lucide-react';
 import { useEffect, useState } from 'react'
 
-const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData }: any) => {
-  console.log(countryData);
+const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, selectedData=null }: any) => {
   const getDemandColor = (status: any) => {
     switch (status) {
       case 'sangat_tinggi':
@@ -33,6 +32,11 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData }
     }
   };
 
+  const handleSelected = (country: any) => {
+    selectedData(country);
+    onClose();
+  }
+  
   if (!isOpen) return null;
 
   return (
@@ -147,6 +151,11 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData }
                     ))}
                   </div>
                 )}
+
+                <button onClick={() => handleSelected(country)} className="flex-1 cursor-pointer mt-6 px-6 py-3 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg text-xs font-medium transition-all duration-200 flex items-center justify-center gap-1.5">
+                  <PhoneIcon className="w-3.5 h-3.5" />
+                  Pakai ID
+                </button>
               </div>
             ))}
           </div>
@@ -161,27 +170,9 @@ export default function ServiceNokosAdaOtp() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [serviceName, setServiceName] = useState("");
-  const [serviceId, setServiceId] = useState("");
-  const [formData, setFormData] = useState({
-    nomorId: '',
-    serviceId: '',
-    profit: ''
-  });
-
+  const [serviceId, setServiceId] = useState("");  
   const [searchQuery, setSearchQuery] = useState('');
-
-  const handleInputChange = (e: any) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
-    setFormData({ nomorId: '', serviceId: '', profit: '' });
-  };
+  const [selectedData, setSelectedData] = useState<any>(null);
 
   const filteredServices = servicesData.filter(service =>
     service.text.toLowerCase().includes(searchQuery.toLowerCase())
@@ -199,11 +190,11 @@ export default function ServiceNokosAdaOtp() {
     }
   });
 
-  const handleOpenServiceModal = async(id: any, name: string) => {
+  const handleOpenServiceModal = async (id: any, name: string) => {
     await handleShowCountry(id);
     setServiceId(id);
     setServiceName(name);
-    setIsModalOpen(true);
+    setIsModalOpen(true);    
   }
 
   return (
@@ -216,6 +207,8 @@ export default function ServiceNokosAdaOtp() {
         serviceName={serviceName}
         serviceId={serviceId}
         countryData={countryData}
+        selectedId={null}
+        selectedData={setSelectedData}
       />
 
       <div className="space-y-8">
@@ -230,8 +223,8 @@ export default function ServiceNokosAdaOtp() {
                 <input
                   type="text"
                   name="nomorId"
-                  value={formData.nomorId}
-                  onChange={handleInputChange}
+                  value={selectedData?.id}
+                  // onChange={handleInputChange}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Masukkan nomor ID"
                 />
@@ -244,8 +237,8 @@ export default function ServiceNokosAdaOtp() {
                 <input
                   type="text"
                   name="serviceId"
-                  value={formData.serviceId}
-                  onChange={handleInputChange}
+                  value={serviceId}
+                  // onChange={handleInputChange}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Masukkan service ID"
                 />
@@ -258,8 +251,8 @@ export default function ServiceNokosAdaOtp() {
                 <input
                   type="text"
                   name="profit"
-                  value={formData.profit}
-                  onChange={handleInputChange}
+                  // value={formData.profit}
+                  // onChange={handleInputChange}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Masukkan profit"
                 />
@@ -267,7 +260,7 @@ export default function ServiceNokosAdaOtp() {
             </div>
 
             <button
-              onClick={handleSubmit}
+              // onClick={handleSubmit}
               className="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
             >
               <Plus className="w-5 h-5" />

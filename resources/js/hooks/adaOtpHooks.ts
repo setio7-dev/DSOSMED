@@ -12,37 +12,37 @@ interface servicesProps {
 }
 
 export interface Metrics {
-  total_success: number;
-  today_success: number;
-  total_order: number;
-  today_order: number;
-  complete_currently: number;
+    total_success: number;
+    today_success: number;
+    total_order: number;
+    today_order: number;
+    complete_currently: number;
 }
 
 export interface CountryProps {
-  id: number;
-  name: string;
-  iso: string;
-  prefix: string;
-  price: number;
-  price_formatted: string;
-  available: boolean;
-  provider_id: number;
-  provider_name: string;
-  stock: number;
-  stock_formatted: string;
-  delivery_percent: number;
-  delivery_formatted: string;
-  operator: string;
-  quality_score: string;
-  provider_rate: string;
-  order_count_today: number;
-  can_order: boolean;
-  current_demand_status: string;
-  avg_delivery_time: number;
-  avg_delivery_time_formatted: string;
-  metrics: Metrics;
-  labels: string[];
+    id: number;
+    name: string;
+    iso: string;
+    prefix: string;
+    price: number;
+    price_formatted: string;
+    available: boolean;
+    provider_id: number;
+    provider_name: string;
+    stock: number;
+    stock_formatted: string;
+    delivery_percent: number;
+    delivery_formatted: string;
+    operator: string;
+    quality_score: string;
+    provider_rate: string;
+    order_count_today: number;
+    can_order: boolean;
+    current_demand_status: string;
+    avg_delivery_time: number;
+    avg_delivery_time_formatted: string;
+    metrics: Metrics;
+    labels: string[];
 }
 
 export default function useAdaOtpHooks() {
@@ -50,7 +50,7 @@ export default function useAdaOtpHooks() {
     const [countryData, setCountry] = useState<CountryProps[]>([]);
 
     useEffect(() => {
-        const fetchServices = async() => {
+        const fetchServices = async () => {
             try {
                 const response = await axios.get(`${ADA_OTP_API}/services`, {
                     headers: {
@@ -67,7 +67,7 @@ export default function useAdaOtpHooks() {
         fetchServices();
     }, []);
 
-    const handleShowCountry = async(id: number) => {
+    const handleShowCountry = async (id: number) => {
         try {
             const response = await axios.get(`${ADA_OTP_API}/services/${id}/countries`, {
                 headers: {
@@ -82,6 +82,18 @@ export default function useAdaOtpHooks() {
                 title: "Gagal!",
                 text: error.message,
                 icon: 'error'
+            })
+        }
+    }
+
+    const handlePostService = async () => {
+        try {
+            const response = await axios.post(`${ADA_OTP_API}/service`)
+        } catch (error: any) {
+            SwalMessage({
+                title: "Gagal",
+                text: error.message,
+                icon: "error"
             })
         }
     }
