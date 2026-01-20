@@ -144,49 +144,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-        * { font-family: 'Poppins', sans-serif; }
-
-        @keyframes slideIn {
-          from { transform: translateX(-100%); opacity: 0; }
-          to { transform: translateX(0); opacity: 1; }
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        .sidebar-enter {
-          animation: slideIn 0.3s ease-out;
-        }
-
-        .overlay-enter {
-          animation: fadeIn 0.3s ease-out;
-        }
-
-        /* Custom scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(31, 41, 55, 0.5);
-          border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(107, 114, 128, 0.5);
-          border-radius: 10px;
-        }
-
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(107, 114, 128, 0.7);
-        }
-      `}</style>
-
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">    
       {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
@@ -277,7 +235,6 @@ export default function Home() {
             ))}
           </nav>
 
-          {/* Footer - Logout */}
           <div className="p-3 sm:p-4 border-t border-gray-800">
             <button className="w-full flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl hover:bg-red-600/20 border border-transparent hover:border-red-500/50 transition-all active:scale-95">
               <LogOut className="w-5 h-5 flex-shrink-0 text-red-400" />

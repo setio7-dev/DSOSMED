@@ -75,7 +75,7 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
                       {country.iso}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-white">{country.name}</h3>
+                      <h3 className="font-semibold text-white">{country.name} ({country.id})</h3>
                       <p className="text-xs text-gray-400">{country.prefix} • {country.operator}</p>
                     </div>
                   </div>
@@ -166,13 +166,22 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
 };
 
 export default function ServiceNokosAdaOtp() {
-  const { servicesData, handleShowCountry, countryData } = useAdaOtpHooks();
+  const { 
+    servicesData, 
+    handleShowCountry, 
+    countryData,
+    serviceId,
+    setServiceId,
+    setCountryId,
+    countryId,
+    profit,
+    handleChangeService,
+    handlePostService
+  } = useAdaOtpHooks();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [serviceName, setServiceName] = useState("");
-  const [serviceId, setServiceId] = useState("");  
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedData, setSelectedData] = useState<any>(null);
 
   const filteredServices = servicesData.filter(service =>
     service.text.toLowerCase().includes(searchQuery.toLowerCase())
@@ -208,7 +217,7 @@ export default function ServiceNokosAdaOtp() {
         serviceId={serviceId}
         countryData={countryData}
         selectedId={null}
-        selectedData={setSelectedData}
+        selectedData={setCountryId}
       />
 
       <div className="space-y-8">
@@ -222,9 +231,9 @@ export default function ServiceNokosAdaOtp() {
                 </label>
                 <input
                   type="text"
-                  name="nomorId"
-                  value={selectedData?.id}
-                  // onChange={handleInputChange}
+                  name="country"
+                  value={countryId?.id}
+                  onChange={handleChangeService}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Masukkan nomor ID"
                 />
@@ -236,9 +245,9 @@ export default function ServiceNokosAdaOtp() {
                 </label>
                 <input
                   type="text"
-                  name="serviceId"
+                  name="service"
                   value={serviceId}
-                  // onChange={handleInputChange}
+                  onChange={handleChangeService}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Masukkan service ID"
                 />
@@ -251,8 +260,8 @@ export default function ServiceNokosAdaOtp() {
                 <input
                   type="text"
                   name="profit"
-                  // value={formData.profit}
-                  // onChange={handleInputChange}
+                  value={profit}
+                  onChange={handleChangeService}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Masukkan profit"
                 />
@@ -260,7 +269,7 @@ export default function ServiceNokosAdaOtp() {
             </div>
 
             <button
-              // onClick={handleSubmit}
+              onClick={() => handlePostService()}
               className="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
             >
               <Plus className="w-5 h-5" />

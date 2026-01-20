@@ -35,7 +35,7 @@ export default function Home() {
                                     {item}
                                 </button>
                             ))}
-                            <Link href={user ? "/profile" : "auth"}>9
+                            <Link href={user ? "/profile" : "auth"}>
                                 <button
                                     className="bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-2.5 rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 animate-fadeInUp delay-400 cursor-pointer"
                                 >

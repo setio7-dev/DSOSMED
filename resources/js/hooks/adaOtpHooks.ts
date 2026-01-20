@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ADA_OTP_API, API_KEY } from "@/server/AdaOtpApi"
+import API from "@/server/API";
 import { SwalMessage } from "@/utils/SwalMessage";
 import axios from "axios";
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 
 interface servicesProps {
     id: number;
@@ -48,7 +48,11 @@ export interface CountryProps {
 
 export default function useAdaOtpHooks() {
     const [servicesData, setServices] = useState<servicesProps[]>([]);
-    const [countryData, setCountry] = useState<CountryProps[]>([]);
+    const [countryData, setCountryData] = useState<CountryProps[]>([]);
+    const [serviceId, setServiceId] = useState<any>(null);
+    const [countryId, setCountryId] = useState<any>(null);
+    const [profit, setProfit] = useState<string>("");
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         const fetchServices = async () => {
@@ -76,8 +80,7 @@ export default function useAdaOtpHooks() {
                 }
             });
 
-            console.log(response.data.data.countries);
-            setCountry(response.data.data.countries);
+            setCountryData(response.data.data.countries);
         } catch (error: any) {
             SwalMessage({
                 title: "Gagal!",
@@ -89,19 +92,69 @@ export default function useAdaOtpHooks() {
 
     const handlePostService = async () => {
         try {
-            const response = await axios.post(`${ADA_OTP_API}/service`)
+            if (!serviceId || !countryId) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Harap isi semua field!"
+                });
+
+                return;
+            }
+
+            const filteringServiceParent = servicesData?.find((item: servicesProps) => {
+                return item.id === serviceId;
+            });
+
+            const response = await API.post('/admin/service/ada-otp', {
+                name: filteringServiceParent?.text,
+                image: filteringServiceParent?.icon,
+                country: countryId?.name,
+                stock: countryId?.stock,
+                price: Number(profit) + Number(countryId?.price_formatted.replace(/[^0-9]/g, ""))
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const message = response.data.message;
+            SwalMessage({
+                icon: "success",
+                title: "Berhasil!",
+                text: message
+            });
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } catch (error: any) {
             SwalMessage({
                 title: "Gagal",
                 text: error.message,
                 icon: "error"
             })
+            console.error(error)
         }
+    }
+
+    const handleChangeService = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        if (name === "service") return setServiceId(value);
+        if (name === "country") return setCountryId(value);
+        if (name === "profit") return setProfit(value);
     }
 
     return {
         servicesData,
         handleShowCountry,
-        countryData
+        countryData,
+        handlePostService,
+        serviceId,
+        countryId,
+        profit,
+        setServiceId,
+        setCountryId,
+        handleChangeService,
     }
 }

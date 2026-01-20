@@ -28,7 +28,7 @@ export default function useUserHook() {
     const handleUpdateUserStatus = async(id: number, isActive: boolean) => {
         try {
             await API.put(`/admin/users/${id}`, {
-                is_active: isActive
+                isAdmin: isActive
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -52,6 +52,7 @@ export default function useUserHook() {
                     text: error.message
                 })
             }
+            console.error("Error updating user status:", error);
         }
     }
 

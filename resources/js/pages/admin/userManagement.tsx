@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Edit2, User, Shield, Wallet, X } from 'lucide-react';
 import AdminDashboard from '@/components/admin/adminDashboard';
 import useUserHook from '@/hooks/userHook';
@@ -11,8 +12,14 @@ const UserModal = ({ isOpen, onClose, user }: any) => {
     const [isAdmin, setIsAdmin] = useState(user?.isAdmin || false);
     const { handleUpdateUserStatus } = useUserHook();
 
-    if (!isOpen) return null;
+    useEffect(() => {
+        if (user) { 
+            setIsAdmin(!!user.isAdmin);
+        }
+    }, [user]);
 
+    if (!isOpen) return null;
+    
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
@@ -35,7 +42,7 @@ const UserModal = ({ isOpen, onClose, user }: any) => {
                     </div>
                 </div>
 
-                <div className="p-6 space-y-4">                
+                <div className="p-6 space-y-4">
                     <div className="flex items-center justify-between bg-gray-800/30 border border-gray-700/50 rounded-lg p-4">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
@@ -193,7 +200,7 @@ export default function UserManagement() {
                                                     title="Edit"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
-                                                </button>                                                
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -207,7 +214,7 @@ export default function UserManagement() {
                             <p className="text-gray-400">Tidak ada user ditemukan</p>
                         </div>
                     )}
-                </div>               
+                </div>
             </div>
 
             <UserModal

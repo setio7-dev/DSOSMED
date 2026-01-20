@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MedanPediaController;
+use App\Http\Controllers\ServiceNokosController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -16,6 +17,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware("role:1")->prefix("/admin")->group(function () {
         Route::get("/users", [UserController::class, "index"]);
         Route::put("/users/{id}", [UserController::class, "update"]);
+
+        Route::post('/service/ada-otp', [ServiceNokosController::class, 'store']);
     });
 });
 

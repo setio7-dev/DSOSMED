@@ -165,10 +165,10 @@ class UserController extends Controller
     {
         try {
             $user = User::findOrFail($id);
-            $data = User::update([
+            $data = $user->update([
                 "username" => $request->username ?: $user->username,
                 "password" => $request->password ? Hash::make($request->password) : $user->password,
-                "isAdmin" => $request->isAdmin ?: $user->isAdmin,
+                "isAdmin" => $request->isAdmin,
                 "saldo" => $request->saldo ?: $user->saldo
             ]);
 
