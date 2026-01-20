@@ -41,7 +41,7 @@ class UserController extends Controller
 
              return response()->json([
                 'message' => "Daftar akun berhasil!",
-                'user' => $data
+                'data' => $data
             ], 201);
 
         } catch(Exception $e) {
@@ -80,7 +80,7 @@ class UserController extends Controller
 
              return response()->json([
                 'message' => "Daftar akun berhasil!",
-                'user' => $data
+                'data' => $data
             ], 201);
 
         } catch(Exception $e) {
@@ -112,7 +112,7 @@ class UserController extends Controller
 
             $token = $user->createToken('access_token')->plainTextToken;
             return response()->json([
-                'user' => $user,
+                'data' => $user,
                 'token' => $token,
                 "message" => "Masuk akun Berhasil!"
             ], 200);
@@ -128,7 +128,7 @@ class UserController extends Controller
             $user = Auth::user();
             return response()->json([
                 'message' => "Mengambil data behasil!",
-                'user' => $user
+                'data' => $user
             ]);
         } catch(Exception $e) {
             return response()->json([
@@ -159,5 +159,27 @@ class UserController extends Controller
             "message" => "Mengambil data berhasil!",
             "data" => $data
         ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $data = User::update([
+                "username" => $request->username ?: $user->username,
+                "password" => $request->password ? Hash::make($request->password) : $user->password,
+                "isAdmin" => $request->isAdmin ?: $user->isAdmin,
+                "saldo" => $request->saldo ?: $user->saldo
+            ]);
+
+            return response()->json([
+                "message" => "Update data berhasil!",
+                "data" => $data
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }

@@ -32,7 +32,7 @@ export interface SharedData {
 
 export interface UserProps {
     id: number;
-    name: string;
+    username: string;
     saldo: number;
     isAdmin: string;
     created_at: string;

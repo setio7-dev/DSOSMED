@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ADA_OTP_API, API_KEY } from "@/server/AdaOtpApi"
 import { SwalMessage } from "@/utils/SwalMessage";

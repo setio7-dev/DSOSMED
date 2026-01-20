@@ -14,7 +14,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [UserController::class, 'logout']);
 
     Route::middleware("role:1")->prefix("/admin")->group(function () {
-        Route::get("/user", [UserController::class, "index"]);
+        Route::get("/users", [UserController::class, "index"]);
+        Route::put("/users/{id}", [UserController::class, "update"]);
     });
 });
 

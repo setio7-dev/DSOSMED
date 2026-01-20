@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
 import useAdaOtpHooks from '@/hooks/adaOtpHooks';
-import SpinnerLoader from '@/utils/SpinnerLoader';
+import SpinnerLoader from '@/ui/SpinnerLoader';
 import { RefreshCwIcon, Plus, Search, CheckCircle, Clock, Package, TrendingUp, X, PhoneIcon } from 'lucide-react';
 import { useEffect, useState } from 'react'
 
