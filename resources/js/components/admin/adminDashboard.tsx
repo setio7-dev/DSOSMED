@@ -2,9 +2,24 @@
 import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
 import Sidebar from '@/components/admin/sidebar';
+import { useAuth } from '@/context/authContext';
+import SpinnerLoader from '@/ui/SpinnerLoader';
+import { router } from '@inertiajs/react';
 
 export default function AdminDashboard({ children, title }: any) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <SpinnerLoader/>
+  }
+
+  if (!user || !user.isAdmin) {
+    router.visit('/auth', {
+      replace: true
+    });
+    return;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
@@ -41,8 +56,7 @@ export default function AdminDashboard({ children, title }: any) {
                   AD
                 </div>
                 <div className="hidden md:block">
-                  <p className="text-sm font-semibold">Admin User</p>
-                  <p className="text-xs text-gray-400">admin@dsosmed.com</p>
+                  <p className="text-sm font-semibold">{user?.username}</p>
                 </div>
               </div>
             </div>

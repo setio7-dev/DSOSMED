@@ -1,32 +1,25 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
-import { Plus, Search, Edit2, Trash2, User, Shield, Wallet, Eye, EyeOff, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Search, Edit2, User, Shield, Wallet, X } from 'lucide-react';
 import AdminDashboard from '@/components/admin/adminDashboard';
+import useUserHook from '@/hooks/userHook';
+import { FormatRupiah } from '@/utils/FormatRupiah';
+import { FormatDate } from '@/utils/FormatDate';
+import { UserProps } from '@/types';
 
-const UserModal = ({ isOpen, onClose, user, mode }: any) => {
-    const [formData, setFormData] = useState({
-        username: user?.username || '',
-        password: '',
-        saldo: user?.saldo || '',
-        isAdmin: user?.isAdmin || false
-    });
-    const [showPassword, setShowPassword] = useState(false);
+const UserModal = ({ isOpen, onClose, user }: any) => {
+    const [isAdmin, setIsAdmin] = useState(user?.isAdmin || false);
+    const { handleUpdateUserStatus } = useUserHook();
 
-    const handleInputChange = (e: any) => {
-        const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? checked : value
-        }));
-    };
-
-    const handleSubmit = () => {
-        console.log('Submit:', mode, formData);
-        onClose();
-    };
+    useEffect(() => {
+        if (user) { 
+            setIsAdmin(!!user.isAdmin);
+        }
+    }, [user]);
 
     if (!isOpen) return null;
-
+    
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
@@ -38,7 +31,7 @@ const UserModal = ({ isOpen, onClose, user, mode }: any) => {
                 <div className="bg-gray-900/95 backdrop-blur-xl border-b border-gray-700/50 p-6">
                     <div className="flex items-center justify-between">
                         <h2 className="text-2xl font-bold text-white">
-                            {mode === 'add' ? 'Tambah User Baru' : 'Edit User'}
+                            Ubah Status Pengguna
                         </h2>
                         <button
                             onClick={onClose}
@@ -50,64 +43,6 @@ const UserModal = ({ isOpen, onClose, user, mode }: any) => {
                 </div>
 
                 <div className="p-6 space-y-4">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Username
-                        </label>
-                        <div className="relative">
-                            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="text"
-                                name="username"
-                                value={formData.username}
-                                onChange={handleInputChange}
-                                className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                                placeholder="Masukkan username"
-                            />
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Password {mode === 'edit' && <span className="text-xs text-gray-500">(Kosongkan jika tidak ingin mengubah)</span>}
-                        </label>
-                        <div className="relative">
-                            <Shield className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type={showPassword ? "text" : "password"}
-                                name="password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                                className="w-full pl-10 pr-12 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                                placeholder="Masukkan password"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300 transition-colors"
-                            >
-                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                            </button>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                            Saldo
-                        </label>
-                        <div className="relative">
-                            <Wallet className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                            <input
-                                type="number"
-                                name="saldo"
-                                value={formData.saldo}
-                                onChange={handleInputChange}
-                                className="w-full pl-10 pr-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                                placeholder="Masukkan saldo"
-                            />
-                        </div>
-                    </div>
-
                     <div className="flex items-center justify-between bg-gray-800/30 border border-gray-700/50 rounded-lg p-4">
                         <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
@@ -121,9 +56,8 @@ const UserModal = ({ isOpen, onClose, user, mode }: any) => {
                         <label className="relative inline-flex items-center cursor-pointer">
                             <input
                                 type="checkbox"
-                                name="isAdmin"
-                                checked={formData.isAdmin}
-                                onChange={handleInputChange}
+                                checked={isAdmin}
+                                onChange={(e: any) => setIsAdmin(e.target.checked)}
                                 className="sr-only peer"
                             />
                             <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
@@ -138,10 +72,10 @@ const UserModal = ({ isOpen, onClose, user, mode }: any) => {
                             Batal
                         </button>
                         <button
-                            onClick={handleSubmit}
+                            onClick={() => handleUpdateUserStatus(user.id, isAdmin)}
                             className="flex-1 px-4 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all shadow-lg shadow-purple-500/20"
                         >
-                            {mode === 'add' ? 'Tambah' : 'Simpan'}
+                            Simpan
                         </button>
                     </div>
                 </div>
@@ -153,86 +87,20 @@ const UserModal = ({ isOpen, onClose, user, mode }: any) => {
 export default function UserManagement() {
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalMode, setModalMode] = useState('add');
     const [selectedUser, setSelectedUser] = useState(null);
-
-    const users = [
-        {
-            id: 1,
-            username: 'admin',
-            saldo: 5000000,
-            isAdmin: true,
-            created_at: '2024-01-15'
-        },
-        {
-            id: 2,
-            username: 'user001',
-            saldo: 250000,
-            isAdmin: false,
-            created_at: '2024-01-16'
-        },
-        {
-            id: 3,
-            username: 'johndoe',
-            saldo: 1500000,
-            isAdmin: false,
-            created_at: '2024-01-18'
-        },
-        {
-            id: 4,
-            username: 'manager',
-            saldo: 3000000,
-            isAdmin: true,
-            created_at: '2024-01-20'
-        },
-        {
-            id: 5,
-            username: 'customer01',
-            saldo: 75000,
-            isAdmin: false,
-            created_at: '2024-01-22'
-        }
-    ];
+    const { users } = useUserHook();
 
     const filteredUsers = users.filter(user =>
         user.username.toLowerCase().includes(searchQuery.toLowerCase())
     );
 
-    const handleAddUser = () => {
-        setModalMode('add');
-        setSelectedUser(null);
-        setIsModalOpen(true);
-    };
-
-    const handleEditUser = (user) => {
-        setModalMode('edit');
+    const handleEditUser = (user: UserProps | any) => {
         setSelectedUser(user);
         setIsModalOpen(true);
     };
-
-    const handleDeleteUser = (userId) => {
-        console.log('Delete user:', userId);
-    };
-
-    const formatRupiah = (amount) => {
-        return new Intl.NumberFormat('id-ID', {
-            style: 'currency',
-            currency: 'IDR',
-            minimumFractionDigits: 0
-        }).format(amount);
-    };
-
-    const formatDate = (dateString) => {
-        return new Date(dateString).toLocaleDateString('id-ID', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric'
-        });
-    };
-
     return (
         <AdminDashboard>
-            <div className="space-y-6">
+            <div className="space-y-6" data-aos="fade-up" data-aos-duration="800">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="bg-gradient-to-br from-purple-600/20 to-purple-800/20 border border-purple-500/30 rounded-xl p-6">
                         <div className="flex items-center justify-between mb-2">
@@ -256,7 +124,7 @@ export default function UserManagement() {
                             <Wallet className="w-5 h-5 text-green-400" />
                         </div>
                         <p className="text-2xl font-bold text-white">
-                            {formatRupiah(users.reduce((sum, user) => sum + user.saldo, 0))}
+                            {FormatRupiah(users.reduce((sum, user) => sum + user.saldo, 0))}
                         </p>
                     </div>
                 </div>
@@ -271,13 +139,6 @@ export default function UserManagement() {
                             className="w-full pl-10 pr-4 py-2.5 bg-gray-900/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                         />
                     </div>
-                    <button
-                        onClick={handleAddUser}
-                        className="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
-                    >
-                        <Plus className="w-5 h-5" />
-                        Tambah User
-                    </button>
                 </div>
 
                 <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl overflow-hidden">
@@ -312,7 +173,7 @@ export default function UserManagement() {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
                                                 <Wallet className="w-4 h-4 text-green-400" />
-                                                <span className="text-sm font-semibold text-white">{formatRupiah(user.saldo)}</span>
+                                                <span className="text-sm font-semibold text-white">{FormatRupiah(user.saldo)}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
@@ -329,7 +190,7 @@ export default function UserManagement() {
                                             )}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <span className="text-sm text-gray-300">{formatDate(user.created_at)}</span>
+                                            <span className="text-sm text-gray-300">{FormatDate(user.created_at)}</span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center justify-center gap-2">
@@ -339,13 +200,6 @@ export default function UserManagement() {
                                                     title="Edit"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDeleteUser(user.id)}
-                                                    className="p-2 bg-red-600/20 hover:bg-red-600/30 text-red-300 rounded-lg transition-all"
-                                                    title="Hapus"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -360,14 +214,13 @@ export default function UserManagement() {
                             <p className="text-gray-400">Tidak ada user ditemukan</p>
                         </div>
                     )}
-                </div>               
+                </div>
             </div>
 
             <UserModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 user={selectedUser}
-                mode={modalMode}
             />
         </AdminDashboard>
     );

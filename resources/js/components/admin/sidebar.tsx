@@ -7,7 +7,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
     const { url } = usePage();
     const menuItems = [
         { id: 'penghasilan', label: 'Penghasilan', icon: DollarSign, color: 'text-green-400', link: "/admin/home" },
-        { id: 'setting', label: 'Setting User', icon: Settings, color: 'text-blue-400', link: "/" },
+        { id: 'setting', label: 'Setting User', icon: Settings, color: 'text-blue-400', link: "/admin/pengguna" },
         { id: 'nokos-otp', label: 'Layanan Nokos Ada OTP', icon: Smartphone, color: 'text-purple-400', link: "/admin/layanan/nokos-ada-otp" },
         { id: 'nokos-virtusim', label: 'Layanan Nokos Virtusim', icon: CreditCard, color: 'text-pink-400', link: "/" },
         { id: 'suntik', label: 'Layanan Suntik', icon: TrendingUp, color: 'text-orange-400', link: "/" },

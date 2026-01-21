@@ -4,10 +4,15 @@ import useHomeHooks from '@/hooks/homeHooks';
 import home from "../../../public/image/home/welcome.png"
 import { Link } from '@inertiajs/react';
 import useAuthHooks from '@/hooks/authHooks';
+import SpinnerLoader from '@/ui/SpinnerLoader';
 
 export default function Home() {
     const { isMobileMenuOpen, isScrolled, activeSection, scrollToSection, setIsMobileMenuOpen, featureData, iconData, serviceData, planData, testimonialsData } = useHomeHooks();
-    const { user } = useAuthHooks();
+    const { user, loading } = useAuthHooks();
+
+    if (loading) {
+        return <SpinnerLoader/>
+    }
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
             <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
