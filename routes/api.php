@@ -18,7 +18,11 @@ Route::middleware('auth')->group(function () {
         Route::get("/users", [UserController::class, "index"]);
         Route::put("/users/{id}", [UserController::class, "update"]);
 
-        Route::post('/service/ada-otp', [ServiceNokosController::class, 'store']);
+        Route::resource('/service/ada-otp', ServiceNokosController::class);
+    });
+
+    Route::middleware("role:0")->prefix("/customer")->group(function () {
+        Route::get('/service/ada-otp', [ServiceNokosController::class, 'index']);
     });
 });
 

@@ -206,6 +206,10 @@ export default function ServiceNokosAdaOtp() {
     setIsModalOpen(true);    
   }
 
+  if (filteredServices.length === 0) {
+    return <SpinnerLoader/>
+  }
+
   return (
     <AdminDashboard title="Layanan Nokos Ada Otp">
       {isLoading && <SpinnerLoader />}
@@ -234,8 +238,9 @@ export default function ServiceNokosAdaOtp() {
                   name="country"
                   value={countryId?.id}
                   onChange={handleChangeService}
+                  disabled
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                  placeholder="Masukkan nomor ID"
+                  placeholder="Nomor ID Layanan (Otomatis Terisi)"
                 />
               </div>
 
@@ -248,8 +253,9 @@ export default function ServiceNokosAdaOtp() {
                   name="service"
                   value={serviceId}
                   onChange={handleChangeService}
+                  disabled
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                  placeholder="Masukkan service ID"
+                  placeholder="Service ID (Otomatis Terisi)"
                 />
               </div>
 

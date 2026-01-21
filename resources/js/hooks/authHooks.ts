@@ -12,6 +12,7 @@ export default function useAuthHooks() {
 
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const token = localStorage.getItem("token");
     const [formData, setFormData] = useState<any>({
         username: '',
         password: '',
@@ -90,6 +91,35 @@ export default function useAuthHooks() {
         setErrors({});
     };
 
+    const handleLogout = async () => {
+        try {
+            const response = await API.post("/logout", {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            localStorage.removeItem("token");
+            const message = response.data.message;
+
+            SwalMessage({
+                title: message,
+                icon: "success"
+            });
+
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 2000);
+        } catch (error: any) {
+            if (error) {
+                SwalMessage({
+                    title: error.response?.data?.message,
+                    icon: "error"
+                })
+            }
+        }
+    }
+
     return {
         handleChange,
         handleSubmit,
@@ -101,5 +131,6 @@ export default function useAuthHooks() {
         setIsLogin,
         errors,
         iconData,
+        handleLogout
     }
 }

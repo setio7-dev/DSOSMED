@@ -3,12 +3,12 @@ import { Menu, X, ChevronRight, Zap, ArrowRight } from 'lucide-react';
 import useHomeHooks from '@/hooks/homeHooks';
 import home from "../../../public/image/home/welcome.png"
 import { Link } from '@inertiajs/react';
-import useAuthHooks from '@/hooks/authHooks';
 import SpinnerLoader from '@/ui/SpinnerLoader';
+import { useAuth } from '@/context/authContext';
 
 export default function Home() {
     const { isMobileMenuOpen, isScrolled, activeSection, scrollToSection, setIsMobileMenuOpen, featureData, iconData, serviceData, planData, testimonialsData } = useHomeHooks();
-    const { user, loading } = useAuthHooks();
+    const { user, loading } = useAuth();
 
     if (loading) {
         return <SpinnerLoader/>
@@ -35,11 +35,11 @@ export default function Home() {
                                     {item}
                                 </button>
                             ))}
-                            <Link href={user ? "/profile" : "auth"}>
+                            <Link href={user ? "/customer/nokos-otp/order" : "/auth"}>
                                 <button
                                     className="bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-2.5 rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 animate-fadeInUp delay-400 cursor-pointer"
                                 >
-                                    {user ? "Profile" : "Login"}
+                                    {user ? "Dashboard" : "Login"}
                                 </button>
                             </Link>
                         </div>
@@ -63,7 +63,7 @@ export default function Home() {
                                     {item}
                                 </button>
                             ))}
-                            <Link href="/auth">
+                            <Link href={user ? "/customer/nokos-otp/order" : "/auth"}>
                                 <button
                                     onClick={() => scrollToSection('cta')}
                                     className="w-full bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
