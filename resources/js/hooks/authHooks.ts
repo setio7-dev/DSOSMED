@@ -13,7 +13,6 @@ export default function useAuthHooks() {
 
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
-    const [user, setUser] = useState<any>(null);
     const [formData, setFormData] = useState<any>({
         username: '',
         password: '',
@@ -27,34 +26,6 @@ export default function useAuthHooks() {
         { icon: CheckCircle, text: 'Support responsif' },
         { icon: CheckCircle, text: '50+ layanan tersedia' }
     ]
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const token = localStorage.getItem("token");
-                const response = await API.get("/me", {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                const userData = response.data.user;
-                // if (url === "/auth" && userData) {
-                //     window.location.href = "/";
-                //     return;
-                // }
-
-                setUser(userData);
-            } catch (error: any) {
-                SwalMessage({
-                    title: error.response.data.message,
-                    icon: "error"
-                })
-            }
-        }
-
-        fetchUser();
-    }, []);
 
     const handleChange = (e: any) => {
         const { name, value } = e.target;
@@ -133,6 +104,5 @@ export default function useAuthHooks() {
         setIsLogin,
         errors,
         iconData,
-        user
     }
 }
