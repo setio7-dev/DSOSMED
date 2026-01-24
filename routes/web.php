@@ -24,6 +24,10 @@ Route::get('/admin/layanan/nokos-ada-otp', function () {
     return Inertia::render('admin/serviceNokosAdaOtp');
 });
 
+Route::get('/admin/layanan/nokos-virtusim', function () {
+    return Inertia::render('admin/serviceNokosVirtusim');
+});
+
 // Customer
 Route::get('/home', function () {
     return Inertia::render('customer/home');

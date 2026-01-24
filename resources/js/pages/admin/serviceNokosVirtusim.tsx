@@ -165,7 +165,7 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
   );
 };
 
-export default function ServiceNokosAdaOtp() {
+export default function ServiceNokosVirtusim() {
   const { 
     servicesData, 
     handleShowCountry, 

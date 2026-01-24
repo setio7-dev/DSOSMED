@@ -46,7 +46,7 @@ export interface CountryProps {
     labels: string[];
 }
 
-export default function useAdaOtpHooks() {
+export default function useNokosHooks() {
     const [servicesData, setServices] = useState<servicesProps[]>([]);
     const [countryData, setCountryData] = useState<CountryProps[]>([]);
     const [serviceId, setServiceId] = useState<any>(null);
