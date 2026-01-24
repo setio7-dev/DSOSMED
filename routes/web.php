@@ -29,7 +29,7 @@ Route::get('/admin/layanan/nokos-virtusim', function () {
 });
 
 // Customer
-Route::get('/home', function () {
-    return Inertia::render('customer/home');
+Route::get('/customer/nokos-otp/order', function () {
+    return Inertia::render('customer/nokosOrder');
 });
 

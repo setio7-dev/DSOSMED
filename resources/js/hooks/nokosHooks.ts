@@ -1,54 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ADA_OTP_API, API_KEY } from "@/server/AdaOtpApi"
 import API from "@/server/API";
+import { CountryProps, ServicesProps } from "@/types";
 import { SwalMessage } from "@/utils/SwalMessage";
 import axios from "axios";
 import React, { useEffect, useState } from "react"
 
-interface servicesProps {
-    id: number;
-    text: string;
-    description: string;
-    icon: string;
-}
-
-export interface Metrics {
-    total_success: number;
-    today_success: number;
-    total_order: number;
-    today_order: number;
-    complete_currently: number;
-}
-
-export interface CountryProps {
-    id: number;
-    name: string;
-    iso: string;
-    prefix: string;
-    price: number;
-    price_formatted: string;
-    available: boolean;
-    provider_id: number;
-    provider_name: string;
-    stock: number;
-    stock_formatted: string;
-    delivery_percent: number;
-    delivery_formatted: string;
-    operator: string;
-    quality_score: string;
-    provider_rate: string;
-    order_count_today: number;
-    can_order: boolean;
-    current_demand_status: string;
-    avg_delivery_time: number;
-    avg_delivery_time_formatted: string;
-    metrics: Metrics;
-    labels: string[];
-}
-
-export default function useNokosHooks() {
-    const [servicesData, setServices] = useState<servicesProps[]>([]);
+export default function useAdaOtpHooks() {
+    const [servicesData, setServices] = useState<ServicesProps[]>([]);
     const [countryData, setCountryData] = useState<CountryProps[]>([]);
+    const [serviceOrderData, setServiceOrderData] = useState<any[]>([]);
     const [serviceId, setServiceId] = useState<any>(null);
     const [countryId, setCountryId] = useState<any>(null);
     const [profit, setProfit] = useState<string>("");
@@ -69,8 +30,23 @@ export default function useNokosHooks() {
             }
         }
 
+        const fetchServicesOrder = async() => {
+            try {
+                const response = await API.get("/customer/service/ada-otp", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                setServiceOrderData(response.data.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
         fetchServices();
-    }, []);
+        fetchServicesOrder();
+    }, [token]);
 
     const handleShowCountry = async (id: number) => {
         try {
@@ -102,7 +78,7 @@ export default function useNokosHooks() {
                 return;
             }
 
-            const filteringServiceParent = servicesData?.find((item: servicesProps) => {
+            const filteringServiceParent = servicesData?.find((item: ServicesProps) => {
                 return item.id === serviceId;
             });
 
@@ -133,8 +109,7 @@ export default function useNokosHooks() {
                 title: "Gagal",
                 text: error.message,
                 icon: "error"
-            })
-            console.error(error)
+            });
         }
     }
 
@@ -156,5 +131,6 @@ export default function useNokosHooks() {
         setServiceId,
         setCountryId,
         handleChangeService,
+        serviceOrderData
     }
 }

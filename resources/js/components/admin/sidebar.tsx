@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
-import { X, Zap, DollarSign, Settings, Smartphone, CreditCard, TrendingUp, History, MessageCircle, FileText, ChevronRight, LogOut } from 'lucide-react';
+import { X, Zap, Settings, Smartphone, CreditCard, TrendingUp, History, MessageCircle, FileText, ChevronRight, LogOut } from 'lucide-react';
 import { usePage, Link } from '@inertiajs/react';
+import useAuthHooks from '@/hooks/authHooks';
 
 export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
     const { url } = usePage();
+    const { handleLogout } = useAuthHooks();
     const menuItems = [
-        { id: 'penghasilan', label: 'Penghasilan', icon: DollarSign, color: 'text-green-400', link: "/admin/home" },
-        { id: 'setting', label: 'Setting User', icon: Settings, color: 'text-blue-400', link: "/admin/pengguna" },
+        { id: 'manajemen', label: 'Manajemen User', icon: Settings, color: 'text-blue-400', link: "/admin/pengguna" },
         { id: 'nokos-otp', label: 'Layanan Nokos Ada OTP', icon: Smartphone, color: 'text-purple-400', link: "/admin/layanan/nokos-ada-otp" },
         { id: 'nokos-virtusim', label: 'Layanan Nokos Virtusim', icon: CreditCard, color: 'text-pink-400', link: "/" },
         { id: 'suntik', label: 'Layanan Suntik', icon: TrendingUp, color: 'text-orange-400', link: "/" },
@@ -65,7 +66,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
                     ))}
                 </nav>
                 <div className="p-4 border-t border-gray-800">
-                    <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-600/20 border border-transparent hover:border-red-500/50 transition-all">
+                    <button onClick={() => handleLogout()} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-600/20 border border-transparent hover:border-red-500/50 transition-all">
                         <LogOut className="w-5 h-5 text-red-400" />
                         <span className="text-sm font-medium text-gray-300">Logout</span>
                     </button>

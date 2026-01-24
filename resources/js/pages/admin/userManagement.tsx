@@ -98,6 +98,7 @@ export default function UserManagement() {
         setSelectedUser(user);
         setIsModalOpen(true);
     };
+
     return (
         <AdminDashboard>
             <div className="space-y-6" data-aos="fade-up" data-aos-duration="800">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Eye, EyeOff, Zap, Lock, User, ArrowRight } from 'lucide-react';
 import useAuthHooks from '@/hooks/authHooks';
+import { router } from '@inertiajs/react';
 
 export default function Auth() {
   const { isLogin, showPassword, setShowPassword, toggleMode, handleChange, handleSubmit, setIsLogin, formData, errors, iconData } = useAuthHooks();
@@ -11,7 +12,7 @@ export default function Auth() {
       <div className="relative w-full max-w-6xl grid lg:grid-cols-2 gap-8 items-center">
         <div className="hidden lg:block animate-slideIn">
           <div className="space-y-6">
-            <div className="flex items-center space-x-3">
+            <div onClick={() => router.visit("/")} className="flex items-center space-x-3 cursor-pointer">
               <div className="w-14 h-14 bg-gradient-to-br from-purple-600 to-purple-800 rounded-xl flex items-center justify-center">
                 <Zap className="w-8 h-8" />
               </div>

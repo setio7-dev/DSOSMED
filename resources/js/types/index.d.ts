@@ -38,3 +38,59 @@ export interface UserProps {
     created_at: string;
     updated_at: string;
 }
+
+export interface ServicesProps {
+    id: number;
+    text: string;
+    description: string;
+    icon: string;
+}
+
+export interface Metrics {
+    total_success: number;
+    today_success: number;
+    total_order: number;
+    today_order: number;
+    complete_currently: number;
+}
+
+export interface CountryProps {
+    id: number;
+    name: string;
+    iso: string;
+    prefix: string;
+    price: number;
+    price_formatted: string;
+    available: boolean;
+    provider_id: number;
+    provider_name: string;
+    stock: number;
+    stock_formatted: string;
+    delivery_percent: number;
+    delivery_formatted: string;
+    operator: string;
+    quality_score: string;
+    provider_rate: string;
+    order_count_today: number;
+    can_order: boolean;
+    current_demand_status: string;
+    avg_delivery_time: number;
+    avg_delivery_time_formatted: string;
+    metrics: Metrics;
+    labels: string[];
+}
+
+export interface ServiceOrderAdaOtpProps {
+    id: number;
+    name: string;
+    image: string;
+    child: [
+        {
+            id: number;
+            nokos_parent_id: number;
+            country: string;
+            stock: string;
+            price: string;
+        }
+    ]
+}
