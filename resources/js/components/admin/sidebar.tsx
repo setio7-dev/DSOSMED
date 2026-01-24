@@ -10,7 +10,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
     const menuItems = [
         { id: 'manajemen', label: 'Manajemen User', icon: Settings, color: 'text-blue-400', link: "/admin/pengguna" },
         { id: 'nokos-otp', label: 'Layanan Nokos Ada OTP', icon: Smartphone, color: 'text-purple-400', link: "/admin/layanan/nokos-ada-otp" },
-        { id: 'nokos-virtusim', label: 'Layanan Nokos Virtusim', icon: CreditCard, color: 'text-pink-400', link: "/" },
+        { id: 'nokos-virtusim', label: 'Layanan Nokos Virtusim', icon: CreditCard, color: 'text-pink-400', link: "/admin/layanan/nokos-virtusim" },
         { id: 'suntik', label: 'Layanan Suntik', icon: TrendingUp, color: 'text-orange-400', link: "/" },
         { id: 'riwayat', label: 'Riwayat Order Layanan', icon: History, color: 'text-yellow-400', link: "/" },
         { id: 'cs', label: 'Customer Service', icon: MessageCircle, color: 'text-cyan-400', link: "/" },

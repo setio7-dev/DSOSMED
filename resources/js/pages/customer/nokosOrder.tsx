@@ -6,13 +6,13 @@ import {
 } from 'lucide-react';
 import CustomerDashboard from '@/components/customer/customerDashboard';
 import { ServiceOrderAdaOtpProps } from '@/types';
-import useAdaOtpHooks from '@/hooks/adaOtpHooks';
+import useNokosHooks from '@/hooks/nokosHooks';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 
 export default function NokosOrder() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedParent, setSelectedParent] = useState<ServiceOrderAdaOtpProps | null>(null);
-  const { serviceOrderData } = useAdaOtpHooks();
+  const { serviceOrderData } = useNokosHooks();
 
   const filteredParents = serviceOrderData.filter(parent =>
     parent.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -69,7 +69,7 @@ export default function NokosOrder() {
                     </div>
                     <h3 className="text-sm font-semibold text-white mb-1">{parent.name}</h3>
                     <p className="text-xs text-gray-400">
-                      {parent.child.filter((c: any) => c.nokos_parent_id === parent.id).length} negara
+                      {parent.child.filter((c: any) => c.nokos_parent_id === parent.id).length} layanan
                     </p>
                   </button>
                 ))
@@ -91,7 +91,7 @@ export default function NokosOrder() {
               </div>
               <div>
                 <h2 className="text-lg font-bold text-white">{selectedParent.name}</h2>
-                <p className="text-sm text-gray-400">{filteredCountries.length} negara tersedia</p>
+                <p className="text-sm text-gray-400">{filteredCountries.length} layanan tersedia</p>
               </div>
             </div>
 

@@ -94,3 +94,23 @@ export interface ServiceOrderAdaOtpProps {
         }
     ]
 }
+
+export interface ServiceVirtusimListCountryProps {
+    id: string;
+    country_code: string;
+    country_name: string;
+    img_link: string;
+}
+
+export interface ServiceVirtusimListServiceProps {
+    id: string;
+    name: string;
+    price: string;
+    is_promo: "0" | "1";
+    tersedia: string;
+    provider_service_id: string;
+    country: string;
+    status: "0" | "1";
+    category: string;
+}
+

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MedanPediaController;
+use App\Http\Controllers\ServiceAPIController;
 use App\Http\Controllers\ServiceNokosController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -10,9 +11,16 @@ Route::post('/register', [UserController::class, 'register']); //all
 Route::post('/register/admin', [UserController::class, 'registerAdmin']); //admin
 Route::post('/login', [UserController::class, 'login']); //all
 
+Route::get("/virtusim/list-countries", [ServiceAPIController::class, "virtusim_api_listcountry"]);
+Route::get("/virtusim/service/{country}", [ServiceAPIController::class, "virtusim_api_listservice"]);
+
+Route::get("/adaotp/services", [ServiceAPIController::class, "adaotp_api_listservice"]);
+Route::get("/adaotp/services/{id}", [ServiceAPIController::class, "adaotp_api_listcountry"]);
+
 Route::middleware('auth')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
+
 
     Route::middleware("role:1")->prefix("/admin")->group(function () {
         Route::get("/users", [UserController::class, "index"]);
@@ -21,7 +29,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('/service/ada-otp', ServiceNokosController::class);
     });
 
-    Route::middleware("role:0")->prefix("/customer")->group(function () {
+    Route::prefix("/customer")->group(function () {
         Route::get('/service/ada-otp', [ServiceNokosController::class, 'index']);
     });
 });
