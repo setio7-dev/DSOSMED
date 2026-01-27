@@ -28,6 +28,10 @@ Route::get('/admin/layanan/nokos-virtusim', function () {
     return Inertia::render('admin/serviceNokosVirtusim');
 });
 
+Route::get('/admin/layanan/suntik', function () {
+    return Inertia::render('admin/serviceSuntik');
+});
+
 // Customer
 Route::get('/customer/nokos-otp/order', function () {
     return Inertia::render('customer/nokosOrder');

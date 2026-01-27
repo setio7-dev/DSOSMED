@@ -38,12 +38,35 @@ class ServiceAPIController extends Controller
 
         return response()->json($response->json());
     }
-    
+
     public function adaotp_api_listcountry($id)
     {
         $response = Http::withHeaders([
             "Authorization" => "Bearer IgxdTIq7LtuwgsmSWDATZyayL8S66Dx9",
         ])->get("https://adaotp.com/api/v1/services/{$id}/countries");
+
+        return response()->json($response->json());
+    }
+
+    // MedanPedia
+    public function medanpedia_api_services()
+    {
+        $response = Http::asForm()
+            ->post('https://api.medanpedia.co.id/services', [
+                'api_id'  => "37461",
+                'api_key' => "vbsj08-btcidp-bqfnnw-k2hydl-hga8xk",
+            ]);
+
+        return response()->json($response->json());
+    
+        }
+    public function medanpedia_api_profile()
+    {
+        $response = Http::asForm()
+            ->post('https://api.medanpedia.co.id/profile', [
+                'api_id'  => "37461",
+                'api_key' => "vbsj08-btcidp-bqfnnw-k2hydl-hga8xk",
+            ]);
 
         return response()->json($response->json());
     }

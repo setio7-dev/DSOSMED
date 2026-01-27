@@ -114,3 +114,15 @@ export interface ServiceVirtusimListServiceProps {
     category: string;
 }
 
+export interface MedanPediaService {
+  id: number;
+  name: string;
+  type: string;
+  category: string;
+  price: number;
+  min: number;
+  max: number;
+  description: string;
+  refill: number;
+  average_time: string;
+}

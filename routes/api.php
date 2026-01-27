@@ -17,6 +17,9 @@ Route::get("/virtusim/service/{country}", [ServiceAPIController::class, "virtusi
 Route::get("/adaotp/services", [ServiceAPIController::class, "adaotp_api_listservice"]);
 Route::get("/adaotp/services/{id}", [ServiceAPIController::class, "adaotp_api_listcountry"]);
 
+Route::get("/medanpedia/services", [ServiceAPIController::class, "medanpedia_api_services"]);
+Route::get("/medanpedia/profile", [ServiceAPIController::class, "medanpedia_api_profile"]);
+
 Route::middleware('auth')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
@@ -34,13 +37,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-
-Route::prefix('medanpedia')->group(function () {
-    Route::get('/profile', [MedanPediaController::class, 'profile']);
-    Route::get('/services', [MedanPediaController::class, 'services']);
-    Route::post('/order', [MedanPediaController::class, 'order']);
-    Route::get('/status/{orderId}', [MedanPediaController::class, 'status']);
-    Route::post('/refill/{orderId}', [MedanPediaController::class, 'refill']);
-    Route::get('/refill-status/{refillId}', [MedanPediaController::class, 'refillStatus']);
-});
 

@@ -323,7 +323,7 @@ export default function ServiceNokosAdaOtp() {
 
                 <button onClick={() => handleOpenServiceModal(service.id, service.text)} className="flex-1 cursor-pointer mt-6 px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg text-xs font-medium transition-all duration-200 flex items-center justify-center gap-1.5">
                   <RefreshCwIcon className="w-3.5 h-3.5" />
-                  Refresh Countries
+                  Tambah Layanan
                 </button>
               </div>
             ))}
