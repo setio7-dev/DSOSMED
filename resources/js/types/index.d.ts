@@ -49,6 +49,7 @@ export interface ServicesAdaOtpProps {
 
 export interface ServiceCountryAdaOtpProps {
     id: number;
+    parent_id: number;
     name: string;
     iso: string;
     prefix: string;
@@ -89,6 +90,7 @@ export interface ServiceVirtusimListCountryProps {
 
 export interface ServiceVirtusimListServiceProps {
     id: string;
+    parent_id: number;
     name: string;
     price: string;
     is_promo: "0" | "1";

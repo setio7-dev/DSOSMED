@@ -41,7 +41,7 @@ export default function useMedanPediaHooks() {
 
         fetchService();
         fetchServicesOrder();
-    }, []);
+    }, [token]);
 
     const handleSuntikPost = async (serviceData: MedanPediaService, servicePrice: number) => {
         try {

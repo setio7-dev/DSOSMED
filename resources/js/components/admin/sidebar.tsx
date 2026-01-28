@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
 import { X, Zap, Settings, Smartphone, CreditCard, TrendingUp, History, MessageCircle, FileText, ChevronRight, LogOut, Server } from 'lucide-react';
-import { usePage, Link } from '@inertiajs/react';
+import { usePage, Link, router } from '@inertiajs/react';
 import useAuthHooks from '@/hooks/authHooks';
 
 export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
@@ -27,7 +27,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
             <div className="flex flex-col h-full">
                 <div className="p-6 border-b border-gray-800">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
+                        <div onClick={() => router.visit("/")} className="flex cursor-pointer items-center space-x-3">
                             <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
                                 <Zap className="w-6 h-6" />
                             </div>
