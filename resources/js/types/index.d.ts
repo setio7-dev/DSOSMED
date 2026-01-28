@@ -39,22 +39,14 @@ export interface UserProps {
     updated_at: string;
 }
 
-export interface ServicesProps {
+export interface ServicesAdaOtpProps {
     id: number;
     text: string;
     description: string;
     icon: string;
 }
 
-export interface Metrics {
-    total_success: number;
-    today_success: number;
-    total_order: number;
-    today_order: number;
-    complete_currently: number;
-}
-
-export interface CountryProps {
+export interface ServiceCountryAdaOtpProps {
     id: number;
     name: string;
     iso: string;
@@ -76,23 +68,14 @@ export interface CountryProps {
     current_demand_status: string;
     avg_delivery_time: number;
     avg_delivery_time_formatted: string;
-    metrics: Metrics;
+    metrics: {
+        total_success: number;
+        today_success: number;
+        total_order: number;
+        today_order: number;
+        complete_currently: number;
+    };
     labels: string[];
-}
-
-export interface ServiceOrderAdaOtpProps {
-    id: number;
-    name: string;
-    image: string;
-    child: [
-        {
-            id: number;
-            nokos_parent_id: number;
-            country: string;
-            stock: string;
-            price: string;
-        }
-    ]
 }
 
 export interface ServiceVirtusimListCountryProps {
@@ -115,14 +98,14 @@ export interface ServiceVirtusimListServiceProps {
 }
 
 export interface MedanPediaService {
-  id: number;
-  name: string;
-  type: string;
-  category: string;
-  price: number;
-  min: number;
-  max: number;
-  description: string;
-  refill: number;
-  average_time: string;
+    id: number;
+    name: string;
+    type: string;
+    category: string;
+    price: number;
+    min: number;
+    max: number;
+    description: string;
+    refill: number;
+    average_time: string;
 }

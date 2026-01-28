@@ -39,7 +39,7 @@ export default function useNokosHooks() {
 
         const fetchServicesOrder = async() => {
             try {
-                const response = await API.get("/customer/service/ada-otp", {
+                const response = await API.get("/customer/service/nokos", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -99,7 +99,7 @@ export default function useNokosHooks() {
                 return item.id === serviceId;
             });
 
-            const response = await API.post('/admin/service/ada-otp', {
+            const response = await API.post('/admin/service/nokos', {
                 name: filteringServiceParent?.text,
                 image: filteringServiceParent?.icon,
                 country: countryId?.name,
@@ -146,7 +146,7 @@ export default function useNokosHooks() {
                 return item.id === serviceId;
             });
 
-            const response = await API.post('/admin/service/ada-otp', {
+            const response = await API.post('/admin/service/nokos', {
                 name: filteringServiceParent?.country_name,
                 image: filteringServiceParent?.img_link,
                 country: countryId?.name,

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,8 +12,16 @@ return new class extends Migration
     {
         Schema::create('service_suntiks', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('service_id')->unique();
-            $table->integer('price');
+            $table->bigInteger("service_id");
+            $table->string('name');
+            $table->string('type');
+            $table->string('category');
+            $table->bigInteger('price');
+            $table->bigInteger('min');
+            $table->bigInteger('max');
+            $table->text('description')->nullable();
+            $table->bigInteger('refill')->default(0);
+            $table->string('average_time')->nullable();
             $table->timestamps();
         });
     }

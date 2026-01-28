@@ -2,76 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ServiceSuntik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class ServiceSuntikController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $data = ServiceSuntik::all();
+        return response()->json([
+            "data" => $data,
+            "message" => "Ambil data berhasil!"
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validateData = Validator::make($request->all(),[
-            "service_id" => "required",
-            "price" => "required"
+        $validateData = Validator::make($request->all(), [
+            'service_id' => "required",
+            'name' => "required",
+            'type' => "required",
+            'category' => "required",
+            'price' => "required",
+            'min' => "required",
+            'max' => "required",
+            'description' => "required",
+            'refill' => "required",
+            'average_time' => "required",
         ]);
 
         if ($validateData->fails()) {
             return response()->json([
-                "message" => "Field mustbe required",
-                "errors"=> $validateData->errors()
+                "message" => "Data wajib diisi!",
+                "errors" => $validateData->errors()
             ], 422);
         }
 
-        // $data = Service  
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $data = ServiceSuntik::create($request->all());
+        return response()->json([
+            "data" => $data,
+            "message" => "Tambah data berhasil!"
+        ]);
     }
 }

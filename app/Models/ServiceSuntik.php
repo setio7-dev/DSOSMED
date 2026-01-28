@@ -12,7 +12,15 @@ class ServiceSuntik extends Model
     use HasFactory, HasApiTokens, Notifiable;
     protected $table = "service_suntiks";
     protected $fillable = [
-        "service_id",
-        "price"
+        'service_id',
+        'name',
+        'type',
+        'category',
+        'price',
+        'min',
+        'max',
+        'description',
+        'refill',
+        'average_time',
     ];
 }

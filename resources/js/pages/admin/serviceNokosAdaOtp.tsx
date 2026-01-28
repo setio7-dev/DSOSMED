@@ -1,11 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
-import useNokosHooks from '@/hooks/nokosHooks';
+import useAdaOtpHooks from '@/hooks/adaOtpHooks';
+import { ServiceCountryAdaOtpProps, ServicesAdaOtpProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { RefreshCwIcon, Plus, Search, CheckCircle, Clock, Package, TrendingUp, X, PhoneIcon } from 'lucide-react';
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
-const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, selectedData=null }: any) => {
+interface CountriesModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  serviceData: ServicesAdaOtpProps;
+  selectedServiceCountry: Dispatch<SetStateAction<ServiceCountryAdaOtpProps | null>>;
+}
+
+const CountriesModal = ({ isOpen, onClose, serviceData, selectedServiceCountry }: CountriesModalProps) => {
   const getDemandColor = (status: any) => {
     switch (status) {
       case 'sangat_tinggi':
@@ -32,11 +40,20 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
     }
   };
 
-  const handleSelected = (country: any) => {
-    selectedData(country);
+  const handleSelected = (country: ServiceCountryAdaOtpProps) => {
+    selectedServiceCountry(country);
     onClose();
   }
   
+  const { serviceCountryAdaOtpData, handleShowCountry } = useAdaOtpHooks();
+  useEffect(() => {
+    const fetchServiceCountry = async() => {
+      await handleShowCountry(serviceData?.id);
+    }
+
+    fetchServiceCountry();
+  }, [serviceData, handleShowCountry]);
+
   if (!isOpen) return null;
 
   return (
@@ -50,8 +67,8 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
         <div className="sticky top-0 z-10 bg-gray-900/95 backdrop-blur-xl border-b border-gray-700/50 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-1">{serviceName}</h2>
-              <p className="text-sm text-gray-400">Service ID: {serviceId}</p>
+              <h2 className="text-2xl font-bold text-white mb-1">{serviceData.text}</h2>
+              <p className="text-sm text-gray-400">Service ID: {serviceData.id}</p>
             </div>
             <button
               onClick={onClose}
@@ -64,7 +81,7 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
 
         <div className="overflow-y-auto max-h-[calc(90vh-100px)] p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {countryData.map((country: any, index: number) => (
+            {serviceCountryAdaOtpData?.map((country, index: number) => (
               <div
                 key={index}
                 className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-5 hover:bg-gray-800/50 hover:border-purple-500/30 transition-all duration-200"
@@ -166,24 +183,20 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
 };
 
 export default function ServiceNokosAdaOtp() {
-  const { 
-    servicesData, 
-    handleShowCountry, 
-    countryData,
-    serviceId,
-    setServiceId,
-    setCountryId,
-    countryId,
-    profit,
+  const {
+    servicesAdaOtpData,
     handleChangeService,
-    handlePostService
-  } = useNokosHooks();
+    handlePostService,
+    profit
+  } = useAdaOtpHooks();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [serviceName, setServiceName] = useState("");
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredServices = servicesData.filter(service =>
+  const [selectedService, setSelectedService] = useState<ServicesAdaOtpProps | null>(null);
+  const [selectedCountry, setSelectedCountry] = useState<ServiceCountryAdaOtpProps | null>(null);
+
+  const filteredServices = servicesAdaOtpData.filter(service =>
     service.text.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -199,10 +212,8 @@ export default function ServiceNokosAdaOtp() {
     }
   });
 
-  const handleOpenServiceModal = async (id: any, name: string) => {
-    await handleShowCountry(id);
-    setServiceId(id);
-    setServiceName(name);
+  const handleOpenServiceModal = async (service: ServicesAdaOtpProps) => {
+    setSelectedService(service);
     setIsModalOpen(true);    
   }
 
@@ -217,11 +228,8 @@ export default function ServiceNokosAdaOtp() {
       <CountriesModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        serviceName={serviceName}
-        serviceId={serviceId}
-        countryData={countryData}
-        selectedId={null}
-        selectedData={setCountryId}
+        serviceData={selectedService as any}
+        selectedServiceCountry={setSelectedCountry}
       />
 
       <div className="space-y-8">
@@ -235,9 +243,7 @@ export default function ServiceNokosAdaOtp() {
                 </label>
                 <input
                   type="text"
-                  name="country"
-                  value={countryId?.id}
-                  onChange={handleChangeService}
+                  value={selectedCountry?.id}
                   disabled
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Nomor ID Layanan (Otomatis Terisi)"
@@ -250,9 +256,7 @@ export default function ServiceNokosAdaOtp() {
                 </label>
                 <input
                   type="text"
-                  name="service"
-                  value={serviceId}
-                  onChange={handleChangeService}
+                  value={selectedService?.id}
                   disabled
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Service ID (Otomatis Terisi)"
@@ -275,7 +279,7 @@ export default function ServiceNokosAdaOtp() {
             </div>
 
             <button
-              onClick={() => handlePostService()}
+              onClick={() => handlePostService(selectedService as any, selectedCountry as any)}
               className="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
             >
               <Plus className="w-5 h-5" />
@@ -321,7 +325,7 @@ export default function ServiceNokosAdaOtp() {
                   </div>
                 </div>
 
-                <button onClick={() => handleOpenServiceModal(service.id, service.text)} className="flex-1 cursor-pointer mt-6 px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg text-xs font-medium transition-all duration-200 flex items-center justify-center gap-1.5">
+                <button onClick={() => handleOpenServiceModal(service)} className="flex-1 cursor-pointer mt-6 px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg text-xs font-medium transition-all duration-200 flex items-center justify-center gap-1.5">
                   <RefreshCwIcon className="w-3.5 h-3.5" />
                   Tambah Layanan
                 </button>

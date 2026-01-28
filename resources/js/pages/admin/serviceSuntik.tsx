@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
-import useSuntikHooks from '@/hooks/suntikHooks';
+import useMedanPediaHooks from '@/hooks/medanPediaHooks';
 import { MedanPediaService } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { FormatRupiah } from '@/utils/FormatRupiah';
@@ -11,38 +11,10 @@ interface ServiceSettingsModalProps {
   isOpen: boolean;
   onClose: any;
   serviceData: MedanPediaService | null;
-  onSave: (data: { name: string; description: string; profit: string }) => void;
 }
 
-const ServiceSettingsModal = ({ isOpen, onClose, serviceData, onSave }: ServiceSettingsModalProps) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    profit: ''
-  });
-
-  useEffect(() => {
-    if (serviceData) {
-      setFormData({
-        name: serviceData.name || '',
-        description: serviceData.description || '',
-        profit: ''
-      });
-    }
-  }, [serviceData]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = () => {
-    onSave(formData);
-    onClose();
-  };
-
+const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsModalProps) => {
+  const { profit, handleSuntikPost, handleChangeSuntik } = useMedanPediaHooks();
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
       case 'instagram':
@@ -86,7 +58,6 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData, onSave }: ServiceS
         </div>
 
         <div className="p-6 space-y-6">
-          {/* Service Info Card */}
           <div className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-5">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -124,7 +95,6 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData, onSave }: ServiceS
             </div>
           </div>
 
-          {/* Form Fields */}
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -133,15 +103,14 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData, onSave }: ServiceS
               <input
                 type="number"
                 name="profit"
-                value={formData.profit}
-                onChange={handleChange}
+                value={profit}
+                onChange={handleChangeSuntik}
                 className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                 placeholder="Masukkan profit"
               />
             </div>
           </div>
 
-          {/* Action Buttons */}
           <div className="flex gap-3">
             <button
               onClick={onClose}
@@ -150,11 +119,11 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData, onSave }: ServiceS
               Batal
             </button>
             <button
-              onClick={handleSubmit}
+              onClick={() => handleSuntikPost(serviceData, serviceData.price)}
               className="flex-1 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
             >
               <Plus className="w-5 h-5" />
-              Simpan
+              Tambah
             </button>
           </div>
         </div>
@@ -168,7 +137,7 @@ export default function ServiceSuntik() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedService, setSelectedService] = useState<MedanPediaService | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const { suntikServiceData } = useSuntikHooks();
+  const { suntikServiceData } = useMedanPediaHooks();
 
   const filteredServices = suntikServiceData?.filter(service =>
     service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -192,12 +161,6 @@ export default function ServiceSuntik() {
     setIsModalOpen(true);
   };
 
-  const handleSaveService = (data: { name: string; description: string; profit: string }) => {
-    console.log('Saving service with data:', data);
-    // Handle save logic here
-    // Call your API or update state
-    // handlePostMedanPediaService(data);
-  };
 
   const getCategoryColor = (category: string) => {
     switch (category.toLowerCase()) {
@@ -224,7 +187,6 @@ export default function ServiceSuntik() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         serviceData={selectedService}
-        onSave={handleSaveService}
       />
 
       <div className="space-y-8">
@@ -255,7 +217,7 @@ export default function ServiceSuntik() {
                       {service.name}
                     </h3>
                     <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-medium border flex-shrink-0 ${getCategoryColor(service.category)}`}>
-                      {service.category}
+                      {service.category.slice(0, 14) + "..."}
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 mb-3">ID: {service.id} • {service.type}</p>
@@ -285,7 +247,7 @@ export default function ServiceSuntik() {
                   className="w-full cursor-pointer px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg text-xs font-medium transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <Settings className="w-4 h-4" />
-                  Pengaturan
+                  Tambah Layanan
                 </button>
               </div>
             ))}
