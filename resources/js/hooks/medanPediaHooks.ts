@@ -7,6 +7,12 @@ import { useEffect, useState } from 'react'
 export default function useMedanPediaHooks() {
     const [suntikServiceData, setSuntikServiceData] = useState<MedanPediaService[]>([]);
     const [profit, setProfit] = useState("");
+    const [customerserviceMedanPediaData, setCustomerserviceMedanPediaData] = useState<any[]>([]);
+    const [formPutMedanPedia, setFormPutMedanPedia] = useState<MedanPediaService | any>({
+        price: null,
+        name: null,
+        description: null,
+    });
     const token = localStorage.getItem("token");
 
     useEffect(() => {
@@ -19,7 +25,22 @@ export default function useMedanPediaHooks() {
             }
         }
 
+        const fetchServicesOrder = async () => {
+            try {
+                const response = await API.get("/customer/service/medanpedia", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                setCustomerserviceMedanPediaData(response.data.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
         fetchService();
+        fetchServicesOrder();
     }, []);
 
     const handleSuntikPost = async (serviceData: MedanPediaService, servicePrice: number) => {
@@ -34,7 +55,7 @@ export default function useMedanPediaHooks() {
                 refill: serviceData.refill,
                 type: serviceData.type,
                 category: serviceData.category,
-                price: servicePrice + profit
+                price: Number(servicePrice) + Number(profit)
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -65,10 +86,92 @@ export default function useMedanPediaHooks() {
         if (name == "profit") return setProfit(value)
     }
 
+    const handleChangeMedanPediaServiceUpdate = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
+        const { name, value } = e.target;
+
+        setFormPutMedanPedia((prev: MedanPediaService) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleUpdateMedanPediaService = async (id: number) => {
+        try {
+            const response = await API.put(`/admin/service/medanpedia/${id}`, formPutMedanPedia, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            SwalMessage({
+                icon: "success",
+                title: "Berhasil!",
+                text: response.data.message
+            });
+
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000);
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi Kesalahan!"
+                })
+            }
+        }
+    }
+
+    const handleDeleteMedanPediaService = async (id: number) => {
+        try {
+            const result = await SwalMessage({
+                icon: "warning",
+                title: "Peringatan",
+                text: "Apakah anda yakin untuk menghapus data ini!",
+            })
+
+            if (result.isConfirmed) {
+                const response = await API.delete(`/admin/service/medanpedia/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                SwalMessage({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: response.data.message
+                });
+
+                setTimeout(() => {
+                    window.location.reload()
+                }, 2000);
+            }
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi Kesalahan!"
+                })
+            }
+        }
+
+    }
+
     return {
         suntikServiceData,
         profit,
         handleChangeSuntik,
-        handleSuntikPost
+        handleSuntikPost,
+        formPutMedanPedia,
+        setFormPutMedanPedia,
+        handleChangeMedanPediaServiceUpdate,
+        handleUpdateMedanPediaService,
+        handleDeleteMedanPediaService,
+        customerserviceMedanPediaData
     }
 }

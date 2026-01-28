@@ -32,6 +32,10 @@ Route::get('/admin/layanan/suntik', function () {
     return Inertia::render('admin/serviceSuntik');
 });
 
+Route::get('/admin/layanan/pengaturan', function () {
+    return Inertia::render('admin/serviceManagement');
+});
+
 // Customer
 Route::get('/customer/nokos-otp/order', function () {
     return Inertia::render('customer/nokosOrder');

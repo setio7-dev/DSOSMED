@@ -149,12 +149,12 @@ export default function ServiceSuntik() {
       setIsLoading(false);
     }, 2000);
 
-    if (isLoading) {
+    if (isLoading || suntikServiceData.length == 0) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
-  }, [isLoading]);
+  }, [isLoading, suntikServiceData]);
 
   const handleOpenSettings = (service: MedanPediaService) => {
     setSelectedService(service);

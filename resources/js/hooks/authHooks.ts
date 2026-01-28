@@ -55,7 +55,7 @@ export default function useAuthHooks() {
 
                 if (user.isAdmin) {
                     setTimeout(() => {
-                        window.location.href = "/admin/home"
+                        window.location.href = "/admin/pengguna"
                     }, 2000);
                 } else {
                     setTimeout(() => {

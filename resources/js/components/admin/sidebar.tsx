@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
-import { X, Zap, Settings, Smartphone, CreditCard, TrendingUp, History, MessageCircle, FileText, ChevronRight, LogOut } from 'lucide-react';
+import { X, Zap, Settings, Smartphone, CreditCard, TrendingUp, History, MessageCircle, FileText, ChevronRight, LogOut, Server } from 'lucide-react';
 import { usePage, Link } from '@inertiajs/react';
 import useAuthHooks from '@/hooks/authHooks';
 
@@ -12,6 +12,7 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
         { id: 'nokos-otp', label: 'Layanan Nokos Ada OTP', icon: Smartphone, color: 'text-purple-400', link: "/admin/layanan/nokos-ada-otp" },
         { id: 'nokos-virtusim', label: 'Layanan Nokos Virtusim', icon: CreditCard, color: 'text-pink-400', link: "/admin/layanan/nokos-virtusim" },
         { id: 'suntik', label: 'Layanan Suntik', icon: TrendingUp, color: 'text-orange-400', link: "/admin/layanan/suntik" },
+        { id: 'layanan', label: 'Pengaturan Layanan', icon: Server, color: 'text-yellow-400', link: "/admin/layanan/pengaturan" },
         { id: 'riwayat', label: 'Riwayat Order Layanan', icon: History, color: 'text-yellow-400', link: "/" },
         { id: 'cs', label: 'Customer Service', icon: MessageCircle, color: 'text-cyan-400', link: "/" },
         { id: 'edit-teks', label: 'Edit Teks', icon: FileText, color: 'text-red-400', link: "/" }

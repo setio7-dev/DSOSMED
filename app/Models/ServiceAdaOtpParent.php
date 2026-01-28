@@ -20,10 +20,10 @@ class ServiceAdaOtpParent extends Model
 
     /**
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function children()
     {
-        return $this->belongsTo(ServiceAdaOtpChildren::class, 'parent_id');
+        return $this->hasMany(ServiceAdaOtpChildren::class, 'parent_id');
     }
 }

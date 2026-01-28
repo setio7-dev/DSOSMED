@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\MedanPediaController;
 use App\Http\Controllers\ServiceAdaOtpController;
 use App\Http\Controllers\ServiceAPIController;
-use App\Http\Controllers\ServiceNokosController;
 use App\Http\Controllers\ServiceSuntikController;
+use App\Http\Controllers\ServiceVirtusimController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -31,13 +30,15 @@ Route::middleware('auth')->group(function () {
         Route::get("/users", [UserController::class, "index"]);
         Route::put("/users/{id}", [UserController::class, "update"]);
 
-        Route::resource('/service/nokos', ServiceNokosController::class);
         Route::resource('/service/adaotp', ServiceAdaOtpController::class);
+        Route::resource('/service/virtusim', ServiceVirtusimController::class);
         Route::resource('/service/medanpedia', ServiceSuntikController::class);
     });
 
     Route::prefix("/customer")->group(function () {
-        Route::get('/service/nokos', [ServiceNokosController::class, 'index']);
+        Route::get("/service/adaotp", [ServiceAdaOtpController::class,"index"]);
+        Route::get("/service/virtusim", [ServiceVirtusimController::class,"index"]);
+        Route::get("/service/medanpedia", [ServiceSuntikController::class,"index"]);
     });
 });
 

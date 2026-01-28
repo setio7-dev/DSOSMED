@@ -44,6 +44,7 @@ export interface ServicesAdaOtpProps {
     text: string;
     description: string;
     icon: string;
+    children: ServiceCountryAdaOtpProps[];
 }
 
 export interface ServiceCountryAdaOtpProps {
@@ -83,6 +84,7 @@ export interface ServiceVirtusimListCountryProps {
     country_code: string;
     country_name: string;
     img_link: string;
+    children: ServiceVirtusimListServiceProps[]
 }
 
 export interface ServiceVirtusimListServiceProps {

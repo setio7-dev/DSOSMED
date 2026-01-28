@@ -1,27 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import API from "@/server/API";
-import { ServicesAdaOtpProps, ServiceCountryAdaOtpProps } from "@/types";
-import { FormatNumber } from "@/utils/FormatNumber";
+import { ServiceVirtusimListServiceProps, ServiceVirtusimListCountryProps } from "@/types";
 import { SwalMessage } from "@/utils/SwalMessage";
 import React, { useEffect, useState } from "react"
 
-export default function useAdaOtpHooks() {
-    const [servicesAdaOtpData, setServicesAdaotpData] = useState<ServicesAdaOtpProps[]>([]);
-    const [serviceCountryAdaOtpData, setServiceCountryAdaOtpData] = useState<ServiceCountryAdaOtpProps[]>([]);
-    const [customerServicesAdaOtpData, setCustomerServicesAdaotpData] = useState<ServicesAdaOtpProps[]>([]);
+export default function useVirtusimHooks() {
+    const [serviceVirtusimData, setServiceVirtusimData] = useState<ServiceVirtusimListServiceProps[]>([]);
+    const [serviceCountryVirtusimData, setServiceCountryVirtusimData] = useState<ServiceVirtusimListCountryProps[]>([]);
+    const [customerserviceVirtusimData, setCustomerserviceVirtusimData] = useState<any[]>([]);
     const [profit, setProfit] = useState<string>("");
-    const [formPutAdaOtp, setFormPutAdaOtp] = useState<ServiceCountryAdaOtpProps | any>({
+    const [formPutVirtusim, setFormPutVirtusim] = useState<ServiceVirtusimListServiceProps | any>({
         price: null,
-        stock: null,
         name: null,
     });
     const token = localStorage.getItem("token");
 
     useEffect(() => {
-        const fetchServices = async () => {
+        const fetchCountry = async () => {
             try {
-                const response = await API.get("/adaotp/services");
-                setServicesAdaotpData(response.data.data);
+                const response = await API.get("/virtusim/list-countries");
+                setServiceCountryVirtusimData(response.data.data);
             } catch (error) {
                 console.error(error);
             }
@@ -29,26 +27,26 @@ export default function useAdaOtpHooks() {
 
         const fetchServicesOrder = async () => {
             try {
-                const response = await API.get("/customer/service/adaotp", {
+                const response = await API.get("/customer/service/virtusim", {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
                 });
 
-                setCustomerServicesAdaotpData(response.data.data);
+                setCustomerserviceVirtusimData(response.data.data);
             } catch (error) {
                 console.error(error);
             }
         }
 
-        fetchServices();
+        fetchCountry();
         fetchServicesOrder();
     }, [token]);
 
-    const handleShowCountry = async (serviceParentId: number) => {
+    const handleShowService = async (serviceCountry: string) => {
         try {
-            const response = await API.get(`/adaotp/services/${serviceParentId}`);
-            setServiceCountryAdaOtpData(response.data.data.countries);
+            const response = await API.get(`/virtusim/service/${serviceCountry}`);
+            setServiceVirtusimData(response.data.data);
         } catch (error: any) {
             SwalMessage({
                 title: "Gagal!",
@@ -58,7 +56,7 @@ export default function useAdaOtpHooks() {
         }
     }
 
-    const handlePostService = async (serviceData: ServicesAdaOtpProps, countryData: ServiceCountryAdaOtpProps) => {
+    const handlePostService = async (serviceData: ServiceVirtusimListServiceProps, countryData: ServiceVirtusimListCountryProps) => {
         try {
             if (!serviceData || !countryData) {
                 SwalMessage({
@@ -70,25 +68,20 @@ export default function useAdaOtpHooks() {
                 return;
             }
 
-            const response = await API.post('/admin/service/adaotp', {
-                parent_service_id: serviceData.id,
-                text: serviceData.text,
-                description: serviceData.description,
-                icon: serviceData.icon,
+            const response = await API.post('/admin/service/virtusim', {
+                parent_service_id: countryData.id,
+                country_code: countryData.country_code,
+                country_name: countryData.country_name,
+                img_link: countryData.img_link,
 
-                service_id: countryData.id,
-                name: countryData.name,
-                iso: countryData.iso,
-                prefix: countryData.prefix,
-                price: Number(countryData.price) + Number(FormatNumber(profit)),
-                stock: countryData.stock,
-                delivery_percent: countryData.delivery_percent,
-                operator: countryData.operator,
-                quality_score: countryData.quality_score,
-                provider_rate: countryData.provider_rate,
-                current_demand_status: countryData.current_demand_status,
-                avg_delivery_time: countryData.avg_delivery_time,
-                avg_delivery_time_formatted: countryData.avg_delivery_time_formatted
+                service_id: serviceData.id,
+                name: serviceData.name,
+                price: Number(serviceData.price) + Number(profit),
+                is_promo: Number(serviceData.is_promo),
+                tersedia: serviceData.tersedia,
+                country: serviceData.country,
+                status: Number(serviceData.status),
+                category: serviceData.category,
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -115,25 +108,25 @@ export default function useAdaOtpHooks() {
         }
     }
 
-    const handleChangeAdaOtpService = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeService = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         if (name === "profit") return setProfit(value);
     }
 
-    const handleChangeAdaOtpServiceUpdate = (
+    const handleChangeVirtusimServiceUpdate = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
 
-        setFormPutAdaOtp((prev: ServiceCountryAdaOtpProps) => ({
+        setFormPutVirtusim((prev: ServiceVirtusimListServiceProps) => ({
             ...prev,
             [name]: value,
         }));
     };
 
-    const handleUpdateAdaOtpServiceCountry = async (id: number) => {
+    const handleUpdateVirtusimServiceCountry = async (id: number) => {
         try {
-            const response = await API.put(`/admin/service/adaotp/${id}`, formPutAdaOtp, {
+            const response = await API.put(`/admin/service/virtusim/${id}`, formPutVirtusim, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -159,7 +152,7 @@ export default function useAdaOtpHooks() {
         }
     }
 
-    const handleDeleteAdaOtpServiceCountry = async (id: number) => {
+    const handleDeleteVirtusimServiceCountry = async (id: number) => {
         try {
             const result = await SwalMessage({
                 icon: "warning",
@@ -168,7 +161,7 @@ export default function useAdaOtpHooks() {
             })
 
             if (result.isConfirmed) {
-                const response = await API.delete(`/admin/service/adaotp/${id}`, {
+                const response = await API.delete(`/admin/service/virtusim/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -193,20 +186,22 @@ export default function useAdaOtpHooks() {
                 })
             }
         }
+
     }
 
     return {
-        servicesAdaOtpData,
-        handleShowCountry,
-        serviceCountryAdaOtpData,
+        serviceVirtusimData,
+        handleShowService,
+        serviceCountryVirtusimData,
         handlePostService,
         profit,
-        handleChangeAdaOtpService,
-        customerServicesAdaOtpData,
-        handleDeleteAdaOtpServiceCountry,
-        handleChangeAdaOtpServiceUpdate,
-        handleUpdateAdaOtpServiceCountry,
-        formPutAdaOtp,
-        setFormPutAdaOtp
+        handleChangeService,
+        customerserviceVirtusimData,
+        formPutVirtusim,
+        setFormPutVirtusim,
+        handleChangeVirtusimServiceUpdate,
+        handleUpdateVirtusimServiceCountry,
+        handleDeleteVirtusimServiceCountry
     }
+
 }
