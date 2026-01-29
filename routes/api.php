@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\NokosController;
 use App\Http\Controllers\ServiceAdaOtpController;
 use App\Http\Controllers\ServiceAPIController;
 use App\Http\Controllers\ServiceSuntikController;
@@ -11,6 +12,8 @@ use App\Http\Controllers\UserController;
 Route::post('/register', [UserController::class, 'register']); //all
 Route::post('/register/admin', [UserController::class, 'registerAdmin']); //admin
 Route::post('/login', [UserController::class, 'login']); //all
+
+Route::post('/transaction/nokos', [NokosController::class, 'index']);
 
 Route::get("/virtusim/list-countries", [ServiceAPIController::class, "virtusim_api_listcountry"]);
 Route::get("/virtusim/service/{country}", [ServiceAPIController::class, "virtusim_api_listservice"]);
@@ -24,6 +27,10 @@ Route::get("/medanpedia/profile", [ServiceAPIController::class, "medanpedia_api_
 Route::middleware('auth')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
+
+    Route::get('/transaction/nokos/user', [NokosController::class, 'indexByUser']);
+    Route::post('/transaction/nokos/create', [NokosController::class, 'store']);
+});
 
 
     Route::middleware("role:1")->prefix("/admin")->group(function () {
