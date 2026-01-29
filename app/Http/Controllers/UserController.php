@@ -10,7 +10,6 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
-
     public function register(Request $request) {
         try {
             $query = User::where('username', $request->name)->first();
