@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nokos_controllers', function (Blueprint $table) {
+        Schema::create('nokos', function (Blueprint $table) {
             $table->id();
             $table->string("service_name");
-            $table->string("service_name");
+            $table->string("price");
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nokos_controllers');
+        Schema::dropIfExists('nokos');
     }
 };
