@@ -13,15 +13,15 @@ return new class extends Migration {
         Schema::create('service_suntiks', function (Blueprint $table) {
             $table->id();
             $table->bigInteger("service_id");
-            $table->string('name');
-            $table->string('type');
-            $table->string('category');
-            $table->bigInteger('price');
-            $table->bigInteger('min');
-            $table->bigInteger('max');
-            $table->text('description')->nullable();
-            $table->bigInteger('refill')->default(0);
-            $table->string('average_time')->nullable();
+            $table->string('name')->nullable();
+            $table->string('type')->nullable();
+            $table->string('category')->nullable();
+            $table->bigInteger('price')->nullable();
+            $table->bigInteger('min')->nullable();
+            $table->bigInteger('max')->nullable();
+            $table->text('description')->nullable()->nullable();
+            $table->bigInteger('refill')->default(0)->nullable();
+            $table->string('average_time')->nullable()->nullable();
             $table->timestamps();
         });
     }

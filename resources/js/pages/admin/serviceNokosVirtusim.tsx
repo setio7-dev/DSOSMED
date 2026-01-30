@@ -1,22 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
-import useNokosHooks from '@/hooks/nokosHooks';
+import useVirtusimHooks from '@/hooks/virtusimHooks';
 import { ServiceVirtusimListCountryProps, ServiceVirtusimListServiceProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { RefreshCwIcon, Plus, Search, CheckCircle, Package, TrendingUp, X, Tag, Phone } from 'lucide-react';
-import { useEffect, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 
 interface CountryDataProps {
     isOpen: boolean;
-    onClose: any;
-    serviceName: string;
-    serviceId: number;
-    countryData: ServiceVirtusimListServiceProps[];
-    selectedData: any;
+    onClose: () => void;
+    countryData: ServiceVirtusimListCountryProps;
+    selectedService: React.Dispatch<SetStateAction<ServiceVirtusimListServiceProps | null>>;
 }
 
-const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, selectedData = null }: CountryDataProps) => {
+const CountriesModal = ({ isOpen, onClose, countryData, selectedService }: CountryDataProps) => {
   const getCategoryColor = (category: string) => {
     switch (category) {
       case 'OTP':
@@ -44,12 +42,19 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
     return 'Nonaktif';
   };
 
-  const handleSelected = (country: ServiceVirtusimListServiceProps) => {
-    if (selectedData) {
-      selectedData(country);
-    }
+  const handleSelected = (service: ServiceVirtusimListServiceProps) => {
+    selectedService(service);
     onClose();
   };
+
+  const { handleShowService, serviceVirtusimData } = useVirtusimHooks();
+  useEffect(() => {
+    const fetchService = async() => {
+      await handleShowService(countryData?.country_name);
+    }
+
+    fetchService()
+  }, [countryData, handleShowService]);
 
   if (!isOpen) return null;
 
@@ -64,8 +69,8 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
         <div className="sticky top-0 z-10 bg-gray-900/95 backdrop-blur-xl border-b border-gray-700/50 p-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-white mb-1">{serviceName}</h2>
-              <p className="text-sm text-gray-400">Service ID: {serviceId}</p>
+              <h2 className="text-2xl font-bold text-white mb-1">{countryData.country_name}</h2>
+              <p className="text-sm text-gray-400">Service ID: {countryData.id}</p>
             </div>
             <button
               onClick={onClose}
@@ -78,7 +83,7 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
 
         <div className="overflow-y-auto max-h-[calc(90vh-100px)] p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {countryData && countryData.map((country, index) => (
+            {serviceVirtusimData?.map((service, index) => (
               <div
                 key={index}
                 className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-5 hover:bg-gray-800/50 hover:border-purple-500/30 transition-all duration-200"
@@ -86,18 +91,18 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                      {country.country?.substring(0, 2).toUpperCase() || 'ID'}
+                      {service.country?.substring(0, 2).toUpperCase() || 'ID'}
                     </div>
                     <div>
-                      <h3 className="font-semibold text-white">{country.country || 'Unknown'}</h3>
-                      <p className="text-xs text-gray-400">ID: {country.id} • {country.name}</p>
+                      <h3 className="font-semibold text-white">{service.country || 'Unknown'}</h3>
+                      <p className="text-xs text-gray-400">ID: {service.id} • {service.name}</p>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(country.category)}`}>
-                      {country.category}
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getCategoryColor(service.category)}`}>
+                      {service.category}
                     </span>
-                    {country.is_promo === "1" && (
+                    {service.is_promo === "1" && (
                       <span className="px-3 py-1 rounded-full text-xs font-medium border bg-yellow-500/20 text-yellow-300 border-yellow-500/30 flex items-center gap-1">
                         <Tag className="w-3 h-3" />
                         Promo
@@ -112,7 +117,7 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
                       <TrendingUp className="w-4 h-4 text-purple-400" />
                       <span className="text-xs text-gray-400">Harga</span>
                     </div>
-                    <p className="text-lg font-bold text-white">{FormatRupiah(Number(country.price))}</p>
+                    <p className="text-lg font-bold text-white">{FormatRupiah(Number(service.price))}</p>
                   </div>
 
                   <div className="bg-gray-900/50 rounded-lg p-3">
@@ -120,7 +125,7 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
                       <Package className="w-4 h-4 text-blue-400" />
                       <span className="text-xs text-gray-400">Tersedia</span>
                     </div>
-                    <p className="text-lg font-bold text-white">{country.tersedia} pcs</p>
+                    <p className="text-lg font-bold text-white">{service.tersedia} pcs</p>
                   </div>
 
                   <div className="bg-gray-900/50 rounded-lg p-3 col-span-2">
@@ -128,14 +133,14 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
                       <CheckCircle className="w-4 h-4 text-green-400" />
                       <span className="text-xs text-gray-400">Status</span>
                     </div>
-                    <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(country.status)}`}>
-                      {getStatusText(country.status)}
+                    <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(service.status)}`}>
+                      {getStatusText(service.status)}
                     </span>
                   </div>
                 </div>
 
                 <button 
-                  onClick={() => handleSelected(country)} 
+                  onClick={() => handleSelected(service)} 
                   className="w-full cursor-pointer px-6 py-3 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg text-sm font-medium transition-all duration-200 flex items-center justify-center gap-2"
                 >
                   <Phone className="w-4 h-4" />
@@ -145,7 +150,7 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
             ))}
           </div>
 
-          {(!countryData || countryData.length === 0) && (
+          {(!countryData) && (
             <div className="text-center py-12">
               <p className="text-gray-400">Tidak ada data negara tersedia</p>
             </div>
@@ -157,24 +162,20 @@ const CountriesModal = ({ isOpen, onClose, serviceName, serviceId, countryData, 
 };
 
 export default function ServiceNokosVirtusim() {
-  const { 
-    serviceVirtusimData,
-    handleShowService, 
-    serviceVirtusimCountryData,
-    serviceId,
-    setServiceId,
-    setCountryId,
-    countryId,
+  const {
     profit,
+    serviceCountryVirtusimData,
     handleChangeService,
-    handlePostServiceVirtusim
-  } = useNokosHooks();
+    handlePostService,
+  } = useVirtusimHooks();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [serviceName, setServiceName] = useState("");
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredServices = serviceVirtusimData.filter(service =>
+  const [selectedCountry, setSelectedCountry] = useState<ServiceVirtusimListCountryProps | null>(null);
+  const [selectedService, setSelectedService] = useState<ServiceVirtusimListServiceProps | null>(null);
+
+  const filteredServices = serviceCountryVirtusimData.filter(service =>
     service.country_name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -190,10 +191,8 @@ export default function ServiceNokosVirtusim() {
     }
   });
 
-  const handleOpenServiceModal = async (service: ServiceVirtusimListCountryProps) => {
-    await handleShowService(service.country_name);
-    setServiceId(service.id);
-    setServiceName(service.country_name);
+  const handleOpenServiceModal = async (country: ServiceVirtusimListCountryProps) => {
+    setSelectedCountry(country)
     setIsModalOpen(true);    
   }
 
@@ -204,10 +203,8 @@ export default function ServiceNokosVirtusim() {
       <CountriesModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        serviceName={serviceName}
-        serviceId={serviceId}
-        countryData={serviceVirtusimCountryData}
-        selectedData={setCountryId}
+        countryData={selectedCountry as any}
+        selectedService={setSelectedService}
       />
 
       <div className="space-y-8">
@@ -221,12 +218,10 @@ export default function ServiceNokosVirtusim() {
                 </label>
                 <input
                   type="text"
-                  name="country"
-                  value={countryId?.id}
                   disabled
-                  onChange={handleChangeService}
+                  value={selectedCountry?.id}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                  placeholder="Masukkan nomor ID"
+                  placeholder="Masukkan nomor ID (Otomatis Terisi)"
                 />
               </div>
 
@@ -236,12 +231,10 @@ export default function ServiceNokosVirtusim() {
                 </label>
                 <input
                   type="text"
-                  name="service"
-                  value={serviceId}
                   disabled
-                  onChange={handleChangeService}
+                  value={selectedService?.id}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                  placeholder="Masukkan service ID"
+                  placeholder="Masukkan service ID (Otomatis Terisi)"
                 />
               </div>
 
@@ -261,7 +254,7 @@ export default function ServiceNokosVirtusim() {
             </div>
 
             <button
-              onClick={() => handlePostServiceVirtusim()}
+              onClick={() => handlePostService(selectedService as any, selectedCountry as any)}
               className="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
             >
               <Plus className="w-5 h-5" />

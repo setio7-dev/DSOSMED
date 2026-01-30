@@ -13,6 +13,7 @@ export default function Home() {
     if (loading) {
         return <SpinnerLoader/>
     }
+    
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
             <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
@@ -35,7 +36,7 @@ export default function Home() {
                                     {item}
                                 </button>
                             ))}
-                            <Link href={user ? "/customer/nokos-otp/order" : "/auth"}>
+                            <Link href={user ? Number(user.isAdmin) == 1 ? "/admin/pengguna"  : "/customer/nokos/order" : "/auth"}>
                                 <button
                                     className="bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-2.5 rounded-lg text-sm font-semibold hover:shadow-lg hover:shadow-purple-500/50 transition-all duration-300 transform hover:scale-105 animate-fadeInUp delay-400 cursor-pointer"
                                 >
@@ -63,7 +64,7 @@ export default function Home() {
                                     {item}
                                 </button>
                             ))}
-                            <Link href={user ? "/customer/nokos-otp/order" : "/auth"}>
+                            <Link href={user ? Number(user.isAdmin) == 1 ? "/admin/pengguna"  : "/customer/nokos/order" : "/auth"}>
                                 <button
                                     onClick={() => scrollToSection('cta')}
                                     className="w-full bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"

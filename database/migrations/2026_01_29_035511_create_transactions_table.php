@@ -11,12 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nokos', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
-            $table->string("service_name");
+            $table->bigInteger('user_id')->unsigned();
+            $table->string("type");
+            $table->bigInteger("order_id");
             $table->string("price");
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string("status");
             $table->timestamps();
+
+            $table->foreign("user_id")->references("id")->on("users")->onDelete("CASCADE");
         });
     }
 
@@ -25,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nokos');
+        Schema::dropIfExists('transactions');
     }
 };

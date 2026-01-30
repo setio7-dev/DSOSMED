@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ServiceAdaOtpChildren;
-use App\Models\ServiceAdaOtpParent;
+use App\Models\ServiceVirtusimChildren;
+use App\Models\ServiceVirtusimParent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 
-class ServiceAdaOtpController extends Controller
+class ServiceVirtusimController extends Controller
 {
     public function index()
     {
-        $data = ServiceAdaOtpParent::with('children')->orderBy("created_at", "DESC")->get();
+        $data = ServiceVirtusimParent::with('children')->orderBy("created_at", "DESC")->get();
         return response()->json([
             "message" => "Data layanan nokos dengan OTP berhasil diperoleh!",
             "data" => $data
@@ -22,13 +22,18 @@ class ServiceAdaOtpController extends Controller
     public function store(Request $request)
     {
         $validateData = Validator::make($request->all(), [
-            "parent_service_id" => "required",
-            "text" => "required",
-            "description" => "nullable",
-            "icon" => "required",
+            'parent_service_id' => "required",
+            'country_code' => "required",
+            'country_name' => "required",
+            'img_link' => "required",
 
-            'service_id' => "required",
-            'name' => "required",   
+            "service_id" => "required",
+            'price' => "required",
+            'is_promo' => "required",
+            'tersedia' => "required",
+            'country' => "required",
+            'status' => "required",
+            'category' => "required",
         ]);
 
         if ($validateData->fails()) {
@@ -38,14 +43,14 @@ class ServiceAdaOtpController extends Controller
             ], 422);
         }
 
-        $serviceNokosParent = ServiceAdaOtpParent::where('parent_service_id', $request->parent_service_id)->first();
+        $serviceNokosParent = ServiceVirtusimParent::where('parent_service_id', $request->parent_service_id)->first();
         if (!$serviceNokosParent) {
-            $dataParent = ServiceAdaOtpParent::create($request->all());
+            $dataParent = ServiceVirtusimParent::create($request->all());
         }
 
         $data = $request->all();
         $data['parent_id'] = $serviceNokosParent->id ?? $dataParent->id;
-        ServiceAdaOtpChildren::create($data);
+        ServiceVirtusimChildren::create($data);
 
         return response()->json([
             "message" => "Layanan Nokos berhasil ditambahkan!"
@@ -54,8 +59,8 @@ class ServiceAdaOtpController extends Controller
 
     public function update(Request $request,$id)
     {
-        $data = ServiceAdaOtpChildren::find($id);
-        $data->update($request->only(['name', 'price', 'stock']));
+        $data = ServiceVirtusimChildren::find($id);
+        $data->update($request->only(['country_name', 'price']));
 
         return response()->json([
             "message" => "Ubah Layanan Berhaisl!"
@@ -64,13 +69,13 @@ class ServiceAdaOtpController extends Controller
 
     public function destroy($id)
     {
-        $data = ServiceAdaOtpChildren::find($id);
+        $data = ServiceVirtusimChildren::find($id);
         $parentId = $data->parent_id;
         $data->delete();
 
-        $parentCheck = ServiceAdaOtpChildren::where("parent_id", $parentId)->exists();
+        $parentCheck = ServiceVirtusimChildren::where("parent_id", $parentId)->exists();
         if (!$parentCheck) {
-            ServiceAdaOtpParent::where("id", $parentId)->delete();
+            ServiceVirtusimParent::where("id", $parentId)->delete();
         }
     
         return response()->json([

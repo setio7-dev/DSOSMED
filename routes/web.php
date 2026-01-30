@@ -12,10 +12,6 @@ Route::get('/auth', function () {
 });
 
 // Admin
-Route::get('/admin/home', function () {
-    return Inertia::render('admin/home');
-});
-
 Route::get('/admin/pengguna', function () {
     return Inertia::render('admin/userManagement');
 });
@@ -32,8 +28,20 @@ Route::get('/admin/layanan/suntik', function () {
     return Inertia::render('admin/serviceSuntik');
 });
 
+Route::get('/admin/layanan/pengaturan', function () {
+    return Inertia::render('admin/serviceManagement');
+});
+
 // Customer
-Route::get('/customer/nokos-otp/order', function () {
+Route::get('/customer/profile', function () {
+    return Inertia::render('customer/profile');
+});
+
+Route::get('/customer/nokos/order', function () {
     return Inertia::render('customer/nokosOrder');
+});
+
+Route::get('/customer/suntik/order', function () {
+    return Inertia::render('customer/suntikOrder');
 });
 

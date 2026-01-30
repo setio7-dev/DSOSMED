@@ -14,21 +14,21 @@ return new class extends Migration
         Schema::create('service_ada_otp_childrens', function (Blueprint $table) {
             $table->id();
             $table->bigInteger("parent_id")->unsigned();
-            $table->bigInteger("service_id");
-            $table->string('name');
-            $table->string('iso');
-            $table->string('prefix', 10);
-            $table->bigInteger('price');
-            $table->integer('stock');
-            $table->bigInteger('delivery_percent');
+            $table->bigInteger("service_id")->nullable();
+            $table->string('name')->nullable();
+            $table->string('iso')->nullable();
+            $table->string('prefix', 10)->nullable();
+            $table->bigInteger('price')->nullable();
+            $table->integer('stock')->nullable();
+            $table->bigInteger('delivery_percent')->nullable();
 
-            $table->string('operator');
-            $table->string('quality_score');
-            $table->string('provider_rate');
+            $table->string('operator')->nullable();
+            $table->string('quality_score')->nullable();
+            $table->string('provider_rate')->nullable();
 
-            $table->string('current_demand_status');
-            $table->bigInteger('avg_delivery_time');
-            $table->string('avg_delivery_time_formatted');
+            $table->string('current_demand_status')->nullable();
+            $table->bigInteger('avg_delivery_time')->nullable();
+            $table->string('avg_delivery_time_formatted')->nullable();
             $table->timestamps();
 
             $table->foreign("parent_id")->on("service_ada_otp_parents")->references("id")->onDelete("CASCADE");

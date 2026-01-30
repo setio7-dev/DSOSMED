@@ -7,22 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class ServiceNokosParent extends Model
+class ServiceVirtusimParent extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $table = 'service_nokos_parents';
+    protected $table = 'service_virtusim_parents';
     protected $fillable = [
-        'name',
-        'image',
+        'parent_service_id',
+        'country_code',
+        'country_name',
+        'img_link',
     ];
 
     /**
-     * Get all of the comments for the serviceNokosParent
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function child()
+    public function children()
     {
-        return $this->hasMany(serviceNokosChildren::class, 'nokos_parent_id', 'id');
+        return $this->hasMany(ServiceVirtusimChildren::class, 'parent_id');
     }
 }

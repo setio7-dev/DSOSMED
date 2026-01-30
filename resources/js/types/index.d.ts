@@ -41,13 +41,17 @@ export interface UserProps {
 
 export interface ServicesAdaOtpProps {
     id: number;
+    parent_service_id: number;
     text: string;
     description: string;
     icon: string;
+    children: ServiceCountryAdaOtpProps[];
 }
 
 export interface ServiceCountryAdaOtpProps {
     id: number;
+    service_id: number;
+    parent_id: number;
     name: string;
     iso: string;
     prefix: string;
@@ -83,10 +87,12 @@ export interface ServiceVirtusimListCountryProps {
     country_code: string;
     country_name: string;
     img_link: string;
+    children: ServiceVirtusimListServiceProps[]
 }
 
 export interface ServiceVirtusimListServiceProps {
     id: string;
+    parent_id: number;
     name: string;
     price: string;
     is_promo: "0" | "1";
@@ -97,7 +103,7 @@ export interface ServiceVirtusimListServiceProps {
     category: string;
 }
 
-export interface MedanPediaService {
+export interface MedanPediaServiceProps {
     id: number;
     name: string;
     type: string;
@@ -108,4 +114,13 @@ export interface MedanPediaService {
     description: string;
     refill: number;
     average_time: string;
+}
+
+export interface TransactionProps {
+    type: string;
+    user_id: number;
+    order_id: number;
+    price: number;
+    status: string;
+    user: UserProps;
 }

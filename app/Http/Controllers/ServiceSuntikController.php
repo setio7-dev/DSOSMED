@@ -45,4 +45,24 @@ class ServiceSuntikController extends Controller
             "message" => "Tambah data berhasil!"
         ]);
     }
+
+    public function update(Request $request,$id)
+    {
+        $data = ServiceSuntik::find($id);
+        $data->update($request->only(['name', 'price', 'stock']));
+
+        return response()->json([
+            "message" => "Ubah Layanan Berhaisl!"
+        ], 200);
+    }
+
+    public function destroy($id)
+    {
+        $data = ServiceSuntik::find($id);
+        $data->delete();
+    
+        return response()->json([
+            "message"=> "Hapus Layanan Berhasil!"
+        ]);
+    }
 }
