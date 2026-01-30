@@ -16,15 +16,15 @@ return new class extends Migration
             $table->bigInteger("parent_id")->unsigned();
             $table->bigInteger("service_id");
 
-            $table->string('name');
-            $table->string('price');
+            $table->string('name')->nullable();
+            $table->string('price')->nullable();
 
-            $table->boolean('is_promo');
-            $table->boolean('status');
-            $table->string('tersedia');
+            $table->boolean('is_promo')->nullable();
+            $table->boolean('status')->nullable();
+            $table->string('tersedia')->nullable();
 
-            $table->string('country');
-            $table->string('category');
+            $table->string('country')->nullable();
+            $table->string('category')->nullable();
             $table->timestamps();
 
             $table->foreign('parent_id')->references('id')->on('service_virtusim_parents')->onDelete('CASCADE');

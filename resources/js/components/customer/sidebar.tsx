@@ -3,8 +3,10 @@
 import React, { useEffect, useState } from 'react'
 import {
     X, Zap, DollarSign, Smartphone,
-    CreditCard, TrendingUp, History, MessageCircle, FileText,
-    ChevronRight, ChevronDown, LogOut
+    CreditCard, TrendingUp, History, FileText,
+    ChevronRight, ChevronDown, LogOut,
+    User,
+    User2Icon
 } from 'lucide-react';
 import { router, usePage } from '@inertiajs/react';
 import useAuthHooks from '@/hooks/authHooks';
@@ -15,13 +17,21 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen, setLabel }: a
     const { handleLogout} = useAuthHooks();
     const menuItems = [
         {
+            id: 'beranda',
+            label: 'Beranda',
+            icon: User,
+            color: 'text-red-400',
+            submenus: [
+                { id: 'profile', label: 'Informasi Pengguna', icon: User2Icon, link: "/customer/profile", },
+            ]
+        },
+        {
             id: 'nokos',
             label: 'Nokos',
             icon: Smartphone,
             color: 'text-purple-400',
             submenus: [
-                { id: 'nokos-order', label: 'Order Nokos', icon: CreditCard, link: "/customer/nokos-otp/order", },
-                { id: 'nokos-otp', label: 'OTP', icon: MessageCircle, link: "/customer/nokos-otp", },
+                { id: 'nokos-order', label: 'Order Nokos', icon: CreditCard, link: "/customer/nokos/order", },
                 { id: 'nokos-history', label: 'Riwayat Order Nokos', icon: History, link: "/customer/nokos-otp/history", },
                 { id: 'nokos-panduan', label: 'Panduan Nokos', icon: FileText, link: "/customer/nokos-otp/panduan", }
             ]

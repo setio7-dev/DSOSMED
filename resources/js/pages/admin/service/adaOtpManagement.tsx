@@ -197,7 +197,7 @@ export default function AdaOtpManagement() {
                                             <h3 className="font-poppins-semibold text-white text-sm mb-1 truncate">
                                                 {service.text}
                                             </h3>
-                                            <p className="text-xs text-gray-400 font-poppins-regular">Service ID: {service.id}</p>
+                                            <p className="text-xs text-gray-400 font-poppins-regular">Service ID: {service.parent_service_id}</p>
                                         </div>
                                     </div>
                                 </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 
 class ServiceAPIController extends Controller
@@ -33,7 +34,7 @@ class ServiceAPIController extends Controller
     public function adaotp_api_listservice()
     {
         $response = Http::withHeaders([
-            "Authorization" => "Bearer IgxdTIq7LtuwgsmSWDATZyayL8S66Dx9",
+            "Authorization" => "Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE",
         ])->get("https://adaotp.com/api/v1/services");
 
         return response()->json($response->json());
@@ -42,8 +43,42 @@ class ServiceAPIController extends Controller
     public function adaotp_api_listcountry($id)
     {
         $response = Http::withHeaders([
-            "Authorization" => "Bearer IgxdTIq7LtuwgsmSWDATZyayL8S66Dx9",
+            "Authorization" => "Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE",
         ])->get("https://adaotp.com/api/v1/services/{$id}/countries");
+
+        return response()->json($response->json());
+    }
+
+    public function adaotp_api_order(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->saldo < $request->price) {
+            return response()->json([
+                "message" => "Saldo Anda Tidak Cukup!"
+            ], 422);
+        }
+
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE',
+            'Accept' => 'application/json',
+        ])->withOptions([
+                    'query' => [
+                        'country' => (int) $request->country,
+                        'service_id' => (int) $request->service_id,
+                    ],
+                ])->post('https://adaotp.com/api/v1/orders');
+
+        return response()->json([
+            "data" => $response->json(),
+            "status" => $response->status()
+        ]);
+    }
+
+    public function ada_otp_getorders()
+    {
+        $response = Http::withHeaders([
+            "Authorization" => "Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE",
+        ])->get("https://adaotp.com/api/v1/orders/active");
 
         return response()->json($response->json());
     }
@@ -53,18 +88,18 @@ class ServiceAPIController extends Controller
     {
         $response = Http::asForm()
             ->post('https://api.medanpedia.co.id/services', [
-                'api_id'  => "37461",
+                'api_id' => "37461",
                 'api_key' => "vbsj08-btcidp-bqfnnw-k2hydl-hga8xk",
             ]);
 
         return response()->json($response->json());
-    
-        }
+
+    }
     public function medanpedia_api_profile()
     {
         $response = Http::asForm()
             ->post('https://api.medanpedia.co.id/profile', [
-                'api_id'  => "37461",
+                'api_id' => "37461",
                 'api_key' => "vbsj08-btcidp-bqfnnw-k2hydl-hga8xk",
             ]);
 

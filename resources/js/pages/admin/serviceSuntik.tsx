@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
 import useMedanPediaHooks from '@/hooks/medanPediaHooks';
-import { MedanPediaService } from '@/types';
+import { MedanPediaServiceProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { Plus, Search, X, TrendingUp, Clock, Package, Settings } from 'lucide-react';
@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 interface ServiceSettingsModalProps {
   isOpen: boolean;
   onClose: any;
-  serviceData: MedanPediaService | null;
+  serviceData: MedanPediaServiceProps | null;
 }
 
 const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsModalProps) => {
@@ -135,7 +135,7 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsM
 export default function ServiceSuntik() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedService, setSelectedService] = useState<MedanPediaService | null>(null);
+  const [selectedService, setSelectedService] = useState<MedanPediaServiceProps | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { suntikServiceData } = useMedanPediaHooks();
 
@@ -156,7 +156,7 @@ export default function ServiceSuntik() {
     }
   }, [isLoading, suntikServiceData]);
 
-  const handleOpenSettings = (service: MedanPediaService) => {
+  const handleOpenSettings = (service: MedanPediaServiceProps) => {
     setSelectedService(service);
     setIsModalOpen(true);
   };

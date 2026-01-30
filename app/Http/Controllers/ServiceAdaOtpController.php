@@ -28,18 +28,7 @@ class ServiceAdaOtpController extends Controller
             "icon" => "required",
 
             'service_id' => "required",
-            'name' => "required",
-            'iso' => "required",
-            'prefix' => "required",
-            'price' => "required",
-            'stock' => "required",
-            'delivery_percent' => "required",
-            'operator' => "required",
-            'quality_score' => "required",
-            'provider_rate' => "required",
-            'current_demand_status' => "required",
-            'avg_delivery_time' => "required",
-            'avg_delivery_time_formatted' => "required",
+            'name' => "required",   
         ]);
 
         if ($validateData->fails()) {

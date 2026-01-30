@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import API from '@/server/API';
-import { MedanPediaService } from '@/types'
+import { MedanPediaServiceProps } from '@/types'
 import { SwalMessage } from '@/utils/SwalMessage';
 import { useEffect, useState } from 'react'
 
 export default function useMedanPediaHooks() {
-    const [suntikServiceData, setSuntikServiceData] = useState<MedanPediaService[]>([]);
+    const [suntikServiceData, setSuntikServiceData] = useState<MedanPediaServiceProps[]>([]);
     const [profit, setProfit] = useState("");
     const [customerserviceMedanPediaData, setCustomerserviceMedanPediaData] = useState<any[]>([]);
-    const [formPutMedanPedia, setFormPutMedanPedia] = useState<MedanPediaService | any>({
+    const [formPutMedanPedia, setFormPutMedanPedia] = useState<MedanPediaServiceProps | any>({
         price: null,
         name: null,
         description: null,
@@ -43,7 +43,7 @@ export default function useMedanPediaHooks() {
         fetchServicesOrder();
     }, [token]);
 
-    const handleSuntikPost = async (serviceData: MedanPediaService, servicePrice: number) => {
+    const handleSuntikPost = async (serviceData: MedanPediaServiceProps, servicePrice: number) => {
         try {
             const response = await API.post("/admin/service/medanpedia", {
                 service_id: serviceData.id,
@@ -86,18 +86,18 @@ export default function useMedanPediaHooks() {
         if (name == "profit") return setProfit(value)
     }
 
-    const handleChangeMedanPediaServiceUpdate = (
+    const handleChangeMedanPediaServicePropsUpdate = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         const { name, value } = e.target;
 
-        setFormPutMedanPedia((prev: MedanPediaService) => ({
+        setFormPutMedanPedia((prev: MedanPediaServiceProps) => ({
             ...prev,
             [name]: value,
         }));
     };
 
-    const handleUpdateMedanPediaService = async (id: number) => {
+    const handleUpdateMedanPediaServiceProps = async (id: number) => {
         try {
             const response = await API.put(`/admin/service/medanpedia/${id}`, formPutMedanPedia, {
                 headers: {
@@ -125,7 +125,7 @@ export default function useMedanPediaHooks() {
         }
     }
 
-    const handleDeleteMedanPediaService = async (id: number) => {
+    const handleDeleteMedanPediaServiceProps = async (id: number) => {
         try {
             const result = await SwalMessage({
                 icon: "warning",
@@ -169,9 +169,9 @@ export default function useMedanPediaHooks() {
         handleSuntikPost,
         formPutMedanPedia,
         setFormPutMedanPedia,
-        handleChangeMedanPediaServiceUpdate,
-        handleUpdateMedanPediaService,
-        handleDeleteMedanPediaService,
+        handleChangeMedanPediaServicePropsUpdate,
+        handleUpdateMedanPediaServiceProps,
+        handleDeleteMedanPediaServiceProps,
         customerserviceMedanPediaData
     }
 }

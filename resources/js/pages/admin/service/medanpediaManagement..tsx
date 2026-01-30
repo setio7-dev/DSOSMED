@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useAuth } from '@/context/authContext';
 import useMedanPediaHooks from '@/hooks/medanPediaHooks';
-import { MedanPediaService } from '@/types';
+import { MedanPediaServiceProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { Pen, Trash, DollarSign, Package, Layers, Search, X } from 'lucide-react';
@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react'
 interface virtusimManagement {
     isOpen: boolean;
     onClose: () => void;
-    service: MedanPediaService;
+    service: MedanPediaServiceProps;
 }
 
 function ServiceModal({
@@ -22,8 +22,8 @@ function ServiceModal({
     const {
         formPutMedanPedia,
         setFormPutMedanPedia,
-        handleChangeMedanPediaServiceUpdate,
-        handleUpdateMedanPediaService
+        handleChangeMedanPediaServicePropsUpdate,
+        handleUpdateMedanPediaServiceProps
     } = useMedanPediaHooks();
 
     useEffect(() => {
@@ -65,7 +65,7 @@ function ServiceModal({
                                 type="text"
                                 name="name"
                                 value={formPutMedanPedia.name}
-                                onChange={handleChangeMedanPediaServiceUpdate}
+                                onChange={handleChangeMedanPediaServicePropsUpdate}
                                 className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white font-poppins-regular focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                                 required
                             />
@@ -78,7 +78,7 @@ function ServiceModal({
                                 type="text"
                                 name="description"
                                 value={formPutMedanPedia.description}
-                                onChange={handleChangeMedanPediaServiceUpdate}
+                                onChange={handleChangeMedanPediaServicePropsUpdate}
                                 className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white font-poppins-regular focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                                 required
                             />
@@ -91,7 +91,7 @@ function ServiceModal({
                                 type="number"
                                 name="price"
                                 value={formPutMedanPedia.price}
-                                onChange={handleChangeMedanPediaServiceUpdate}
+                                onChange={handleChangeMedanPediaServicePropsUpdate}
                                 className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white font-poppins-regular focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                                 required
                             />
@@ -108,7 +108,7 @@ function ServiceModal({
                         </button>
                         <button
                             type="submit"
-                            onClick={() => handleUpdateMedanPediaService(Number(service.id))}
+                            onClick={() => handleUpdateMedanPediaServiceProps(Number(service.id))}
                             className="px-4 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg font-poppins-medium transition-all duration-200"
                         >
                             Ubah Data
@@ -124,13 +124,13 @@ export default function MedanPediaManagement() {
     const [searchQuery, setSearchQuery] = useState("");
     const {
         customerserviceMedanPediaData,
-        handleDeleteMedanPediaService
+        handleDeleteMedanPediaServiceProps
     } = useMedanPediaHooks();
 
-    const [filteredServices, setFilteredServices] = useState<MedanPediaService[]>([]);
+    const [filteredServices, setFilteredServices] = useState<MedanPediaServiceProps[]>([]);
     const [showAMedanPediaModal, setShowAMedanPediaModal] = useState(false);
 
-    const [selectedMedanPedia, setSelectedMedanPedia] = useState<MedanPediaService | null>(null);
+    const [selectedMedanPedia, setSelectedMedanPedia] = useState<MedanPediaServiceProps | null>(null);
     const { loading } = useAuth();
 
     useEffect(() => {
@@ -145,7 +145,7 @@ export default function MedanPediaManagement() {
         fetchFiltering();
     }, [searchQuery, customerserviceMedanPediaData]);
 
-    const handleVirtusimModal = (service: MedanPediaService) => {
+    const handleVirtusimModal = (service: MedanPediaServiceProps) => {
         setShowAMedanPediaModal(true);
         setSelectedMedanPedia(service)
     }
@@ -220,7 +220,7 @@ export default function MedanPediaManagement() {
                                             <button onClick={() => handleVirtusimModal(service)} className="p-1.5 bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 rounded transition-all duration-200">
                                                 <Pen className="w-3.5 h-3.5" />
                                             </button>
-                                            <button onClick={() => handleDeleteMedanPediaService(Number(service.id))} className="p-1.5 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-all duration-200">
+                                            <button onClick={() => handleDeleteMedanPediaServiceProps(Number(service.id))} className="p-1.5 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-all duration-200">
                                                 <Trash className="w-3.5 h-3.5" />
                                             </button>
                                         </div>

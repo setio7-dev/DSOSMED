@@ -7,12 +7,14 @@ import {
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import useAdaOtpHooks from '@/hooks/adaOtpHooks';
 import { ServiceCountryAdaOtpProps, ServicesAdaOtpProps } from '@/types';
+import useTransactionHooks from '@/hooks/transactionHooks';
 
 export default function NokosAdaOtpOrder() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedParent, setSelectedParent] = useState<ServicesAdaOtpProps | null>(null);
     const [selectedChild, setSelectedChild] = useState<ServiceCountryAdaOtpProps[]>([]);
     const { customerServicesAdaOtpData } = useAdaOtpHooks();
+    const { handleTransactionAdaOtp } = useTransactionHooks();
 
     const filteredParents = customerServicesAdaOtpData.filter(parent =>
         parent.text.toLowerCase().includes(searchQuery.toLowerCase())
@@ -131,7 +133,7 @@ export default function NokosAdaOtpOrder() {
                                         </div>
 
                                         <button
-                                            // onClick={() => handleOrder(country as any)}
+                                            onClick={() => handleTransactionAdaOtp(Number(country.price), String(country.service_id), Number(selectedParent.parent_service_id))}
                                             disabled={Number(country.stock) === 0}
                                             className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${Number(country.stock) > 0
                                                 ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white'
