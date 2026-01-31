@@ -11,7 +11,8 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        $data = Transaction::orderByDesc("created_at")->get();
+        $user = Auth::user();
+        $data = Transaction::orderByDesc("created_at")->where("user_id", $user->id)->get();
         return response()->json([
             "data" => $data
         ]);
@@ -20,8 +21,13 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $user = Auth::user();
-        $data = Transaction::create($request->all());
-        $data["user_id"] = $user->id;
+        $data = Transaction::create([
+            "user_id" => $user->id,
+            "type" => $request->type,
+            "order_id" => $request->order_id,
+            "price" => $request->price,
+            "status" => "proses"
+        ]);
 
         $updateUser = User::where("id", $user->id)->first();
         $updateUser->update([
