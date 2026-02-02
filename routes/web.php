@@ -45,3 +45,10 @@ Route::get('/customer/suntik/order', function () {
     return Inertia::render('customer/suntikOrder');
 });
 
+Route::get('/customer/deposit', function () {
+    return Inertia::render('customer/deposit');
+});
+
+Route::get('/customer/deposit/history', function () {
+    return Inertia::render('customer/historyDeposit');
+});

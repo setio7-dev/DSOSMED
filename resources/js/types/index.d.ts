@@ -124,3 +124,11 @@ export interface TransactionProps {
     status: string;
     user: UserProps;
 }
+
+export interface DepositProps {
+    merchant_order_id: string;
+    payment_method: string;
+    amount: number;
+    created_at: string;
+    user: UserProps;
+}

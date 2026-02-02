@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import {
     Search, ArrowLeft, ShoppingCart,
@@ -11,7 +10,7 @@ import useMedanPediaHooks from '@/hooks/medanPediaHooks';
 export default function SuntikMedanpedia() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedParent, setSelectedParent] = useState<MedanPediaServiceProps | null>(null);
-    const { customerserviceMedanPediaData } = useMedanPediaHooks();
+    const {customerserviceMedanPediaData } = useMedanPediaHooks();
 
     const filteredParents = customerserviceMedanPediaData.filter(parent =>
         parent.name.toLowerCase().includes(searchQuery.toLowerCase())

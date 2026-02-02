@@ -11,33 +11,33 @@ use Illuminate\Support\Facades\Validator;
 use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
-{      
+{
     public function register(Request $request) {
         try {
-            $validateData = Validator::make($request->all(), [
-                "username" => "required",
-                "password" => "required",            
-            ]);
+            // $validateData = Validator::make($request->all(), [
+            //     "username" => "required",
+            //     "password" => "required",
+            // ]);
 
-            if ($validateData->fails()) {
-                return response()->json([
-                    "message" => "Nama pengguna / kata sandi harus diisi!"
-                ], 422);
-            }
+            // if ($validateData->fails()) {
+            //     return response()->json([
+            //         "message" => "Nama pengguna / kata sandi harus diisi!"
+            //     ], 422);
+            // }
 
-            $userCheck = User::where('username', $request->username)->first();
-             if ($userCheck) {
-                return response()->json([
-                    'message' => 'Nama Pegguna sudah digunakan!'
-                ], 401);
-             }
+            // $userCheck = User::where('username', $request->username)->first();
+            //  if ($userCheck) {
+            //     return response()->json([
+            //         'message' => 'Nama Pegguna sudah digunakan!'
+            //     ], 401);
+            //  }
 
              $data = User::create([
                 "username" => $request->username,
                 "password" => $request->password,
                 "isAdmin" => false,
                 "saldo" => 0
-             ]);             
+             ]);
 
              return response()->json([
                 'message' => "Daftar akun berhasil!",
@@ -55,7 +55,7 @@ class UserController extends Controller
         try {
             $validateData = Validator::make($request->all(), [
                 "username" => "required",
-                "password" => "required",            
+                "password" => "required",
             ]);
 
             if ($validateData->fails()) {
@@ -76,7 +76,7 @@ class UserController extends Controller
                 "password" => $request->password,
                 "isAdmin" => true,
                 "saldo" => 0
-             ]);             
+             ]);
 
              return response()->json([
                 'message' => "Daftar akun berhasil!",
@@ -94,7 +94,7 @@ class UserController extends Controller
         try {
             $validateData = Validator::make($request->all(), [
                 "username" => "required",
-                "password" => "required",            
+                "password" => "required",
             ]);
 
             if ($validateData->fails()) {
@@ -134,7 +134,7 @@ class UserController extends Controller
             return response()->json([
                 'message' => $e->getMessage()
             ], 500);
-        } 
+        }
     }
 
     public function logout(Request $request) {
@@ -178,6 +178,25 @@ class UserController extends Controller
             ]);
         } catch (Exception $e) {
             return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function updateSaldo(Request $request) {
+        try {
+            $user = Auth::user();
+
+            $data = User::findOrFail($user->id);
+            $data->saldo += $request->saldo;
+            $data->save();
+
+            return response()->json([
+                "message" => "Berhasil memperbarui saldo",
+                "data" => $data
+            ], 200);
+        } catch(Exception $e) {
+              return response()->json([
                 'message' => $e->getMessage()
             ], 500);
         }
