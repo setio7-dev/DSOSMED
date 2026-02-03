@@ -105,6 +105,7 @@ export interface ServiceVirtusimListServiceProps {
 
 export interface MedanPediaServiceProps {
     id: number;
+    service_id: number;
     name: string;
     type: string;
     category: string;

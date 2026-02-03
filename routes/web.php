@@ -52,3 +52,4 @@ Route::get('/customer/deposit', function () {
 Route::get('/customer/deposit/history', function () {
     return Inertia::render('customer/historyDeposit');
 });
+

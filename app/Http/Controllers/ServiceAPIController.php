@@ -107,6 +107,36 @@ class ServiceAPIController extends Controller
         return response()->json($response->json());
     }
 
+    public function medanpedia_api_order(Request $request)
+{
+
+    $response = Http::asForm()->post(
+        'https://api.medanpedia.co.id/order',
+        [
+            'api_id' => '37461',
+            'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+            'service' => $request->service,
+            'target' => $request->target,
+            'quantity' => $request->quantity,
+        ]
+    );
+
+    $body = $response->json();
+
+    if (!isset($body['status']) || $body['status'] === false) {
+        return response()->json([
+            'success' => false,
+            'message' => $body['msg'] ?? 'Order gagal',
+        ], 422);
+    }
+
+    return response()->json([
+        'success' => true,
+        'message' => $body['msg'],
+        'order_id' => $body['data']['id'] ?? null,
+    ]);
+}
+
     // iskapay
     public function iskapay_create_payment(Request $request)
     {

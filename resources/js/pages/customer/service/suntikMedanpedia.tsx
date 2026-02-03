@@ -6,15 +6,27 @@ import {
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { MedanPediaServiceProps } from '@/types';
 import useMedanPediaHooks from '@/hooks/medanPediaHooks';
+import SuntikOrderDetail from '../suntikOrderDetail';
+
 
 export default function SuntikMedanpedia() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedParent, setSelectedParent] = useState<MedanPediaServiceProps | null>(null);
-    const {customerserviceMedanPediaData } = useMedanPediaHooks();
+    const [orderDetail, setOrderDetail] = useState<MedanPediaServiceProps | null>(null);
+    const { customerserviceMedanPediaData } = useMedanPediaHooks();
 
     const filteredParents = customerserviceMedanPediaData.filter(parent =>
         parent.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    if (orderDetail) {
+        return (
+            <SuntikOrderDetail
+                selectedParent={orderDetail}
+                onBack={() => setOrderDetail(null)}
+            />
+        );
+    }
 
     return (
         <div className="p-6 bg-black/30 space-y-6 backdrop-blur-sm rounded-lg">
@@ -49,9 +61,7 @@ export default function SuntikMedanpedia() {
                             filteredParents.map((parent) => (
                                 <button
                                     key={parent.id}
-                                    onClick={() => {
-                                        setSelectedParent(parent)
-                                    }}
+                                    onClick={() => setSelectedParent(parent)}
                                     className="group bg-gray-700/30 border border-gray-600/30 hover:border-purple-500/40 hover:bg-gray-700/40 rounded-xl p-4 transition-all text-left"
                                 >
                                     <h3 className="text-sm font-semibold text-white mb-1">{parent.name}</h3>
@@ -74,7 +84,7 @@ export default function SuntikMedanpedia() {
                         <h2 className="text-lg font-bold text-white">{selectedParent.name}</h2>
                     </div>
 
-                    <div className="bg-gray-700/30 border border-gray-600/30 hover:border-purple-500/30 rounded-xl p-4 transition-all"                    >
+                    <div className="bg-gray-700/30 border border-gray-600/30 hover:border-purple-500/30 rounded-xl p-4 transition-all">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                             <div className="flex items-center gap-3 flex-1">
                                 <div className="w-11 h-11 bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30 rounded-lg flex items-center justify-center text-lg flex-shrink-0">
@@ -110,7 +120,7 @@ export default function SuntikMedanpedia() {
                             </div>
 
                             <button
-                                // onClick={() => handleOrder(selectedParent as any)}
+                                onClick={() => setOrderDetail(selectedParent)}
                                 disabled={Number(selectedParent.min) === 0}
                                 className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${Number(selectedParent.min) > 0
                                     ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white'
@@ -123,8 +133,7 @@ export default function SuntikMedanpedia() {
                         </div>
                     </div>
                 </div>
-            )
-            }
-        </div >
+            )}
+        </div>
     );
 }
