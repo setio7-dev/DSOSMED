@@ -26,6 +26,7 @@ Route::get("/adaotp/orders/status", [ServiceAPIController::class, "ada_otp_getor
 Route::get("/medanpedia/services", [ServiceAPIController::class, "medanpedia_api_services"]);
 Route::get("/medanpedia/profile", [ServiceAPIController::class, "medanpedia_api_profile"]);
 Route::post("/medanpedia/order", [ServiceAPIController::class, "medanpedia_api_order"]);
+Route::post("/medanpedia/status", [ServiceAPIController::class, "medanpedia_api_status"]);
 
 Route::post("/iskapay/payments", [ServiceAPIController::class, "iskapay_create_payment"]);
 Route::get("/iskapay/payments/{merchant_order_id}", [ServiceAPIController::class, "iskapay_payment_status"]);

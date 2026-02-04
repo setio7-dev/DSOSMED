@@ -108,34 +108,78 @@ class ServiceAPIController extends Controller
     }
 
     public function medanpedia_api_order(Request $request)
-{
+    {
 
-    $response = Http::asForm()->post(
-        'https://api.medanpedia.co.id/order',
-        [
-            'api_id' => '37461',
-            'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
-            'service' => $request->service,
-            'target' => $request->target,
-            'quantity' => $request->quantity,
-        ]
-    );
+        $response = Http::asForm()->post(
+            'https://api.medanpedia.co.id/order',
+            [
+                'api_id' => '37461',
+                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'service' => $request->service,
+                'target' => $request->target,
+                'quantity' => $request->quantity,
+            ]
+        );
 
-    $body = $response->json();
+        $body = $response->json();
 
-    if (!isset($body['status']) || $body['status'] === false) {
+        if (! isset($body['status']) || $body['status'] === false) {
+            return response()->json([
+                'success' => false,
+                'message' => $body['msg'] ?? 'Order gagal',
+            ], 422);
+        }
+
         return response()->json([
-            'success' => false,
-            'message' => $body['msg'] ?? 'Order gagal',
-        ], 422);
+            'success' => true,
+            'message' => $body['msg'],
+            'order_id' => $body['data']['id'] ?? null,
+        ]);
     }
 
-    return response()->json([
-        'success' => true,
-        'message' => $body['msg'],
-        'order_id' => $body['data']['id'] ?? null,
-    ]);
-}
+    public function medanpedia_api_status(Request $request)
+    {
+        $request->validate([
+            'id' => 'required',
+        ]);
+
+        $response = Http::asForm()->post(
+            'https://api.medanpedia.co.id/status',
+            [
+                'api_id' => '37461',
+                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'id' => $request->id,
+            ]
+        );
+
+        $body = $response->json();
+
+        if (! isset($body['status']) || $body['status'] === false) {
+            return response()->json([
+                'success' => false,
+                'message' => $body['msg'] ?? 'Pesanan tidak ditemukan',
+            ], 422);
+        }
+
+        if (isset($body['data'])) {
+            return response()->json([
+                'success' => true,
+                'message' => $body['msg'],
+                'data' => [
+                    'order_id' => $body['data']['id'] ?? null,
+                    'status' => $body['data']['status'] ?? null,
+                    'charge' => $body['data']['charge'] ?? 0,
+                    'start_count' => $body['data']['start_count'] ?? 0,
+                    'remains' => $body['data']['remains'] ?? 0,
+                ],
+            ]);
+        }
+        
+        return response()->json([
+            'success' => false,
+            'message' => 'Format response tidak dikenali',
+        ], 500);
+    }
 
     // iskapay
     public function iskapay_create_payment(Request $request)

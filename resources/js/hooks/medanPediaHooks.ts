@@ -1,14 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from 'react';
 import API from '@/server/API';
-import { MedanPediaServiceProps } from '@/types';
+import { MedanPediaServiceProps, MedanPediaStatusData } from '@/types';
 import { SwalMessage } from '@/utils/SwalMessage';
+import { useEffect, useState } from 'react';
 
 export default function useMedanPediaHooks() {
-    const [suntikServiceData, setSuntikServiceData] = useState<MedanPediaServiceProps[]>([]);
-    const [profit, setProfit] = useState("");
-    const [customerserviceMedanPediaData, setCustomerserviceMedanPediaData] = useState<any[]>([]);
-    const [formPutMedanPedia, setFormPutMedanPedia] = useState<MedanPediaServiceProps | any>({
+    const [suntikServiceData, setSuntikServiceData] = useState<
+        MedanPediaServiceProps[]
+    >([]);
+    const [profit, setProfit] = useState('');
+    const [customerserviceMedanPediaData, setCustomerserviceMedanPediaData] =
+        useState<any[]>([]);
+    const [formPutMedanPedia, setFormPutMedanPedia] = useState<
+        MedanPediaServiceProps | any
+    >({
         price: null,
         name: null,
         description: null,
@@ -17,7 +22,7 @@ export default function useMedanPediaHooks() {
     const [target, setTarget] = useState<string>('');
     const [quantity, setQuantity] = useState<number | null>(null);
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
 
     const totalPrice = quantity ? quantity : 0;
 
@@ -26,8 +31,8 @@ export default function useMedanPediaHooks() {
         quantity: !quantity
             ? 'Masukkan jumlah'
             : quantity < 1
-                ? 'Jumlah harus lebih dari 0'
-                : '',
+              ? 'Jumlah harus lebih dari 0'
+              : '',
     };
 
     const isValid = !errors.target && !errors.quantity;
@@ -35,7 +40,7 @@ export default function useMedanPediaHooks() {
     useEffect(() => {
         const fetchService = async () => {
             try {
-                const response = await API.get("/medanpedia/services");
+                const response = await API.get('/medanpedia/services');
                 setSuntikServiceData(response.data.data);
             } catch (error) {
                 console.error(error);
@@ -44,7 +49,7 @@ export default function useMedanPediaHooks() {
 
         const fetchServicesOrder = async () => {
             try {
-                const response = await API.get("/customer/service/medanpedia", {
+                const response = await API.get('/customer/service/medanpedia', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -61,11 +66,11 @@ export default function useMedanPediaHooks() {
 
     const handleSuntikPost = async (
         serviceData: MedanPediaServiceProps,
-        servicePrice: number
+        servicePrice: number,
     ) => {
         try {
             const response = await API.post(
-                "/admin/service/medanpedia",
+                '/admin/service/medanpedia',
                 {
                     service_id: serviceData.id,
                     name: serviceData.name,
@@ -82,20 +87,20 @@ export default function useMedanPediaHooks() {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-                }
+                },
             );
 
             SwalMessage({
-                icon: "success",
-                title: "Berhasil!",
+                icon: 'success',
+                title: 'Berhasil!',
                 text: response.data.message,
             });
 
             setTimeout(() => window.location.reload(), 2000);
         } catch (error: any) {
             SwalMessage({
-                icon: "error",
-                title: "Gagal!",
+                icon: 'error',
+                title: 'Gagal!',
                 text: error?.response?.data?.message,
             });
         }
@@ -103,11 +108,11 @@ export default function useMedanPediaHooks() {
 
     const handleChangeSuntik = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        if (name === "profit") setProfit(value);
+        if (name === 'profit') setProfit(value);
     };
 
     const handleChangeMedanPediaServicePropsUpdate = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     ) => {
         const { name, value } = e.target;
         setFormPutMedanPedia((prev: MedanPediaServiceProps) => ({
@@ -125,21 +130,21 @@ export default function useMedanPediaHooks() {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-                }
+                },
             );
 
             SwalMessage({
-                icon: "success",
-                title: "Berhasil!",
+                icon: 'success',
+                title: 'Berhasil!',
                 text: response.data.message,
             });
 
             setTimeout(() => window.location.reload(), 2000);
         } catch {
             SwalMessage({
-                icon: "error",
-                title: "Gagal!",
-                text: "Terjadi Kesalahan!",
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Terjadi Kesalahan!',
             });
         }
     };
@@ -147,9 +152,9 @@ export default function useMedanPediaHooks() {
     const handleDeleteMedanPediaServiceProps = async (id: number) => {
         try {
             const result = await SwalMessage({
-                icon: "warning",
-                title: "Peringatan",
-                text: "Apakah anda yakin untuk menghapus data ini!",
+                icon: 'warning',
+                title: 'Peringatan',
+                text: 'Apakah anda yakin untuk menghapus data ini!',
             });
 
             if (result.isConfirmed) {
@@ -159,12 +164,12 @@ export default function useMedanPediaHooks() {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
-                    }
+                    },
                 );
 
                 SwalMessage({
-                    icon: "success",
-                    title: "Berhasil!",
+                    icon: 'success',
+                    title: 'Berhasil!',
                     text: response.data.message,
                 });
 
@@ -172,16 +177,14 @@ export default function useMedanPediaHooks() {
             }
         } catch {
             SwalMessage({
-                icon: "error",
-                title: "Gagal!",
-                text: "Terjadi Kesalahan!",
+                icon: 'error',
+                title: 'Gagal!',
+                text: 'Terjadi Kesalahan!',
             });
         }
     };
 
-    const handleQuantityChange = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value.replace(/[^0-9]/g, '');
         setQuantity(val === '' ? null : Number(val));
     };
@@ -190,15 +193,15 @@ export default function useMedanPediaHooks() {
         if (!isValid) return;
 
         try {
-            const response = await API.post("/medanpedia/order", {
+            const response = await API.post('/medanpedia/order', {
                 service: serviceId,
                 target,
                 quantity,
             });
 
             SwalMessage({
-                icon: "success",
-                title: "Berhasil!",
+                icon: 'success',
+                title: 'Berhasil!',
                 text: response.data.message,
             });
 
@@ -206,10 +209,113 @@ export default function useMedanPediaHooks() {
             setQuantity(null);
         } catch (error: any) {
             SwalMessage({
-                icon: "error",
-                title: "Gagal!",
-                text: error?.response?.data?.message || "Terjadi kesalahan",
+                icon: 'error',
+                title: 'Gagal!',
+                text: error?.response?.data?.message || 'Terjadi kesalahan',
             });
+        }
+    };
+
+    const handleMultiSubmitOrder = async (
+        serviceId: number,
+        targets: { username: string; quantity: number }[],
+    ) => {
+        if (targets.length === 0) return;
+
+        const results = {
+            success: [] as string[],
+            failed: [] as string[],
+        };
+
+        try {
+            for (const item of targets) {
+                try {
+                    await API.post('/medanpedia/order', {
+                        service: serviceId,
+                        target: item.username,
+                        quantity: item.quantity,
+                    });
+
+                    results.success.push(item.username);
+                } catch (error: any) {
+                    results.failed.push(item.username);
+                    console.log(error);
+                }
+            }
+
+            if (results.failed.length === 0) {
+                SwalMessage({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: `Semua ${results.success.length} order berhasil diproses`,
+                });
+            } else if (results.success.length === 0) {
+                SwalMessage({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: `Semua order gagal diproses`,
+                });
+            } else {
+                SwalMessage({
+                    icon: 'warning',
+                    title: 'Sebagian Berhasil',
+                    text: `${results.success.length} berhasil, ${results.failed.length} gagal`,
+                });
+            }
+
+            return results;
+        } catch (error: any) {
+            SwalMessage({
+                icon: 'error',
+                title: 'Gagal!',
+                text: error?.response?.data?.message || 'Terjadi kesalahan',
+            });
+        }
+    };
+
+    const handleCheckStatus = async (orderIds: number[] | number) => {
+        try {
+            const idParam = Array.isArray(orderIds)
+                ? orderIds.join(',')
+                : orderIds.toString();
+
+            const response = await API.post('/medanpedia/status', {
+                id: idParam,
+            });
+
+            const data = response.data;
+
+            if (!data.success) {
+                SwalMessage({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: data.message,
+                });
+                return null;
+            }
+
+            if (data.orders) {
+                return {
+                    type: 'mass',
+                    orders: data.orders,
+                };
+            }
+
+            if (data.data) {
+                return {
+                    type: 'single',
+                    data: data.data as MedanPediaStatusData,
+                };
+            }
+
+            return null;
+        } catch (error: any) {
+            SwalMessage({
+                icon: 'error',
+                title: 'Gagal!',
+                text: error?.response?.data?.message || 'Terjadi kesalahan',
+            });
+            return null;
         }
     };
 
@@ -234,5 +340,8 @@ export default function useMedanPediaHooks() {
         isValid,
         handleQuantityChange,
         handleSubmitOrder,
+        handleMultiSubmitOrder,
+        handleCheckStatus,
+
     };
 }

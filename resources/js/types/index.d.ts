@@ -133,3 +133,20 @@ export interface DepositProps {
     created_at: string;
     user: UserProps;
 }
+
+export type MedanPediaOrderStatus =
+    | "Pending"
+    | "Processing"
+    | "Success"
+    | "Error"
+    | "Partial";
+
+export interface MedanPediaStatusData {
+    order_id: number;
+    status: MedanPediaOrderStatus;
+    charge: number;
+    start_count: number;
+    remains: number;
+}
+
+
