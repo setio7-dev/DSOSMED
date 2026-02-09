@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
 import useAdaOtpHooks from '@/hooks/adaOtpHooks';
@@ -52,7 +53,7 @@ const CountriesModal = ({ isOpen, onClose, serviceData, selectedServiceCountry }
     }
 
     fetchServiceCountry();
-  }, [serviceData, handleShowCountry]);
+  }, [serviceData]);
 
   if (!isOpen) return null;
 
@@ -210,7 +211,7 @@ export default function ServiceNokosAdaOtp() {
     } else {
       document.body.style.overflow = 'auto';
     }
-  });
+  }, [isLoading]);
 
   const handleOpenServiceModal = async (service: ServicesAdaOtpProps) => {
     setSelectedService(service);

@@ -141,6 +141,10 @@ export default function useDepositHooks() {
                     },
                 },
             );
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } catch (err) {
             console.error(err);
             Swal.fire({

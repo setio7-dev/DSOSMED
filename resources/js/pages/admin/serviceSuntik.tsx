@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
+import { useAuth } from '@/context/authContext';
 import useMedanPediaHooks from '@/hooks/medanPediaHooks';
 import { MedanPediaServiceProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { Plus, Search, X, TrendingUp, Clock, Package, Settings } from 'lucide-react';
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 interface ServiceSettingsModalProps {
   isOpen: boolean;
@@ -134,7 +135,7 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsM
 
 export default function ServiceSuntik() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const { loading } = useAuth();
   const [selectedService, setSelectedService] = useState<MedanPediaServiceProps | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { suntikServiceData } = useMedanPediaHooks();
@@ -143,18 +144,6 @@ export default function ServiceSuntik() {
     service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     service.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
-
-  useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    if (isLoading || suntikServiceData.length == 0) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
-    }
-  }, [isLoading, suntikServiceData]);
 
   const handleOpenSettings = (service: MedanPediaServiceProps) => {
     setSelectedService(service);
@@ -179,10 +168,12 @@ export default function ServiceSuntik() {
     }
   };
 
+  if (loading || suntikServiceData.length === 0) {
+    return <SpinnerLoader/>
+  }
+
   return (
     <AdminDashboard title="Layanan Suntik (MedanPedia)">
-      {isLoading && <SpinnerLoader />}
-
       <ServiceSettingsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

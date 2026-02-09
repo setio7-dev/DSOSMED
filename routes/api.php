@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CustomerServiceController;
 use App\Http\Controllers\DepositController;
+use App\Http\Controllers\GuideController;
 use App\Http\Controllers\NokosController;
 use App\Http\Controllers\ServiceAdaOtpController;
 use App\Http\Controllers\ServiceAPIController;
@@ -17,6 +19,7 @@ Route::post('/login', [UserController::class, 'login']); //all
 
 Route::get("/virtusim/list-countries", [ServiceAPIController::class, "virtusim_api_listcountry"]);
 Route::get("/virtusim/service/{country}", [ServiceAPIController::class, "virtusim_api_listservice"]);
+Route::post("/virtusim/order", [ServiceAPIController::class, "virtusim_api_order"])->middleware("auth");
 
 Route::get("/adaotp/services", [ServiceAPIController::class, "adaotp_api_listservice"]);
 Route::get("/adaotp/services/{id}", [ServiceAPIController::class, "adaotp_api_listcountry"]);
@@ -25,7 +28,7 @@ Route::get("/adaotp/orders/status", [ServiceAPIController::class, "ada_otp_getor
 
 Route::get("/medanpedia/services", [ServiceAPIController::class, "medanpedia_api_services"]);
 Route::get("/medanpedia/profile", [ServiceAPIController::class, "medanpedia_api_profile"]);
-Route::post("/medanpedia/order", [ServiceAPIController::class, "medanpedia_api_order"]);
+Route::post("/medanpedia/order", [ServiceAPIController::class, "medanpedia_api_order"])->middleware("auth");
 Route::post("/medanpedia/status", [ServiceAPIController::class, "medanpedia_api_status"]);
 
 Route::post("/iskapay/payments", [ServiceAPIController::class, "iskapay_create_payment"]);
@@ -50,6 +53,9 @@ Route::middleware('auth')->group(function () {
         Route::resource('/service/adaotp', ServiceAdaOtpController::class);
         Route::resource('/service/virtusim', ServiceVirtusimController::class);
         Route::resource('/service/medanpedia', ServiceSuntikController::class);
+
+        Route::resource("/guide", GuideController::class);
+        Route::resource("/customer-service", CustomerServiceController::class);
     });
 
     Route::prefix("/customer")->group(function () {
@@ -58,6 +64,8 @@ Route::middleware('auth')->group(function () {
         Route::get("/service/medanpedia", [ServiceSuntikController::class, "index"]);
 
         Route::resource("/transaction", TransactionController::class);
+        Route::get("/guide/{id}", [GuideController::class,"show"]);
+        Route::get("/customer-service", [CustomerServiceController::class,"index"]);
     });
 });
 

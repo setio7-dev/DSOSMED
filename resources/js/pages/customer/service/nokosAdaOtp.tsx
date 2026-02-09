@@ -133,7 +133,7 @@ export default function NokosAdaOtpOrder() {
                                         </div>
 
                                         <button
-                                            onClick={() => handleTransactionAdaOtp(Number(country.price), String(country.service_id), Number(selectedParent.parent_service_id))}
+                                            onClick={() => handleTransactionAdaOtp(Number(country.price), String(country.service_id), selectedParent)}
                                             disabled={Number(country.stock) === 0}
                                             className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${Number(country.stock) > 0
                                                 ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white'

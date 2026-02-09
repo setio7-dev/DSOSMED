@@ -17,6 +17,7 @@ import { FormatRupiah } from '@/utils/FormatRupiah';
 import { MedanPediaServiceProps } from '@/types';
 import useMedanPediaHooks from '@/hooks/medanPediaHooks';
 import jsPDF from 'jspdf';
+import useTransactionHooks from '@/hooks/transactionHooks';
 
 interface TargetItem {
     username: string;
@@ -41,13 +42,9 @@ export default function SuntikMedanpedia() {
     const [orderReceipt, setOrderReceipt] = useState<OrderReceipt | null>(null);
     const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
     const [defaultQuantity, setDefaultQuantity] = useState<string>('100');
-
-    const {
-        customerserviceMedanPediaData,
-        target,
-        setTarget,
-        handleMultiSubmitOrder,
-    } = useMedanPediaHooks();
+    const [target, setTarget] = useState<string>('');
+    const { customerserviceMedanPediaData } = useMedanPediaHooks();
+    const { handleTransactionMedanPedia } = useTransactionHooks();
 
     const filteredServices = customerserviceMedanPediaData.filter(service =>
         service.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -68,14 +65,12 @@ export default function SuntikMedanpedia() {
             const parts = line.split('|').map(p => p.trim());
 
             if (parts.length === 2) {
-                // Format: username | jumlah
                 const username = parts[0];
                 const quantity = parseInt(parts[1]);
                 if (username && !isNaN(quantity) && quantity > 0) {
                     items.push({ username, quantity });
                 }
             } else if (parts.length === 1 && parts[0]) {
-                // Format: hanya username (gunakan default quantity)
                 const username = parts[0];
                 if (username) {
                     items.push({ username, quantity: defaultQty });
@@ -98,21 +93,23 @@ export default function SuntikMedanpedia() {
 
         setIsSubmitting(true);
         try {
-            await handleMultiSubmitOrder(selectedService.service_id, targetItems);
+            const orderSubmit = await handleTransactionMedanPedia(totalPrice, selectedService, targetItems)
+            if (orderSubmit?.success) {
+                const receipt: OrderReceipt = {
+                    serviceName: selectedService.name,
+                    targets: targetItems,
+                    pricePerUnit: Number(selectedService.price),
+                    totalQuantity: totalQuantity,
+                    totalPrice: totalPrice,
+                    orderId: `ORD-${Date.now()}`,
+                    timestamp: new Date().toLocaleString('id-ID'),
+                };
+    
+                setOrderReceipt(receipt);
+                setSelectedService(null);
+                setTarget('');
+            }
 
-            const receipt: OrderReceipt = {
-                serviceName: selectedService.name,
-                targets: targetItems,
-                pricePerUnit: Number(selectedService.price),
-                totalQuantity: totalQuantity,
-                totalPrice: totalPrice,
-                orderId: `ORD-${Date.now()}`,
-                timestamp: new Date().toLocaleString('id-ID'),
-            };
-
-            setOrderReceipt(receipt);
-            setSelectedService(null);
-            setTarget('');
         } finally {
             setIsSubmitting(false);
         }

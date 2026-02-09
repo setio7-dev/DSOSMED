@@ -13,11 +13,15 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
+            $table->string('service_id')->nullable();
             $table->bigInteger('user_id')->unsigned();
             $table->string("type");
-            $table->bigInteger("order_id");
+            $table->bigInteger("order_id")->nullable();
             $table->string("price");
+            $table->string("quantity")->nullable();
             $table->string("status");
+            $table->string("result")->nullable();
             $table->timestamps();
 
             $table->foreign("user_id")->references("id")->on("users")->onDelete("CASCADE");

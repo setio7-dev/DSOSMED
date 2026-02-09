@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('suntik_orders', function (Blueprint $table) {
+        Schema::create('guides', function (Blueprint $table) {
             $table->id();
-            $table->string("service_id");
-            $table->string("title");
-            $table->string("price");
-            $table->int("qty");
-            $table->string("status");
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->text('desc');
+            $table->string('type');
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('suntik_orders');
+        Schema::dropIfExists('guides');
     }
 };

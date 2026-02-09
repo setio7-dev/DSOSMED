@@ -8,8 +8,8 @@ import {
     ChevronDown,
     ChevronRight,
     CreditCard,
-    // DollarSign,
     FileText,
+    HelpCircle,
     History,
     LogOut,
     Smartphone,
@@ -27,7 +27,7 @@ export default function Sidebar({
     setIsSidebarOpen,
     setLabel,
 }: any) {
-    const [expandedMenus, setExpandedMenus] = useState(['nokos']);
+    const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
     const { url } = usePage();
     const { handleLogout } = useAuthHooks();
     const menuItems = [
@@ -61,13 +61,13 @@ export default function Sidebar({
                     id: 'nokos-history',
                     label: 'Riwayat Order Nokos',
                     icon: History,
-                    link: '/customer/nokos-otp/history',
+                    link: '/customer/nokos/history',
                 },
                 {
                     id: 'nokos-panduan',
                     label: 'Panduan Nokos',
                     icon: FileText,
-                    link: '/customer/nokos-otp/panduan',
+                    link: '/customer/nokos/guide',
                 },
             ],
         },
@@ -85,7 +85,7 @@ export default function Sidebar({
                 },
                 {
                     id: 'suntik-history',
-                    label: 'History',
+                    label: 'Riwayat Order Suntik',
                     icon: History,
                     link: '/customer/suntik/history',
                 },
@@ -93,30 +93,10 @@ export default function Sidebar({
                     id: 'suntik-panduan',
                     label: 'Panduan',
                     icon: FileText,
-                    link: '/customer/suntik/panduan',
+                    link: '/customer/suntik/guide',
                 },
             ],
         },
-        // {
-        //     id: 'transaction',
-        //     label: 'Transaction',
-        //     icon: DollarSign,
-        //     color: 'text-green-400',
-        //     submenus: [
-        //         {
-        //             id: 'transaction-deposit',
-        //             label: 'Deposit',
-        //             icon: CreditCard,
-        //             link: '/customer/deposit',
-        //         },
-        //         {
-        //             id: 'transaction-history',
-        //             label: 'History',
-        //             icon: History,
-        //             link: '/customer/riwayat',
-        //         },
-        //     ],
-        // },
         {
             id: 'deposit',
             label: 'Deposit',
@@ -137,6 +117,20 @@ export default function Sidebar({
                 },
             ],
         },
+        {
+            id: 'bantuan',
+            label: 'Bantuan',
+            icon: HelpCircle,
+            color: 'text-orange-400',
+            submenus: [
+                {
+                    id: 'bantuan',
+                    label: 'Bantuan',
+                    icon: HelpCircle    ,
+                    link: '/customer/customer-service',
+                },
+            ],
+        },
     ];
 
     const toggleMenu = (menuId: any) => {
@@ -148,25 +142,16 @@ export default function Sidebar({
     };
 
     useEffect(() => {
-        const fetchActiveBar = () => {
-            for (let index = 0; index < menuItems.length; index++) {
-                const item = menuItems[index];
-
-                for (let index = 0; index < item.submenus.length; index++) {
-                    const submenu = item.submenus[index];
-
-                    if (url === submenu.link) {
-                        setLabel(submenu.label);
-                        if (!expandedMenus.includes(item.id)) {
-                            setExpandedMenus((prev) => [...prev, item.id]);
-                        }
-                    }
+        for (const item of menuItems) {
+            for (const submenu of item.submenus) {
+                if (url === submenu.link) {
+                    setLabel(submenu.label);
+                    setExpandedMenus([item.id]); 
+                    return;
                 }
             }
-        };
-
-        fetchActiveBar();
-    }, [setLabel, url]);
+        }
+    }, [url]);
 
     return (
         <aside
@@ -223,8 +208,8 @@ export default function Sidebar({
                                                 }
                                             }}
                                             className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 transition-all duration-300 sm:gap-3 sm:px-4 sm:py-2.5 ${url === submenu.link
-                                                    ? 'border border-purple-500/50 bg-gradient-to-r from-purple-600/30 to-purple-800/30 shadow-lg shadow-purple-500/20'
-                                                    : 'border border-transparent hover:bg-gray-800/30'
+                                                ? 'border border-purple-500/50 bg-gradient-to-r from-purple-600/30 to-purple-800/30 shadow-lg shadow-purple-500/20'
+                                                : 'border border-transparent hover:bg-gray-800/30'
                                                 } active:scale-95`}
                                         >
                                             <submenu.icon
@@ -232,8 +217,8 @@ export default function Sidebar({
                                             />
                                             <span
                                                 className={`flex-1 truncate text-left text-sm ${url === submenu.link
-                                                        ? 'font-medium text-white'
-                                                        : 'text-gray-400'
+                                                    ? 'font-medium text-white'
+                                                    : 'text-gray-400'
                                                     }`}
                                             >
                                                 {submenu.label}

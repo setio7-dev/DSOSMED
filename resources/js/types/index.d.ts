@@ -87,7 +87,8 @@ export interface ServiceVirtusimListCountryProps {
     country_code: string;
     country_name: string;
     img_link: string;
-    children: ServiceVirtusimListServiceProps[]
+    children: ServiceVirtusimListServiceProps[];
+    service_id: number;
 }
 
 export interface ServiceVirtusimListServiceProps {
@@ -118,12 +119,17 @@ export interface MedanPediaServiceProps {
 }
 
 export interface TransactionProps {
+    name: string;
+    service_id: string;
     type: string;
     user_id: number;
     order_id: number;
     price: number;
+    quantity: string | number;
     status: string;
+    result: number;
     user: UserProps;
+    created_at: Date;
 }
 
 export interface DepositProps {
@@ -149,4 +155,16 @@ export interface MedanPediaStatusData {
     remains: number;
 }
 
+export interface GuideProps {
+    id: number;
+    name: string;
+    desc: string;
+    type: string;
+}
 
+export interface CustomerServiceProps {
+    id: number;
+    name: string;
+    desc: string;
+    phone: string;
+}

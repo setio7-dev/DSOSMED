@@ -5,12 +5,9 @@ import { SwalMessage } from '@/utils/SwalMessage';
 import { useEffect, useState } from 'react';
 
 export default function useMedanPediaHooks() {
-    const [suntikServiceData, setSuntikServiceData] = useState<
-        MedanPediaServiceProps[]
-    >([]);
+    const [suntikServiceData, setSuntikServiceData] = useState<MedanPediaServiceProps[]>([]);
     const [profit, setProfit] = useState('');
-    const [customerserviceMedanPediaData, setCustomerserviceMedanPediaData] =
-        useState<any[]>([]);
+    const [customerserviceMedanPediaData, setCustomerserviceMedanPediaData] = useState<any[]>([]);
     const [formPutMedanPedia, setFormPutMedanPedia] = useState<
         MedanPediaServiceProps | any
     >({
@@ -18,24 +15,22 @@ export default function useMedanPediaHooks() {
         name: null,
         description: null,
     });
-
-    const [target, setTarget] = useState<string>('');
-    const [quantity, setQuantity] = useState<number | null>(null);
-
     const token = localStorage.getItem('token');
+    // const [quantity, setQuantity] = useState<number | null>(null);
 
-    const totalPrice = quantity ? quantity : 0;
+    // const [target, setTarget] = useState<string>('');
+    // const totalPrice = quantity ? quantity : 0;
 
-    const errors = {
-        target: !target.trim() ? 'Target wajib diisi' : '',
-        quantity: !quantity
-            ? 'Masukkan jumlah'
-            : quantity < 1
-              ? 'Jumlah harus lebih dari 0'
-              : '',
-    };
+    // const errors = {
+    //     target: !target.trim() ? 'Target wajib diisi' : '',
+    //     quantity: !quantity
+    //         ? 'Masukkan jumlah'
+    //         : quantity < 1
+    //           ? 'Jumlah harus lebih dari 0'
+    //           : '',
+    // };
 
-    const isValid = !errors.target && !errors.quantity;
+    // const isValid = !errors.target && !errors.quantity;
 
     useEffect(() => {
         const fetchService = async () => {
@@ -184,94 +179,94 @@ export default function useMedanPediaHooks() {
         }
     };
 
-    const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const val = e.target.value.replace(/[^0-9]/g, '');
-        setQuantity(val === '' ? null : Number(val));
-    };
+    // const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     const val = e.target.value.replace(/[^0-9]/g, '');
+    //     setQuantity(val === '' ? null : Number(val));
+    // };
 
-    const handleSubmitOrder = async (serviceId: number) => {
-        if (!isValid) return;
+    // const handleSubmitOrder = async (serviceId: number) => {
+    //     if (!isValid) return;
 
-        try {
-            const response = await API.post('/medanpedia/order', {
-                service: serviceId,
-                target,
-                quantity,
-            });
+    //     try {
+    //         const response = await API.post('/medanpedia/order', {
+    //             service: serviceId,
+    //             target,
+    //             quantity,
+    //         });
 
-            SwalMessage({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: response.data.message,
-            });
+    //         SwalMessage({
+    //             icon: 'success',
+    //             title: 'Berhasil!',
+    //             text: response.data.message,
+    //         });
 
-            setTarget('');
-            setQuantity(null);
-        } catch (error: any) {
-            SwalMessage({
-                icon: 'error',
-                title: 'Gagal!',
-                text: error?.response?.data?.message || 'Terjadi kesalahan',
-            });
-        }
-    };
+    //         setTarget('');
+    //         setQuantity(null);
+    //     } catch (error: any) {
+    //         SwalMessage({
+    //             icon: 'error',
+    //             title: 'Gagal!',
+    //             text: error?.response?.data?.message || 'Terjadi kesalahan',
+    //         });
+    //     }
+    // };
 
-    const handleMultiSubmitOrder = async (
-        serviceId: number,
-        targets: { username: string; quantity: number }[],
-    ) => {
-        if (targets.length === 0) return;
+    // const handleMultiSubmitOrder = async (
+    //     serviceId: number,
+    //     targets: { username: string; quantity: number }[],
+    // ) => {
+    //     if (targets.length === 0) return;
 
-        const results = {
-            success: [] as string[],
-            failed: [] as string[],
-        };
+    //     const results = {
+    //         success: [] as string[],
+    //         failed: [] as string[],
+    //     };
 
-        try {
-            for (const item of targets) {
-                try {
-                    await API.post('/medanpedia/order', {
-                        service: serviceId,
-                        target: item.username,
-                        quantity: item.quantity,
-                    });
+    //     try {
+    //         for (const item of targets) {
+    //             try {
+    //                 await API.post('/medanpedia/order', {
+    //                     service: serviceId,
+    //                     target: item.username,
+    //                     quantity: item.quantity,
+    //                 });
 
-                    results.success.push(item.username);
-                } catch (error: any) {
-                    results.failed.push(item.username);
-                    console.log(error);
-                }
-            }
+    //                 results.success.push(item.username);
+    //             } catch (error: any) {
+    //                 results.failed.push(item.username);
+    //                 console.log(error);
+    //             }
+    //         }
 
-            if (results.failed.length === 0) {
-                SwalMessage({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: `Semua ${results.success.length} order berhasil diproses`,
-                });
-            } else if (results.success.length === 0) {
-                SwalMessage({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: `Semua order gagal diproses`,
-                });
-            } else {
-                SwalMessage({
-                    icon: 'warning',
-                    title: 'Sebagian Berhasil',
-                    text: `${results.success.length} berhasil, ${results.failed.length} gagal`,
-                });
-            }
+    //         if (results.failed.length === 0) {
+    //             SwalMessage({
+    //                 icon: 'success',
+    //                 title: 'Berhasil!',
+    //                 text: `Semua ${results.success.length} order berhasil diproses`,
+    //             });
+    //         } else if (results.success.length === 0) {
+    //             SwalMessage({
+    //                 icon: 'error',
+    //                 title: 'Gagal!',
+    //                 text: `Semua order gagal diproses`,
+    //             });
+    //         } else {
+    //             SwalMessage({
+    //                 icon: 'warning',
+    //                 title: 'Sebagian Berhasil',
+    //                 text: `${results.success.length} berhasil, ${results.failed.length} gagal`,
+    //             });
+    //         }
 
-            return results;
-        } catch (error: any) {
-            SwalMessage({
-                icon: 'error',
-                title: 'Gagal!',
-                text: error?.response?.data?.message || 'Terjadi kesalahan',
-            });
-        }
-    };
+    //         return results;
+    //     } catch (error: any) {
+    //         SwalMessage({
+    //             icon: 'error',
+    //             title: 'Gagal!',
+    //             text: error?.response?.data?.message || 'Terjadi kesalahan',
+    //         });
+    //     }
+    // };
 
     const handleCheckStatus = async (orderIds: number[] | number) => {
         try {
@@ -331,16 +326,16 @@ export default function useMedanPediaHooks() {
         handleDeleteMedanPediaServiceProps,
         customerserviceMedanPediaData,
 
-        target,
-        setTarget,
-        quantity,
-        setQuantity,
-        totalPrice,
-        errors,
-        isValid,
-        handleQuantityChange,
-        handleSubmitOrder,
-        handleMultiSubmitOrder,
+        // target,
+        // setTarget,
+        // quantity,
+        // setQuantity,
+        // totalPrice,
+        // errors,
+        // isValid,
+        // handleQuantityChange,
+        // handleSubmitOrder,
+        // handleMultiSubmitOrder,
         handleCheckStatus,
 
     };

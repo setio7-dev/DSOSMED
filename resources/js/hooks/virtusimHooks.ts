@@ -45,6 +45,7 @@ export default function useVirtusimHooks() {
 
     const handleShowService = async (serviceCountry: string) => {
         try {
+            if (!serviceCountry) return;
             const response = await API.get(`/virtusim/service/${serviceCountry}`);
             setServiceVirtusimData(response.data.data);
         } catch (error: any) {

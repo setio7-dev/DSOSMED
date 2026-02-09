@@ -12,11 +12,15 @@ class Transaction extends Model
     use HasFactory, Notifiable, HasApiTokens;
     protected $table = "transactions";
     protected $fillable = [
+        "name",
+        "service_id",
         "type",
         "user_id",
         "order_id",
         "price",
-        "status"
+        "quantity",
+        "status",
+        "result"
     ];
 
     /**

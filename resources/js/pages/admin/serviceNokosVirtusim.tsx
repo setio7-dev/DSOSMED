@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
 import useVirtusimHooks from '@/hooks/virtusimHooks';
@@ -54,7 +55,7 @@ const CountriesModal = ({ isOpen, onClose, countryData, selectedService }: Count
     }
 
     fetchService()
-  }, [countryData, handleShowService]);
+  }, [countryData]);
 
   if (!isOpen) return null;
 
@@ -189,7 +190,7 @@ export default function ServiceNokosVirtusim() {
     } else {
       document.body.style.overflow = 'auto';
     }
-  });
+  }, [isLoading]);
 
   const handleOpenServiceModal = async (country: ServiceVirtusimListCountryProps) => {
     setSelectedCountry(country)

@@ -7,12 +7,14 @@ import {
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { ServiceVirtusimListCountryProps, ServiceVirtusimListServiceProps } from '@/types';
 import useVirtusimHooks from '@/hooks/virtusimHooks';
+import useTransactionHooks from '@/hooks/transactionHooks';
 
 export default function NokosVirtusimOrder() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedParent, setSelectedParent] = useState<ServiceVirtusimListCountryProps | null>(null);
     const [selectedChild, setSelectedChild] = useState<ServiceVirtusimListServiceProps[]>([]);
     const { customerserviceVirtusimData } = useVirtusimHooks();
+    const { handleTransactionVirtusim } = useTransactionHooks();
 
     const filteredParents = customerserviceVirtusimData.filter(parent =>
         parent.country_name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -131,7 +133,7 @@ export default function NokosVirtusimOrder() {
                                         </div>
 
                                         <button
-                                            // onClick={() => handleOrder(country as any)}
+                                            onClick={() => handleTransactionVirtusim(Number(country.price), country as any)}
                                             disabled={Number(country.tersedia) === 0}
                                             className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${Number(country.tersedia) > 0
                                                 ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white'

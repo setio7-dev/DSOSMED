@@ -22,11 +22,15 @@ class TransactionController extends Controller
     {
         $user = Auth::user();
         $data = Transaction::create([
+            "name" => $request->name,
             "user_id" => $user->id,
+            "service_id" => $request->service_id,
+            "quantity" => $request->quantity,
             "type" => $request->type,
             "order_id" => $request->order_id,
             "price" => $request->price,
-            "status" => "proses"
+            "status" => "berhasil",
+            "result" => $request->result,
         ]);
 
         $updateUser = User::where("id", $user->id)->first();

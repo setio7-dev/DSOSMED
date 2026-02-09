@@ -30,6 +30,25 @@ class ServiceAPIController extends Controller
         return response()->json($response->json());
     }
 
+    public function virtusim_api_order(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->saldo < $request->price) {
+            return response()->json([
+                'message' => 'Saldo Anda Tidak Cukup!',
+            ], 422);
+        }
+
+        $response = Http::timeout(30)->get('https://virtusim.com/api/json.php', [
+            'api_key'  => 'CkLMBwcFoORWm0P5iThVqJf1Drsbyj',
+            'action'   => 'order',
+            'service'  => $request->service_id,
+            'operator' => 'any',
+        ]);
+
+        return response()->json($response->json());
+    }
+
     // Ada OTP
     public function adaotp_api_listservice()
     {
@@ -93,7 +112,6 @@ class ServiceAPIController extends Controller
             ]);
 
         return response()->json($response->json());
-
     }
 
     public function medanpedia_api_profile()
@@ -109,6 +127,12 @@ class ServiceAPIController extends Controller
 
     public function medanpedia_api_order(Request $request)
     {
+        $user = Auth::user();
+        if ($user->saldo < $request->price) {
+            return response()->json([
+                'message' => 'Saldo Anda Tidak Cukup!',
+            ], 422);
+        }
 
         $response = Http::asForm()->post(
             'https://api.medanpedia.co.id/order',
@@ -174,7 +198,7 @@ class ServiceAPIController extends Controller
                 ],
             ]);
         }
-        
+
         return response()->json([
             'success' => false,
             'message' => 'Format response tidak dikenali',
@@ -205,7 +229,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->get('https://wallet.iskapay.com/api/gateway/payments/'.$merchant_order_id);
+        ])->get('https://wallet.iskapay.com/api/gateway/payments/' . $merchant_order_id);
 
         return response()->json($response->json());
     }
@@ -214,7 +238,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->post('https://wallet.iskapay.com/api/gateway/payments/'.$merchant_order_id.'/cancel');
+        ])->post('https://wallet.iskapay.com/api/gateway/payments/' . $merchant_order_id . '/cancel');
 
         return response()->json($response->json());
     }
@@ -249,6 +273,19 @@ class ServiceAPIController extends Controller
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
         ])->get('https://wallet.iskapay.com/api/gateway/payments/statistics');
 
+        return response()->json($response->json());
+    }
+
+    // Jasa OTP
+    public function jasaotp_country()
+    {
+        $response = Http::get('https://api.jasaotp.id/v1/negara.php');
+        return response()->json($response->json());
+    }
+
+    public function jasaotp_operator()
+    {
+        $response = Http::get('https://api.jasaotp.id/v1/negara.php');
         return response()->json($response->json());
     }
 }

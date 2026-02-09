@@ -47,6 +47,7 @@ export default function useAdaOtpHooks() {
 
     const handleShowCountry = async (serviceParentId: number) => {
         try {
+            if (!serviceParentId) return;
             const response = await API.get(`/adaotp/services/${serviceParentId}`);
             setServiceCountryAdaOtpData(response.data.data.countries);
         } catch (error: any) {
