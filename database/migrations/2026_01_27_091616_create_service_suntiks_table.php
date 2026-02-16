@@ -15,6 +15,7 @@ return new class extends Migration {
             $table->bigInteger("service_id");
             $table->string('name')->nullable();
             $table->string('type')->nullable();
+            $table->string('api_type')->nullable();
             $table->string('category')->nullable();
             $table->bigInteger('price')->nullable();
             $table->bigInteger('min')->nullable();

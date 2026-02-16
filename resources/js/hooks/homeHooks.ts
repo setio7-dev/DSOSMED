@@ -7,7 +7,7 @@ export default function useHomeHooks() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [activeSection, setActiveSection] = useState('home');
 
-    const featureData = ['Home', 'Features', 'Services', 'Pricing', 'Testimonials'];
+    const featureData = ['Home', 'Features', 'Services'];
     const iconData = [
         { icon: Zap, title: 'Proses Otomatis', desc: 'Order diproses instant dengan sistem otomatis 24/7', delay: '100' },
         { icon: Shield, title: 'Aman & Terpercaya', desc: 'Data Anda aman dengan enkripsi tingkat enterprise', delay: '200' },

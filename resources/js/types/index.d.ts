@@ -107,6 +107,7 @@ export interface ServiceVirtusimListServiceProps {
 export interface MedanPediaServiceProps {
     id: number;
     service_id: number;
+    api_type: string;
     name: string;
     type: string;
     category: string;
@@ -129,6 +130,7 @@ export interface TransactionProps {
     status: string;
     result: number;
     user: UserProps;
+    target: string;
     created_at: Date;
 }
 
@@ -167,4 +169,73 @@ export interface CustomerServiceProps {
     name: string;
     desc: string;
     phone: string;
+}
+
+export interface JasaOtpCountryProps {
+    id_negara: number;
+    nama_negara: string;
+}
+
+export interface JasaOtpServiceDetailProps {
+    harga: number;
+    stok: number;
+    layanan: string;
+}
+
+export interface CountryServicesProps {
+    [serviceCode: string]: ServiceDetail;
+}
+
+export interface JasaOtpServiceProps {
+    operator: {
+        [countryId: string]: string[];
+    };
+    service: {
+        [countryId: string]: CountryServices;
+    };
+}
+
+export interface JasaOtpCountryProps {
+    id_negara: number;
+    nama_negara: string;
+}
+
+export interface JasaOtpServiceChildProps {
+  id: number;
+  parent_id: number;
+  code: string;
+  price: number;
+  service: string;
+  operator: string;
+  stock: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface JasaOtpServiceProps {
+  id: number;
+  country_id: number;
+  country: string;
+  children: JasaOtpServiceChildProps[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface MiraiServiceProps {
+  id: number;
+  type: "primary" | "secondary" | string;
+  category: string;
+  name: string;
+  price: number;
+  min: number;
+  max: number;
+  refill: boolean;
+  cancel: boolean;
+  refill_days: number;
+  description: string;
+  avg_quantity: number;
+  avg_time_in_seconds: number;
+  avg_time_in_human: string;
+  created_at: string;
+  updated_at: string;
 }

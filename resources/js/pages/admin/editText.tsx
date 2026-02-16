@@ -28,7 +28,7 @@ export default function EditText() {
         setSelectedGuide(e.target.value);
     };
 
-    if (loading || customerServiceData.length == 0 || guidesData.length == 0) {
+    if (loading) {
         return <SpinnerLoader/>
     }
 

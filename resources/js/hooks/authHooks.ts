@@ -59,7 +59,7 @@ export default function useAuthHooks() {
                     }, 2000);
                 } else {
                     setTimeout(() => {
-                        window.location.href = "/"
+                        window.location.href = "/customer/profile"
                     }, 2000);
                 }
             } else {

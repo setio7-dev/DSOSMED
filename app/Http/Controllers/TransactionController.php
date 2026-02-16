@@ -18,6 +18,14 @@ class TransactionController extends Controller
         ]);
     }
 
+    public function indexAdmin()
+    {
+        $data = Transaction::orderByDesc("created_at")->with("user")->get();
+        return response()->json([
+            "data" => $data
+        ]);
+    }
+
     public function store(Request $request)
     {
         $user = Auth::user();
@@ -30,6 +38,7 @@ class TransactionController extends Controller
             "order_id" => $request->order_id,
             "price" => $request->price,
             "status" => "berhasil",
+            "target" => $request->target,
             "result" => $request->result,
         ]);
 

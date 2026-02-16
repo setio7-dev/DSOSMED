@@ -283,9 +283,96 @@ class ServiceAPIController extends Controller
         return response()->json($response->json());
     }
 
-    public function jasaotp_operator()
+    public function jasaotp_operator(Request $request)
     {
-        $response = Http::get('https://api.jasaotp.id/v1/negara.php');
+        $country = $request->query('country');
+        $response = Http::get('https://api.jasaotp.id/v1/operator.php', [
+            'negara' => $country
+        ]);
+
+        return response()->json($response->json());
+    }
+
+    public function jasaotp_service(Request $request)
+    {
+        $country = $request->query('country');
+        $response = Http::get('https://api.jasaotp.id/v1/layanan.php', [
+            'negara' => $country
+        ]);
+
+        return response()->json($response->json());
+    }
+
+    public function jasaotp_order(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->saldo < $request->price) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Saldo Anda Tidak Cukup!',
+            ], 422);
+        }
+
+        $response = Http::get(
+            'https://api.jasaotp.id/v1/order.php',
+            [
+                'api_key'  => '1bfe748360e3d244b9a76ae0e285860b',
+                'negara'   => $request->country,
+                'layanan'  => $request->service,
+                'operator' => $request->operator,
+            ]
+        );
+
+        $body = $response->json();
+
+        if (!isset($body['success']) || $body['success'] !== true) {
+            return response()->json([
+                'success' => false,
+                'message' => $body['message'] ?? 'Order gagal',
+            ], 422);
+        }
+
+        return response()->json([
+            'success'  => true,
+            'message'  => $body['message'],
+            'order_id' => $body['data']['order_id'] ?? null,
+            'number'   => $body['data']['number'] ?? null,
+        ]);
+    }
+
+    // MiraiPedia
+    public function miraipedia_service()
+    {
+        $response = Http::asForm()
+            ->post('https://api.mirai-pedia.com/services', [
+                'api_key' => '12c043-0a8591-97da15-8937f4-f11a40',
+                'secret_key' => 'Ikannnnn123',
+            ]);
+
+        return response()->json($response->json());
+    }
+
+    public function miraipedia_order(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->saldo < $request->price) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Saldo Anda Tidak Cukup!',
+            ], 422);
+        }
+
+        $response = Http::asForm()
+            ->post('https://api.mirai-pedia.com/order/create', [
+                'api_key' => '12c043-0a8591-97da15-8937f4-f11a40',
+                'secret_key' => 'Ikannnnn123',
+                'service_id' => $request->service,
+                "target" => $request->target,
+                "quantity" => $request->quantity,
+            ]);
+
         return response()->json($response->json());
     }
 }

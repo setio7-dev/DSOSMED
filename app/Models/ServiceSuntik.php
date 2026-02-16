@@ -15,6 +15,7 @@ class ServiceSuntik extends Model
         'service_id',
         'name',
         'type',
+        'api_type',
         'category',
         'price',
         'min',

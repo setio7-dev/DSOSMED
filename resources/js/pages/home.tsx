@@ -7,7 +7,7 @@ import SpinnerLoader from '@/ui/SpinnerLoader';
 import { useAuth } from '@/context/authContext';
 
 export default function Home() {
-    const { isMobileMenuOpen, isScrolled, activeSection, scrollToSection, setIsMobileMenuOpen, featureData, iconData, serviceData, planData, testimonialsData } = useHomeHooks();
+    const { isMobileMenuOpen, isScrolled, activeSection, scrollToSection, setIsMobileMenuOpen, featureData, iconData, serviceData } = useHomeHooks();
     const { user, loading } = useAuth();
 
     if (loading) {
@@ -127,7 +127,7 @@ export default function Home() {
                                 <img
                                     src={home}
                                     alt="Dashboard"
-                                    className="rounded-2xl shadow-2xl border border-purple-500/20"
+                                    className="rounded-2xl"
                                 />
                             </div>
                             <div className="absolute -top-10 -right-10 w-72 h-72 bg-purple-600/30 rounded-full blur-3xl animate-pulse-slow"></div>
@@ -202,97 +202,6 @@ export default function Home() {
                     </div>
                 </div>
             </section>
-            <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16 animate-fadeInUp">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                            Pilih <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Paket</span> Terbaik
-                        </h2>
-                        <p className="text-gray-400 text-lg">
-                            Harga transparan tanpa biaya tersembunyi
-                        </p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {planData.map((plan, idx) => (
-                            <div
-                                key={idx}
-                                className={`relative p-8 rounded-2xl ${plan.popular
-                                    ? 'bg-gradient-to-br from-purple-600/20 to-purple-800/20 border-2 border-purple-500 shadow-2xl shadow-purple-500/20 scale-105'
-                                    : 'bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50'
-                                    } hover:-translate-y-2 transition-all duration-300 animate-fadeInUp delay-${plan.delay}`}
-                            >
-                                {plan.popular && (
-                                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-1 rounded-full text-sm font-semibold">
-                                        Most Popular
-                                    </div>
-                                )}
-
-                                <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                                <div className="mb-6">
-                                    <span className="text-4xl font-bold">{plan.price}</span>
-                                    {plan.price !== 'Custom' && <span className="text-gray-400">/bulan</span>}
-                                </div>
-
-                                <ul className="space-y-3 mb-8">
-                                    {plan.features.map((feature, fidx) => (
-                                        <li key={fidx} className="flex items-center gap-2 text-gray-300">
-                                            <ChevronRight className="w-5 h-5 text-purple-400 flex-shrink-0" />
-                                            {feature}
-                                        </li>
-                                    ))}
-                                </ul>
-
-                                <button className={`w-full py-3 rounded-lg font-semibold transition-all duration-300 ${plan.popular
-                                    ? 'bg-gradient-to-r from-purple-600 to-purple-800 hover:shadow-lg hover:shadow-purple-500/50'
-                                    : 'border-2 border-purple-500 hover:bg-purple-500/10'
-                                    } hover:scale-105`}>
-                                    Get Started
-                                </button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-            <section id="testimonials" className="py-20 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-16 animate-fadeInUp">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                            Apa Kata <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Mereka?</span>
-                        </h2>
-                        <p className="text-gray-400 text-lg">
-                            Testimoni dari pelanggan setia kami
-                        </p>
-                    </div>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        {testimonialsData.map((testimonial, idx) => (
-                            <div
-                                key={idx}
-                                className={`p-8 rounded-2xl bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 hover:border-purple-500/50 transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20 hover:-translate-y-2 animate-fadeInUp delay-${testimonial.delay}`}
-                            >
-                                <div className="flex items-center gap-1 mb-4">
-                                    {[...Array(5)].map((_, i) => (
-                                        <svg key={i} className="w-5 h-5 fill-yellow-400" viewBox="0 0 20 20">
-                                            <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                                        </svg>
-                                    ))}
-                                </div>
-                                <p className="text-gray-300 mb-6 leading-relaxed italic">"{testimonial.text}"</p>
-                                <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-purple-800 rounded-full flex items-center justify-center text-xl font-bold">
-                                        {testimonial.name[0]}
-                                    </div>
-                                    <div>
-                                        <div className="font-semibold">{testimonial.name}</div>
-                                        <div className="text-sm text-gray-400">{testimonial.role}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
             <section id="cta" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-900/50 to-pink-900/50">
                 <div className="max-w-4xl mx-auto text-center animate-fadeInUp">
                     <h2 className="text-3xl md:text-5xl font-bold mb-6">
@@ -306,15 +215,12 @@ export default function Home() {
                             Daftar Gratis Sekarang
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                         </button>
-                        <button className="px-8 py-4 rounded-lg font-semibold text-lg border-2 border-white hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
-                            Hubungi Sales
-                        </button>
                     </div>
                 </div>
             </section>
             <footer className="bg-gray-900 py-12 px-4 sm:px-6 lg:px-8 border-t border-gray-800">
                 <div className="max-w-7xl mx-auto">
-                    <div className="grid md:grid-cols-4 gap-8 mb-8">
+                    <div className="grid md:grid-cols-3 gap-8 mb-8">
                         <div>
                             <div className="flex items-center space-x-2 mb-4">
                                 <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-800 rounded-lg flex items-center justify-center">
@@ -326,42 +232,13 @@ export default function Home() {
                                 Solusi terlengkap untuk kebutuhan nokos dan social media marketing Anda.
                             </p>
                         </div>
-
-                        <div>
-                            <h4 className="font-semibold mb-4">Layanan</h4>
-                            <ul className="space-y-2 text-gray-400 text-sm">
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">Virtual Number</a></li>
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">SMM Panel</a></li>
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">API Access</a></li>
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">White Label</a></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="font-semibold mb-4">Perusahaan</h4>
-                            <ul className="space-y-2 text-gray-400 text-sm">
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">Tentang Kami</a></li>
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">Blog</a></li>
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">Karir</a></li>
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">Kontak</a></li>
-                            </ul>
-                        </div>
-
-                        <div>
-                            <h4 className="font-semibold mb-4">Legal</h4>
-                            <ul className="space-y-2 text-gray-400 text-sm">
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">Privacy Policy</a></li>
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">Terms of Service</a></li>
-                                <li><a href="#" className="hover:text-purple-400 transition-colors">Refund Policy</a></li>
-                            </ul>
-                        </div>
                     </div>
 
                     <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="text-gray-400 text-sm">
                             © 2026 DSOSMED. All rights reserved.
                         </p>
-                        <div className="flex gap-4">
+                        {/* <div className="flex gap-4">
                             <a href="#" className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-colors">
                                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.37h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -382,7 +259,7 @@ export default function Home() {
                                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                 </svg>
                             </a>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </footer>

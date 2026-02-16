@@ -20,7 +20,8 @@ class Transaction extends Model
         "price",
         "quantity",
         "status",
-        "result"
+        "result",
+        "target",
     ];
 
     /**

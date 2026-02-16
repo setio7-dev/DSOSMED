@@ -44,7 +44,7 @@ export default function useMedanPediaHooks() {
 
         const fetchServicesOrder = async () => {
             try {
-                const response = await API.get('/customer/service/medanpedia', {
+                const response = await API.get('/customer/service/suntik', {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -65,10 +65,11 @@ export default function useMedanPediaHooks() {
     ) => {
         try {
             const response = await API.post(
-                '/admin/service/medanpedia',
+                '/admin/service/suntik',
                 {
                     service_id: serviceData.id,
                     name: serviceData.name,
+                    api_type: "medanpedia",
                     description: serviceData.description,
                     min: serviceData.min,
                     max: serviceData.max,
@@ -119,7 +120,7 @@ export default function useMedanPediaHooks() {
     const handleUpdateMedanPediaServiceProps = async (id: number) => {
         try {
             const response = await API.put(
-                `/admin/service/medanpedia/${id}`,
+                `/admin/service/suntik/${id}`,
                 formPutMedanPedia,
                 {
                     headers: {
@@ -154,7 +155,7 @@ export default function useMedanPediaHooks() {
 
             if (result.isConfirmed) {
                 const response = await API.delete(
-                    `/admin/service/medanpedia/${id}`,
+                    `/admin/service/suntik/${id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

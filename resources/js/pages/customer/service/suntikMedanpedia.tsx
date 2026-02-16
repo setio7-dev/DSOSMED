@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 import React, { useState } from 'react';
 import {
     Search,
@@ -16,7 +17,6 @@ import {
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { MedanPediaServiceProps } from '@/types';
 import useMedanPediaHooks from '@/hooks/medanPediaHooks';
-import jsPDF from 'jspdf';
 import useTransactionHooks from '@/hooks/transactionHooks';
 
 interface TargetItem {
@@ -44,7 +44,7 @@ export default function SuntikMedanpedia() {
     const [defaultQuantity, setDefaultQuantity] = useState<string>('100');
     const [target, setTarget] = useState<string>('');
     const { customerserviceMedanPediaData } = useMedanPediaHooks();
-    const { handleTransactionMedanPedia } = useTransactionHooks();
+    const { handleTransactionSuntik } = useTransactionHooks();
 
     const filteredServices = customerserviceMedanPediaData.filter(service =>
         service.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -93,7 +93,7 @@ export default function SuntikMedanpedia() {
 
         setIsSubmitting(true);
         try {
-            const orderSubmit = await handleTransactionMedanPedia(totalPrice, selectedService, targetItems)
+            const orderSubmit = await handleTransactionSuntik(totalPrice, selectedService, targetItems)
             if (orderSubmit?.success) {
                 const receipt: OrderReceipt = {
                     serviceName: selectedService.name,
@@ -104,7 +104,7 @@ export default function SuntikMedanpedia() {
                     orderId: `ORD-${Date.now()}`,
                     timestamp: new Date().toLocaleString('id-ID'),
                 };
-    
+
                 setOrderReceipt(receipt);
                 setSelectedService(null);
                 setTarget('');
@@ -115,59 +115,122 @@ export default function SuntikMedanpedia() {
         }
     };
 
+    const wrapText = (
+        ctx: CanvasRenderingContext2D,
+        text: string,
+        x: number,
+        y: number,
+        maxWidth: number,
+        lineHeight: number
+    ) => {
+        const words = text.split(' ');
+        let line = '';
+        let currentY = y;
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            const metrics = ctx.measureText(testLine);
+
+            if (metrics.width > maxWidth && i > 0) {
+                ctx.fillText(line, x, currentY);
+                line = words[i] + ' ';
+                currentY += lineHeight;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, x, currentY);
+    };
+
+    const getLineCount = (
+        ctx: CanvasRenderingContext2D,
+        text: string,
+        maxWidth: number
+    ): number => {
+        const words = text.split(' ');
+        let line = '';
+        let lineCount = 1;
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            const metrics = ctx.measureText(testLine);
+
+            if (metrics.width > maxWidth && i > 0) {
+                lineCount++;
+                line = words[i] + ' ';
+            } else {
+                line = testLine;
+            }
+        }
+        return lineCount;
+    };
+
     const downloadReceiptPDF = () => {
         if (!orderReceipt) return;
 
-        const doc = new jsPDF();
+        const scale = 4;
+        const cssWidth = 500;
+        const cssHeight = 172;
 
-        doc.setFontSize(18);
-        doc.text('STRUK PEMBELIAN', 105, 20, { align: 'center' });
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
 
-        doc.setFontSize(10);
-        doc.text(`Order ID: ${orderReceipt.orderId}`, 20, 35);
-        doc.text(`Tanggal: ${orderReceipt.timestamp}`, 20, 42);
+        canvas.width = cssWidth * scale;
+        canvas.height = cssHeight * scale;
+        canvas.style.width = `${cssWidth}px`;
+        canvas.style.height = `${cssHeight}px`;
 
-        doc.setFontSize(12);
-        doc.text('SERVICE', 20, 55);
-        doc.setFontSize(10);
-        doc.text(orderReceipt.serviceName, 20, 62);
+        ctx.scale(scale, scale);
+        ctx.imageSmoothingEnabled = false;
 
-        doc.setFontSize(12);
-        doc.text('TARGET', 20, 75);
-        doc.setFontSize(9);
-        let yPos = 82;
-        orderReceipt.targets.forEach((item, index) => {
-            if (yPos > 270) {
-                doc.addPage();
-                yPos = 20;
-            }
-            doc.text(`${index + 1}. ${item.username} - ${item.quantity} items`, 20, yPos);
-            yPos += 7;
-        });
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, cssWidth, cssHeight);
 
-        if (yPos > 240) {
-            doc.addPage();
-            yPos = 20;
-        } else {
-            yPos += 10;
-        }
+        ctx.fillStyle = '#6e6e6e';
+        ctx.fillRect(0, 0, cssWidth, 22);
+        ctx.fillRect(0, cssHeight - 22, cssWidth, 22);
 
-        doc.setFontSize(12);
-        doc.text('RINGKASAN', 20, yPos);
-        yPos += 10;
+        ctx.font = '12px Courier New, monospace';
+        ctx.fillStyle = '#000000';
+        ctx.fillText(`Username: N/A`, 12, 15);
 
-        doc.setFontSize(10);
-        doc.text(`Total Item: ${orderReceipt.totalQuantity}`, 20, yPos);
-        yPos += 7;
-        doc.text(`${orderReceipt.totalQuantity} x ${FormatRupiah(orderReceipt.pricePerUnit)} = ${FormatRupiah(orderReceipt.totalPrice)}`, 20, yPos);
-        yPos += 7;
-        doc.text(`Total Estimasi: ${FormatRupiah(orderReceipt.totalPrice)}`, 20, yPos);
+        ctx.font = '11px Courier New, monospace';
+        ctx.fillStyle = '#ffffff';
 
-        yPos += 15;
-        doc.setFontSize(9);
-        doc.text('Terima kasih atas pembelian Anda!', 105, yPos, { align: 'center' });
+        let x = 12;
+        let y = 42;
+        const lineHeight = 14;
+        const maxWidth = cssWidth - 24;
 
-        doc.save(`receipt-${orderReceipt.orderId}.pdf`);
+        ctx.fillText(`ID Pesanan: ${orderReceipt.orderId}`, x, y);
+        y += lineHeight;
+
+        wrapText(ctx, `Layanan: ${orderReceipt.serviceName}`, x, y, maxWidth, lineHeight);
+        y += lineHeight * getLineCount(ctx, `Layanan: ${orderReceipt.serviceName}`, maxWidth);
+
+        const targetText = orderReceipt.targets.map(t => `${t.username} (${t.quantity})`).join('| ');
+        wrapText(ctx, `Target: ${targetText}`, x, y, maxWidth, lineHeight);
+        y += lineHeight * getLineCount(ctx, `Target: ${targetText}`, maxWidth);
+
+        ctx.fillText(`Jumlah Pesan: ${orderReceipt.totalQuantity}`, x, y);
+        y += lineHeight;
+
+        ctx.fillText('==============================================', x, y);
+        y += lineHeight;
+
+        ctx.fillStyle = '#00ff00';
+        ctx.fillText('Proses sedang berlangsung', x, y);
+
+        canvas.toBlob((blob) => {
+            if (!blob) return;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `resi_${orderReceipt.orderId}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }, 'image/png');
     };
 
     return (
@@ -238,7 +301,7 @@ export default function SuntikMedanpedia() {
                             className="w-full py-3 bg-purple-600 hover:bg-purple-700 rounded-xl font-semibold flex justify-center items-center gap-2 transition-all text-white"
                         >
                             <Download className="w-5 h-5" />
-                            Download Resi PDF
+                            Download Resi
                         </button>
                     </div>
                 </div>
@@ -471,11 +534,10 @@ export default function SuntikMedanpedia() {
                     <button
                         disabled={!selectedService || isSubmitting || !hasValidTargets}
                         onClick={onSubmitOrder}
-                        className={`w-full py-3 rounded-xl font-semibold flex justify-center items-center gap-2 transition-all ${
-                            selectedService && !isSubmitting && hasValidTargets
+                        className={`w-full py-3 rounded-xl font-semibold flex justify-center items-center gap-2 transition-all ${selectedService && !isSubmitting && hasValidTargets
                                 ? 'bg-purple-600 hover:bg-purple-700 text-white'
                                 : 'bg-gray-600/40 text-gray-500 cursor-not-allowed'
-                        }`}
+                            }`}
                     >
                         {isSubmitting ? (
                             <>

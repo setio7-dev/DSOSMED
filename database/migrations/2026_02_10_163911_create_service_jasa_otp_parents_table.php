@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('nokos_transactions', function (Blueprint $table) {
+        Schema::create('service_jasa_otp_parents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('service_name');
-            $table->string('total');
+            $table->integer('country_id');
+            $table->string('country');
             $table->timestamps();
         });
     }
@@ -25,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('nokos_transactions');
+        Schema::dropIfExists('service_jasa_otp_parents');
     }
 };

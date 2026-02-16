@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import CustomerDashboard from '@/components/customer/customerDashboard';
 import {
@@ -9,6 +11,8 @@ import {
     Clock,
     CheckCircle,
     XCircle,
+    ListOrdered,
+    Download,
 } from 'lucide-react';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { useAuth } from '@/context/authContext';
@@ -18,13 +22,137 @@ import { FormatDate } from '@/utils/FormatDate';
 
 export default function HistorySuntik() {
     const [searchQuery, setSearchQuery] = useState('');
-    const { loading } = useAuth();
+    const { loading, user } = useAuth();
     const { transactionData } = useTransactionHooks();
 
     const statusConfig = {
         berhasil: { label: 'Berhasil', color: 'text-green-400', bg: 'bg-green-400/20', icon: CheckCircle },
         gagal: { label: 'Gagal', color: 'text-red-400', bg: 'bg-red-400/20', icon: XCircle },
     };
+
+    const handleDownloadResi = (order: any) => {
+        const scale = 4;
+
+        const cssWidth = 500;
+        const cssHeight = 172;
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        canvas.width = cssWidth * scale;
+        canvas.height = cssHeight * scale;
+        canvas.style.width = `${cssWidth}px`;
+        canvas.style.height = `${cssHeight}px`;
+
+        ctx.scale(scale, scale);
+        ctx.imageSmoothingEnabled = false;
+
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(0, 0, cssWidth, cssHeight);
+
+        ctx.fillStyle = '#6e6e6e';
+        ctx.fillRect(0, 0, cssWidth, 22);
+        ctx.fillRect(0, cssHeight - 22, cssWidth, 22);
+
+        ctx.font = '12px Courier New, monospace';
+        ctx.fillStyle = '#000000';
+        ctx.fillText(`Username: ${user?.username || 'N/A'}`, 12, 15);
+
+        ctx.font = '11px Courier New, monospace';
+        ctx.fillStyle = '#ffffff';
+
+        let x = 12;
+        let y = 42;
+        const lineHeight = 14;
+        const maxWidth = cssWidth - 24;
+
+        ctx.fillText(`ID Pesanan: ${order.order_id}`, x, y);
+        y += lineHeight;
+
+        wrapText(ctx, `Layanan: ${order.name}`, x, y, maxWidth, lineHeight);
+        y += lineHeight * getLineCount(ctx, `Layanan: ${order.name}`, maxWidth);
+
+        wrapText(ctx, `Target: ${order.target || 'N/A'}`, x, y, maxWidth, lineHeight);
+        y += lineHeight * getLineCount(ctx, `Target: ${order.target || 'N/A'}`, maxWidth);
+
+        ctx.fillText(`Jumlah Pesan: ${order.quantity}`, x, y);
+        y += lineHeight;
+
+        ctx.fillText('==============================================', x, y);
+        y += lineHeight;
+
+        let statusText = 'Proses sedang berlangsung';
+        let statusColor = '#00ff00';
+
+        if (order.status === 'berhasil') {
+            statusText = 'Selesai';
+        } else if (order.status === 'gagal') {
+            statusText = 'Gagal';
+            statusColor = '#ff6464';
+        }
+
+        ctx.fillStyle = statusColor;
+        ctx.fillText(statusText, x, y);
+
+        canvas.toBlob((blob) => {
+            if (!blob) return;
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `resi_${order.order_id}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }, 'image/png');
+    };
+
+    const wrapText = (
+        ctx: CanvasRenderingContext2D,
+        text: string,
+        x: number,
+        y: number,
+        maxWidth: number,
+        lineHeight: number
+    ) => {
+        const words = text.split(' ');
+        let line = '';
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            if (ctx.measureText(testLine).width > maxWidth && line) {
+                ctx.fillText(line, x, y);
+                y += lineHeight;
+                line = words[i] + ' ';
+            } else {
+                line = testLine;
+            }
+        }
+
+        if (line) ctx.fillText(line, x, y);
+    };
+
+    const getLineCount = (
+        ctx: CanvasRenderingContext2D,
+        text: string,
+        maxWidth: number
+    ) => {
+        const words = text.split(' ');
+        let line = '';
+        let count = 1;
+
+        for (let i = 0; i < words.length; i++) {
+            const testLine = line + words[i] + ' ';
+            if (ctx.measureText(testLine).width > maxWidth && line) {
+                count++;
+                line = words[i] + ' ';
+            } else {
+                line = testLine;
+            }
+        }
+
+        return count;
+    };
+
 
     const filteredOrders = transactionData.filter(order => {
         const matchesSearch = order.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -36,6 +164,7 @@ export default function HistorySuntik() {
     if (loading) {
         return <SpinnerLoader />
     }
+
     return (
         <CustomerDashboard>
             <div className="p-6 space-y-6">
@@ -84,15 +213,30 @@ export default function HistorySuntik() {
                                                         <span className="capitalize">{order.type}</span>
                                                     </div>
                                                 </div>
-                                                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${statusStyle.bg}`}>
-                                                    <StatusIcon className={`w-4 h-4 ${statusStyle.color} ${order.status === 'Diproses' ? 'animate-spin' : ''}`} />
-                                                    <span className={`text-xs font-semibold ${statusStyle.color}`}>
-                                                        {statusStyle.label}
-                                                    </span>
+                                                <div className="flex items-center gap-2">
+                                                    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg ${statusStyle.bg}`}>
+                                                        <StatusIcon className={`w-4 h-4 ${statusStyle.color} ${order.status === 'Diproses' ? 'animate-spin' : ''}`} />
+                                                        <span className={`text-xs font-semibold ${statusStyle.color}`}>
+                                                            {statusStyle.label}
+                                                        </span>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleDownloadResi(order)}
+                                                        className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 rounded-lg transition-all"
+                                                        title="Download Resi"
+                                                    >
+                                                        <Download className="w-4 h-4" />
+                                                        <span className="text-xs font-semibold hidden sm:inline">Download</span>
+                                                    </button>
                                                 </div>
                                             </div>
 
-                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                                                <div className="flex items-center gap-2 text-sm">
+                                                    <ListOrdered className="w-4 h-4 text-orange-400" />
+                                                    <span className="text-gray-400">Order Id:</span>
+                                                    <span className="text-white font-semibold">{order.order_id}</span>
+                                                </div>
                                                 <div className="flex items-center gap-2 text-sm">
                                                     <Hash className="w-4 h-4 text-purple-400" />
                                                     <span className="text-gray-400">Qty:</span>

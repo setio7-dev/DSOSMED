@@ -160,7 +160,7 @@ export default function Sidebar({
             <div className="flex h-full flex-col">
                 <div className="border-b border-gray-800 p-4 sm:p-5 md:p-6">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2 sm:space-x-3">
+                        <div onClick={() => router.visit("/")} className="flex cursor-pointer items-center space-x-2 sm:space-x-3">
                             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-purple-600 to-purple-800 shadow-lg shadow-purple-500/20 sm:h-10 sm:w-10">
                                 <Zap className="h-5 w-5 sm:h-6 sm:w-6" />
                             </div>

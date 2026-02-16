@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string("price");
             $table->string("quantity")->nullable();
             $table->string("status");
+            $table->string("target")->nullable();
             $table->string("result")->nullable();
             $table->timestamps();
 

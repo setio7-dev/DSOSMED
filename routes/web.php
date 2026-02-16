@@ -20,12 +20,28 @@ Route::get('/admin/layanan/nokos-ada-otp', function () {
     return Inertia::render('admin/serviceNokosAdaOtp');
 });
 
+Route::get('/admin/layanan/nokos-jasa-otp', function () {
+    return Inertia::render('admin/serviceNokosJasaOtp');
+});
+
 Route::get('/admin/layanan/nokos-virtusim', function () {
     return Inertia::render('admin/serviceNokosVirtusim');
 });
 
-Route::get('/admin/layanan/suntik', function () {
+Route::get('/admin/layanan/suntik-medanpedia', function () {
     return Inertia::render('admin/serviceSuntik');
+});
+
+Route::get('/admin/layanan/suntik-miraipedia', function () {
+    return Inertia::render('admin/serviceSuntikMiraiPedia');
+});
+
+Route::get('/admin/layanan/pengaturan', function () {
+    return Inertia::render('admin/serviceManagement');
+});
+
+Route::get('/admin/order-layanan', function () {
+    return Inertia::render('admin/orderService');
 });
 
 Route::get('/admin/layanan/pengaturan', function () {
@@ -35,6 +51,7 @@ Route::get('/admin/layanan/pengaturan', function () {
 Route::get("/admin/edit-text", function() {
     return Inertia::render("admin/editText");
 });
+
 // Customer
 Route::get('/customer/profile', function () {
     return Inertia::render('customer/profile');

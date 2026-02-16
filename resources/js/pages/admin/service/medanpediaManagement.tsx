@@ -165,7 +165,7 @@ export default function MedanPediaManagement() {
             <div className="space-y-8">
                 <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl p-6">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-                        <h2 className="text-xl font-semibold text-purple-300">Daftar Layanan Suntik MedanPedia</h2>
+                        <h2 className="text-xl font-semibold text-purple-300">Daftar Layanan Suntik</h2>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                             <input
@@ -187,7 +187,7 @@ export default function MedanPediaManagement() {
                                             <h3 className="font-poppins-semibold text-white text-sm mb-1 truncate">
                                                 {service.name}
                                             </h3>
-                                            <p className="text-xs text-gray-400 font-poppins-regular">Dskripsi: {service.description}</p>
+                                            <p className="text-xs text-gray-400 font-poppins-regular">Deskripsi: {service.description} | Jenis API: {service.api_type}</p>
                                         </div>
                                     </div>
                                 </div>

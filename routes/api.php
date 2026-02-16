@@ -6,6 +6,7 @@ use App\Http\Controllers\GuideController;
 use App\Http\Controllers\NokosController;
 use App\Http\Controllers\ServiceAdaOtpController;
 use App\Http\Controllers\ServiceAPIController;
+use App\Http\Controllers\ServiceJasaOtpController;
 use App\Http\Controllers\ServiceSuntikController;
 use App\Http\Controllers\ServiceVirtusimController;
 use App\Http\Controllers\TransactionController;
@@ -31,6 +32,14 @@ Route::get("/medanpedia/profile", [ServiceAPIController::class, "medanpedia_api_
 Route::post("/medanpedia/order", [ServiceAPIController::class, "medanpedia_api_order"])->middleware("auth");
 Route::post("/medanpedia/status", [ServiceAPIController::class, "medanpedia_api_status"]);
 
+Route::get("/jasaotp/country", [ServiceAPIController::class, "jasaotp_country"]);
+Route::get("/jasaotp/operator", [ServiceAPIController::class, "jasaotp_operator"]);
+Route::get("/jasaotp/service", [ServiceAPIController::class, "jasaotp_service"]);
+Route::post("/jasaotp/order", [ServiceAPIController::class, "jasaotp_order"])->middleware("auth");
+
+Route::get("/miraipedia/service", [ServiceAPIController::class, "miraipedia_service"]);
+Route::post("/miraipedia/order", [ServiceAPIController::class, "miraipedia_order"])->middleware("auth");
+
 Route::post("/iskapay/payments", [ServiceAPIController::class, "iskapay_create_payment"]);
 Route::get("/iskapay/payments/{merchant_order_id}", [ServiceAPIController::class, "iskapay_payment_status"]);
 Route::post("/iskapay/payments/{merchant_order_id}/cancel", [ServiceAPIController::class, "iskapay_cancel_payment"]);
@@ -49,10 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::middleware("role:1")->prefix("/admin")->group(function () {
         Route::get("/users", [UserController::class, "index"]);
         Route::put("/users/{id}", [UserController::class, "update"]);
+        Route::get("/transaction", [TransactionController::class, "indexAdmin"]);
 
         Route::resource('/service/adaotp', ServiceAdaOtpController::class);
         Route::resource('/service/virtusim', ServiceVirtusimController::class);
-        Route::resource('/service/medanpedia', ServiceSuntikController::class);
+        Route::resource('/service/suntik', ServiceSuntikController::class);
+        Route::resource('/service/jasaotp', ServiceJasaOtpController::class);
 
         Route::resource("/guide", GuideController::class);
         Route::resource("/customer-service", CustomerServiceController::class);
@@ -61,7 +72,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix("/customer")->group(function () {
         Route::get("/service/adaotp", [ServiceAdaOtpController::class, "index"]);
         Route::get("/service/virtusim", [ServiceVirtusimController::class, "index"]);
-        Route::get("/service/medanpedia", [ServiceSuntikController::class, "index"]);
+        Route::get("/service/suntik", [ServiceSuntikController::class, "index"]);
+        Route::get("/service/jasaotp", [ServiceJasaOtpController::class, "index"]);
 
         Route::resource("/transaction", TransactionController::class);
         Route::get("/guide/{id}", [GuideController::class,"show"]);
