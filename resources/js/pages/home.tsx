@@ -7,7 +7,7 @@ import SpinnerLoader from '@/ui/SpinnerLoader';
 import { useAuth } from '@/context/authContext';
 
 export default function Home() {
-    const { isMobileMenuOpen, isScrolled, activeSection, scrollToSection, setIsMobileMenuOpen, featureData, iconData, serviceData } = useHomeHooks();
+    const { isMobileMenuOpen, activeSection, scrollToSection, setIsMobileMenuOpen, featureData, iconData, serviceData } = useHomeHooks();
     const { user, loading } = useAuth();
 
     if (loading) {
@@ -16,7 +16,7 @@ export default function Home() {
     
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
-            <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-gray-900/95 backdrop-blur-lg shadow-lg' : 'bg-transparent'}`}>
+            <nav className={`fixed w-full z-50 transition-all duration-300 bg-gray-900/95 backdrop-blur-lg shadow-lg`}>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16 md:h-20">
                         <div className="flex items-center space-x-2 animate-fadeInLeft">
@@ -55,7 +55,7 @@ export default function Home() {
                 {isMobileMenuOpen && (
                     <div className="md:hidden bg-gray-900/98 backdrop-blur-lg border-t border-gray-800 animate-fadeInUp">
                         <div className="px-4 py-6 space-y-4">
-                            {['Home', 'Features', 'Services', 'Pricing', 'Testimonials'].map((item) => (
+                            {featureData.map((item) => (
                                 <button
                                     key={item}
                                     onClick={() => scrollToSection(item.toLowerCase())}
@@ -69,7 +69,7 @@ export default function Home() {
                                     onClick={() => scrollToSection('cta')}
                                     className="w-full bg-gradient-to-r from-purple-600 to-purple-800 px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
                                 >
-                                    Login
+                                    {user ? "Dashboard" : "Login"}
                                 </button>
                             </Link>
                         </div>
@@ -122,7 +122,7 @@ export default function Home() {
                                 </div>
                             </div>
                         </div>
-                        <div className="relative animate-fadeInRight">
+                        <div className="relative lg:block hidden animate-fadeInRight">
                             <div className="relative z-10 animate-float">
                                 <img
                                     src={home}

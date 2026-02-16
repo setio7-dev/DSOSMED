@@ -51,7 +51,7 @@ export default function NokosAdaOtpOrder() {
 
             {!selectedParent && (
                 <div>
-                    <h2 className="text-lg font-semibold mb-4 text-gray-200">Pilih Platform Berdasarkan Layanan</h2>
+                    <h2 className="lg:text-lg text-sm font-semibold mb-4 text-gray-200">Pilih Platform Berdasarkan Layanan</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                         {filteredParents.length > 0 ? (
                             filteredParents.map((parent) => (

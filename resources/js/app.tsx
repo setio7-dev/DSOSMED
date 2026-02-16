@@ -6,8 +6,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import AuthProvider from './context/authContext';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
-
+const appName = "Dsosmed Website"
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
     resolve: (name) =>

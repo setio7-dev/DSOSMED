@@ -26,16 +26,16 @@ export default function Deposit() {
         <div>
             <CustomerDashboard title="Deposit">
                 <div className="h-full space-y-0">
-                    <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-8 shadow-xl">
-                        <div className="flex items-center gap-4">
-                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20">
-                                <Wallet className="h-8 w-8 text-white" />
+                    <div className="bg-gradient-to-r from-purple-600 to-purple-800 p-4 sm:p-8 shadow-xl">
+                        <div className="flex items-center gap-3 sm:gap-4">
+                            <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-xl sm:rounded-2xl bg-white/20 flex-shrink-0">
+                                <Wallet className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
                             </div>
-                            <div>
-                                <h1 className="text-3xl font-bold text-white">
+                            <div className="min-w-0 flex-1">
+                                <h1 className="text-xl sm:text-3xl font-bold text-white">
                                     DEPOSIT
                                 </h1>
-                                <p className="text-purple-100">
+                                <p className="text-sm sm:text-base text-purple-100">
                                     Isi saldo akun Anda dengan mudah dan cepat
                                 </p>
                             </div>
@@ -43,34 +43,34 @@ export default function Deposit() {
                     </div>
 
                     {paymentData && (
-                        <div className="border-b border-purple-500/30 bg-gradient-to-br from-purple-900/40 to-purple-800/40 p-8">
+                        <div className="border-b border-purple-500/30 bg-gradient-to-br from-purple-900/40 to-purple-800/40 p-4 sm:p-8">
                             <div className="mx-auto max-w-2xl">
-                                <div className="mb-6 text-center">
-                                    <h3 className="text-2xl font-bold text-purple-200">
+                                <div className="mb-4 sm:mb-6 text-center">
+                                    <h3 className="text-xl sm:text-2xl font-bold text-purple-200">
                                         QR Code Pembayaran
                                     </h3>
-                                    <p className="mt-2 text-purple-300">
+                                    <p className="mt-2 text-sm sm:text-base text-purple-300">
                                         Scan QR code di bawah ini untuk
                                         melakukan pembayaran
                                     </p>
                                 </div>
 
-                                <div className="rounded-2xl border-2 border-purple-400/50 bg-white p-8 shadow-2xl">
-                                    <div className="flex flex-col items-center gap-6">
-                                        <div className="rounded-xl bg-white p-4 shadow-lg">
+                                <div className="rounded-xl sm:rounded-2xl border-2 border-purple-400/50 bg-white p-4 sm:p-8 shadow-2xl">
+                                    <div className="flex flex-col items-center gap-4 sm:gap-6">
+                                        <div className="rounded-lg sm:rounded-xl bg-white p-3 sm:p-4 shadow-lg">
                                             <img
                                                 src={paymentData.qr_code}
                                                 alt="QR Code Pembayaran"
-                                                className="h-64 w-64 object-contain"
+                                                className="h-48 w-48 sm:h-64 sm:w-64 object-contain"
                                             />
                                         </div>
 
-                                        <div className="w-full space-y-3 rounded-xl bg-purple-50 p-6">
+                                        <div className="w-full space-y-2 sm:space-y-3 rounded-lg sm:rounded-xl bg-purple-50 p-4 sm:p-6">
                                             <div className="flex justify-between border-b border-purple-200 pb-2">
-                                                <span className="font-semibold text-gray-700">
+                                                <span className="text-sm sm:text-base font-semibold text-gray-700">
                                                     Nominal:
                                                 </span>
-                                                <span className="text-xl font-bold text-purple-700">
+                                                <span className="text-lg sm:text-xl font-bold text-purple-700">
                                                     Rp{' '}
                                                     {Number(
                                                         paymentData.amount,
@@ -78,11 +78,11 @@ export default function Deposit() {
                                                 </span>
                                             </div>
                                             <div className="flex justify-between border-b border-purple-200 pb-2">
-                                                <span className="font-semibold text-gray-700">
+                                                <span className="text-sm sm:text-base font-semibold text-gray-700">
                                                     Status:
                                                 </span>
                                                 <span
-                                                    className={`rounded-full px-3 py-1 text-sm font-bold ${
+                                                    className={`rounded-full px-2 sm:px-3 py-1 text-xs sm:text-sm font-bold ${
                                                         paymentData.status ===
                                                         'paid'
                                                             ? 'bg-green-100 text-green-700'
@@ -97,11 +97,11 @@ export default function Deposit() {
                                                 </span>
                                             </div>
                                             {paymentData.transaction_id && (
-                                                <div className="flex justify-between">
-                                                    <span className="font-semibold text-gray-700">
+                                                <div className="flex justify-between gap-2">
+                                                    <span className="text-sm sm:text-base font-semibold text-gray-700 flex-shrink-0">
                                                         ID Transaksi:
                                                     </span>
-                                                    <span className="font-mono text-sm text-gray-600">
+                                                    <span className="font-mono text-xs sm:text-sm text-gray-600 break-all text-right">
                                                         {
                                                             paymentData.transaction_id
                                                         }
@@ -110,10 +110,10 @@ export default function Deposit() {
                                             )}
                                         </div>
 
-                                        <div className="w-full rounded-lg border border-yellow-400 bg-yellow-50 p-4">
-                                            <div className="flex gap-3">
-                                                <AlertCircle className="h-5 w-5 flex-shrink-0 text-yellow-600" />
-                                                <div className="text-sm text-yellow-800">
+                                        <div className="w-full rounded-lg border border-yellow-400 bg-yellow-50 p-3 sm:p-4">
+                                            <div className="flex gap-2 sm:gap-3">
+                                                <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-yellow-600 mt-0.5" />
+                                                <div className="text-xs sm:text-sm text-yellow-800">
                                                     <p className="font-semibold">
                                                         Penting:
                                                     </p>
@@ -134,16 +134,16 @@ export default function Deposit() {
                         </div>
                     )}
 
-                    <div className="border-b border-blue-500/30 bg-blue-500/10 p-8">
-                        <div className="flex gap-4">
-                            <Info className="mt-1 h-6 w-6 flex-shrink-0 text-blue-400" />
-                            <div className="flex-1 space-y-3">
-                                <h3 className="text-xl font-bold text-blue-300">
+                    <div className="border-b border-blue-500/30 bg-blue-500/10 p-4 sm:p-8">
+                        <div className="flex gap-3 sm:gap-4">
+                            <Info className="mt-1 h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 text-blue-400" />
+                            <div className="flex-1 space-y-2 sm:space-y-3">
+                                <h3 className="text-lg sm:text-xl font-bold text-blue-300">
                                     Cara Deposit:
                                 </h3>
-                                <ol className="space-y-3 text-gray-300">
-                                    <li className="flex gap-3">
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/30 text-sm font-bold text-blue-400">
+                                <ol className="space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-300">
+                                    <li className="flex gap-2 sm:gap-3">
+                                        <span className="flex h-6 w-6 sm:h-7 sm:w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/30 text-xs sm:text-sm font-bold text-blue-400">
                                             1
                                         </span>
                                         <span className="pt-0.5">
@@ -154,8 +154,8 @@ export default function Deposit() {
                                             yang tersedia.
                                         </span>
                                     </li>
-                                    <li className="flex gap-3">
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/30 text-sm font-bold text-blue-400">
+                                    <li className="flex gap-2 sm:gap-3">
+                                        <span className="flex h-6 w-6 sm:h-7 sm:w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/30 text-xs sm:text-sm font-bold text-blue-400">
                                             2
                                         </span>
                                         <span className="pt-0.5">
@@ -165,8 +165,8 @@ export default function Deposit() {
                                             sudah benar.
                                         </span>
                                     </li>
-                                    <li className="flex gap-3">
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/30 text-sm font-bold text-blue-400">
+                                    <li className="flex gap-2 sm:gap-3">
+                                        <span className="flex h-6 w-6 sm:h-7 sm:w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/30 text-xs sm:text-sm font-bold text-blue-400">
                                             3
                                         </span>
                                         <span className="pt-0.5">
@@ -178,8 +178,8 @@ export default function Deposit() {
                                             waktu.
                                         </span>
                                     </li>
-                                    <li className="flex gap-3">
-                                        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/30 text-sm font-bold text-blue-400">
+                                    <li className="flex gap-2 sm:gap-3">
+                                        <span className="flex h-6 w-6 sm:h-7 sm:w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/30 text-xs sm:text-sm font-bold text-blue-400">
                                             4
                                         </span>
                                         <span className="pt-0.5">
@@ -196,16 +196,16 @@ export default function Deposit() {
                         </div>
                     </div>
 
-                    <div className="border-b border-yellow-500/30 bg-yellow-500/10 p-8">
-                        <div className="flex gap-4">
-                            <AlertCircle className="mt-1 h-6 w-6 flex-shrink-0 text-yellow-400" />
-                            <div className="flex-1 space-y-3">
-                                <h3 className="text-xl font-bold text-yellow-300">
+                    <div className="border-b border-yellow-500/30 bg-yellow-500/10 p-4 sm:p-8">
+                        <div className="flex gap-3 sm:gap-4">
+                            <AlertCircle className="mt-1 h-5 w-5 sm:h-6 sm:w-6 flex-shrink-0 text-yellow-400" />
+                            <div className="flex-1 space-y-2 sm:space-y-3">
+                                <h3 className="text-lg sm:text-xl font-bold text-yellow-300">
                                     Informasi Penting:
                                 </h3>
-                                <ul className="space-y-2 text-gray-300">
+                                <ul className="space-y-2 text-sm sm:text-base text-gray-300">
                                     <li className="flex gap-2">
-                                        <span className="text-yellow-400">
+                                        <span className="text-yellow-400 flex-shrink-0">
                                             •
                                         </span>
                                         <span>
@@ -214,7 +214,7 @@ export default function Deposit() {
                                         </span>
                                     </li>
                                     <li className="flex gap-2">
-                                        <span className="text-yellow-400">
+                                        <span className="text-yellow-400 flex-shrink-0">
                                             •
                                         </span>
                                         <span>
@@ -224,7 +224,7 @@ export default function Deposit() {
                                         </span>
                                     </li>
                                     <li className="flex gap-2">
-                                        <span className="text-yellow-400">
+                                        <span className="text-yellow-400 flex-shrink-0">
                                             •
                                         </span>
                                         <span>
@@ -233,7 +233,7 @@ export default function Deposit() {
                                         </span>
                                     </li>
                                     <li className="flex gap-2">
-                                        <span className="text-yellow-400">
+                                        <span className="text-yellow-400 flex-shrink-0">
                                             •
                                         </span>
                                         <span>
@@ -242,7 +242,7 @@ export default function Deposit() {
                                         </span>
                                     </li>
                                     <li className="flex gap-2">
-                                        <span className="text-yellow-400">
+                                        <span className="text-yellow-400 flex-shrink-0">
                                             •
                                         </span>
                                         <span>
@@ -255,15 +255,15 @@ export default function Deposit() {
                         </div>
                     </div>
 
-                    <div className="border-b border-gray-700 bg-gray-800/50 p-8">
-                        <h3 className="mb-6 text-2xl font-bold text-gray-200">
+                    <div className="border-b border-gray-700 bg-gray-800/50 p-4 sm:p-8">
+                        <h3 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-gray-200">
                             Pilih Nominal Cepat
                         </h3>
-                        <p className="mb-6 text-gray-400">
+                        <p className="mb-4 sm:mb-6 text-sm sm:text-base text-gray-400">
                             Klik salah satu nominal di bawah ini untuk mengisi
                             otomatis jumlah deposit yang Anda inginkan.
                         </p>
-                        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-3 sm:gap-4">
                             {quickAmounts.map((item) => (
                                 <button
                                     key={item.value}
@@ -271,7 +271,7 @@ export default function Deposit() {
                                         handleQuickAmount(item.value)
                                     }
                                     disabled={loading || !!paymentData}
-                                    className={`rounded-xl px-6 py-4 text-lg font-bold transition-all duration-200 ${
+                                    className={`rounded-lg sm:rounded-xl px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg font-bold transition-all duration-200 ${
                                         selectedAmount === item.value
                                             ? 'scale-95 bg-gradient-to-r from-purple-600 to-purple-700 text-white shadow-xl ring-2 shadow-purple-500/50 ring-purple-400'
                                             : 'border-2 border-gray-600 bg-gray-700/50 text-gray-300 hover:border-purple-500 hover:bg-gray-700'
@@ -283,18 +283,18 @@ export default function Deposit() {
                         </div>
                     </div>
 
-                    <div className="bg-gray-800/50 p-8">
-                        <h3 className="mb-6 text-2xl font-bold text-gray-200">
+                    <div className="bg-gray-800/50 p-4 sm:p-8">
+                        <h3 className="mb-4 sm:mb-6 text-xl sm:text-2xl font-bold text-gray-200">
                             Atau Masukkan Jumlah Sendiri
                         </h3>
-                        <div className="mb-6 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4">
-                            <div className="flex items-start gap-3">
-                                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-yellow-400" />
+                        <div className="mb-4 sm:mb-6 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-3 sm:p-4">
+                            <div className="flex items-start gap-2 sm:gap-3">
+                                <AlertCircle className="mt-0.5 h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0 text-yellow-400" />
                                 <div className="flex-1">
-                                    <p className="font-semibold text-yellow-300">
+                                    <p className="text-sm sm:text-base font-semibold text-yellow-300">
                                         Ketentuan Input Manual:
                                     </p>
-                                    <p className="mt-1 text-sm text-gray-400">
+                                    <p className="mt-1 text-xs sm:text-sm text-gray-400">
                                         Minimal Rp2.000 dan maksimal
                                         Rp10.000.000. Anda boleh menggunakan
                                         tanda titik (.) atau koma (,) sebagai
@@ -306,13 +306,13 @@ export default function Deposit() {
                             </div>
                         </div>
 
-                        <div className="space-y-6">
+                        <div className="space-y-4 sm:space-y-6">
                             <div>
-                                <label className="mb-3 block text-lg font-semibold text-gray-300">
+                                <label className="mb-2 sm:mb-3 block text-base sm:text-lg font-semibold text-gray-300">
                                     Jumlah Deposit
                                 </label>
                                 <div className="relative">
-                                    <span className="absolute top-1/2 left-5 -translate-y-1/2 text-xl font-bold text-gray-400">
+                                    <span className="absolute top-1/2 left-4 sm:left-5 -translate-y-1/2 text-lg sm:text-xl font-bold text-gray-400">
                                         Rp
                                     </span>
                                     <input
@@ -321,13 +321,13 @@ export default function Deposit() {
                                         onChange={handleAmountChange}
                                         placeholder="0"
                                         disabled={loading || !!paymentData}
-                                        className="w-full rounded-xl border-2 border-gray-600 bg-gray-900/70 py-5 pr-6 pl-16 text-xl font-semibold text-white placeholder-gray-500 transition-all focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="w-full rounded-lg sm:rounded-xl border-2 border-gray-600 bg-gray-900/70 py-4 sm:py-5 pr-4 sm:pr-6 pl-12 sm:pl-16 text-lg sm:text-xl font-semibold text-white placeholder-gray-500 transition-all focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                     />
                                 </div>
                                 {amount &&
                                     parseInt(amount.replace(/[.,]/g, '')) >=
                                         2000 && (
-                                        <p className="mt-2 text-sm text-green-400">
+                                        <p className="mt-2 text-xs sm:text-sm text-green-400">
                                             ✓ Jumlah deposit: Rp{' '}
                                             {parseInt(
                                                 amount.replace(/[.,]/g, ''),
@@ -337,18 +337,18 @@ export default function Deposit() {
                                 {amount &&
                                     parseInt(amount.replace(/[.,]/g, '')) <
                                         2000 && (
-                                        <p className="mt-2 text-sm text-red-400">
+                                        <p className="mt-2 text-xs sm:text-sm text-red-400">
                                             ✗ Minimal deposit Rp 2.000
                                         </p>
                                     )}
                             </div>
 
-                            <div className="flex gap-4">
+                            <div className="flex gap-3 sm:gap-4">
                                 {!paymentData && (
                                     <button
                                         onClick={handleDeposit}
                                         disabled={loading}
-                                        className="flex-1 rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 px-8 py-5 text-xl font-bold text-white shadow-xl shadow-purple-500/40 transition-all duration-200 hover:from-purple-700 hover:to-purple-800 hover:shadow-2xl hover:shadow-purple-500/60 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex-1 rounded-lg sm:rounded-xl bg-gradient-to-r from-purple-600 to-purple-700 px-6 sm:px-8 py-4 sm:py-5 text-lg sm:text-xl font-bold text-white shadow-xl shadow-purple-500/40 transition-all duration-200 hover:from-purple-700 hover:to-purple-800 hover:shadow-2xl hover:shadow-purple-500/60 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {loading
                                             ? 'Memproses...'
@@ -360,7 +360,7 @@ export default function Deposit() {
                                     <button
                                         onClick={handleCancel}
                                         disabled={loading}
-                                        className="flex-1 rounded-xl border-2 border-red-500 bg-red-500/10 px-8 py-5 text-xl font-bold text-red-400 transition-all duration-200 hover:bg-red-500/20 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+                                        className="flex-1 rounded-lg sm:rounded-xl border-2 border-red-500 bg-red-500/10 px-6 sm:px-8 py-4 sm:py-5 text-lg sm:text-xl font-bold text-red-400 transition-all duration-200 hover:bg-red-500/20 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
                                     >
                                         {loading
                                             ? 'Membatalkan...'
@@ -371,44 +371,44 @@ export default function Deposit() {
                         </div>
                     </div>
 
-                    <div className="border-t border-gray-700 bg-gray-900/50 p-8">
-                        <h3 className="mb-6 text-xl font-bold text-gray-200">
+                    <div className="border-t border-gray-700 bg-gray-900/50 p-4 sm:p-8">
+                        <h3 className="mb-4 sm:mb-6 text-lg sm:text-xl font-bold text-gray-200">
                             Status Transaksi Deposit
                         </h3>
-                        <div className="grid gap-4 sm:grid-cols-3">
-                            <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-5">
-                                <div className="mb-3 flex items-center gap-3">
-                                    <Clock className="h-6 w-6 text-yellow-400" />
-                                    <h4 className="font-bold text-yellow-300">
+                        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-3">
+                            <div className="rounded-lg sm:rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4 sm:p-5">
+                                <div className="mb-2 sm:mb-3 flex items-center gap-2 sm:gap-3">
+                                    <Clock className="h-5 w-5 sm:h-6 sm:w-6 text-yellow-400 flex-shrink-0" />
+                                    <h4 className="text-sm sm:text-base font-bold text-yellow-300">
                                         Pending
                                     </h4>
                                 </div>
-                                <p className="text-sm text-gray-400">
+                                <p className="text-xs sm:text-sm text-gray-400">
                                     Menunggu pembayaran dari Anda. Segera
                                     lakukan transfer sesuai nominal yang
                                     tertera.
                                 </p>
                             </div>
-                            <div className="rounded-xl border border-green-500/30 bg-green-500/10 p-5">
-                                <div className="mb-3 flex items-center gap-3">
-                                    <CheckCircle className="h-6 w-6 text-green-400" />
-                                    <h4 className="font-bold text-green-300">
+                            <div className="rounded-lg sm:rounded-xl border border-green-500/30 bg-green-500/10 p-4 sm:p-5">
+                                <div className="mb-2 sm:mb-3 flex items-center gap-2 sm:gap-3">
+                                    <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-green-400 flex-shrink-0" />
+                                    <h4 className="text-sm sm:text-base font-bold text-green-300">
                                         Success
                                     </h4>
                                 </div>
-                                <p className="text-sm text-gray-400">
+                                <p className="text-xs sm:text-sm text-gray-400">
                                     Pembayaran berhasil diterima dan saldo sudah
                                     ditambahkan ke akun Anda.
                                 </p>
                             </div>
-                            <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-5">
-                                <div className="mb-3 flex items-center gap-3">
-                                    <XCircle className="h-6 w-6 text-red-400" />
-                                    <h4 className="font-bold text-red-300">
+                            <div className="rounded-lg sm:rounded-xl border border-red-500/30 bg-red-500/10 p-4 sm:p-5">
+                                <div className="mb-2 sm:mb-3 flex items-center gap-2 sm:gap-3">
+                                    <XCircle className="h-5 w-5 sm:h-6 sm:w-6 text-red-400 flex-shrink-0" />
+                                    <h4 className="text-sm sm:text-base font-bold text-red-300">
                                         Failed/Cancelled
                                     </h4>
                                 </div>
-                                <p className="text-sm text-gray-400">
+                                <p className="text-xs sm:text-sm text-gray-400">
                                     Transaksi dibatalkan atau gagal. Silakan
                                     buat deposit baru jika diperlukan.
                                 </p>
