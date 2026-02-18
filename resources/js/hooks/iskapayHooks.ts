@@ -9,7 +9,7 @@ export default function useDepositHooks() {
     const [loading, setLoading] = useState(false);
     const [paymentData, setPaymentData] = useState<any>(null);
     const token = localStorage.getItem('token');
-    const MOCK_PAID = true;
+    const MOCK_PAID = false;
 
     const quickAmounts = [
         { value: 5000, label: 'Rp 5.000' },
