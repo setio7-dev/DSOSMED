@@ -61,6 +61,10 @@ Route::get('/customer/nokos/order', function () {
     return Inertia::render('customer/nokosOrder');
 });
 
+Route::get('/customer/nokos/otp', function () {
+    return Inertia::render('customer/nokosOtp');
+});
+
 Route::get('/customer/nokos/history', function () {
     return Inertia::render('customer/historyNokos');
 });

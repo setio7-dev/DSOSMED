@@ -40,9 +40,9 @@ class ServiceAPIController extends Controller
         }
 
         $response = Http::timeout(30)->get('https://virtusim.com/api/json.php', [
-            'api_key'  => 'CkLMBwcFoORWm0P5iThVqJf1Drsbyj',
-            'action'   => 'order',
-            'service'  => $request->service_id,
+            'api_key' => 'CkLMBwcFoORWm0P5iThVqJf1Drsbyj',
+            'action' => 'order',
+            'service' => $request->service_id,
             'operator' => 'any',
         ]);
 
@@ -70,34 +70,61 @@ class ServiceAPIController extends Controller
 
     public function adaotp_api_order(Request $request)
     {
+        // dd(
+        //     $request->header('Authorization'),
+        //     auth()->user()
+        // );
         $user = Auth::user();
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'User null bro',
+            ], 401);
+        }
+
         if ($user->saldo < $request->price) {
             return response()->json([
                 'message' => 'Saldo Anda Tidak Cukup!',
             ], 422);
         }
 
-        $response = Http::withHeaders([
-            'Authorization' => 'Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE',
-            'Accept' => 'application/json',
-        ])->withOptions([
-            'query' => [
+        $response = Http::asForm()->post(
+            'https://adaotp.com/api/v1/orders',
+            [
+                'apikey' => 'Wwnpfj17qfJERz7uDhAIC28rTw779RRE',
                 'country' => (int) $request->country,
                 'service_id' => (int) $request->service_id,
-            ],
-        ])->post('https://adaotp.com/api/v1/orders');
+            ]
+        );
 
-        return response()->json([
-            'data' => $response->json(),
-            'status' => $response->status(),
-        ]);
+        return response()->json($response->json(), $response->status());
     }
 
     public function ada_otp_getorders()
     {
         $response = Http::withHeaders([
             'Authorization' => 'Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE',
+            'Accept' => 'application/json',
         ])->get('https://adaotp.com/api/v1/orders/active');
+
+        return response()->json($response->json());
+    }
+
+    public function adaotp_cancel_order($order_id)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE',
+            'Accept' => 'application/json',
+        ])->delete("https://adaotp.com/api/v1/orders/{$order_id}");
+
+        return response()->json($response->json());
+    }
+
+    public function adaotp_finish_order($order_id)
+    {
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE',
+        ])->post("https://adaotp.com/api/v1/orders/{$order_id}/finish");
 
         return response()->json($response->json());
     }
@@ -229,7 +256,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->get('https://wallet.iskapay.com/api/gateway/payments/' . $merchant_order_id);
+        ])->get('https://wallet.iskapay.com/api/gateway/payments/'.$merchant_order_id);
 
         return response()->json($response->json());
     }
@@ -238,7 +265,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->post('https://wallet.iskapay.com/api/gateway/payments/' . $merchant_order_id . '/cancel');
+        ])->post('https://wallet.iskapay.com/api/gateway/payments/'.$merchant_order_id.'/cancel');
 
         return response()->json($response->json());
     }
@@ -280,6 +307,7 @@ class ServiceAPIController extends Controller
     public function jasaotp_country()
     {
         $response = Http::get('https://api.jasaotp.id/v1/negara.php');
+
         return response()->json($response->json());
     }
 
@@ -287,7 +315,7 @@ class ServiceAPIController extends Controller
     {
         $country = $request->query('country');
         $response = Http::get('https://api.jasaotp.id/v1/operator.php', [
-            'negara' => $country
+            'negara' => $country,
         ]);
 
         return response()->json($response->json());
@@ -297,7 +325,7 @@ class ServiceAPIController extends Controller
     {
         $country = $request->query('country');
         $response = Http::get('https://api.jasaotp.id/v1/layanan.php', [
-            'negara' => $country
+            'negara' => $country,
         ]);
 
         return response()->json($response->json());
@@ -317,16 +345,16 @@ class ServiceAPIController extends Controller
         $response = Http::get(
             'https://api.jasaotp.id/v1/order.php',
             [
-                'api_key'  => '1bfe748360e3d244b9a76ae0e285860b',
-                'negara'   => $request->country,
-                'layanan'  => $request->service,
+                'api_key' => '1bfe748360e3d244b9a76ae0e285860b',
+                'negara' => $request->country,
+                'layanan' => $request->service,
                 'operator' => $request->operator,
             ]
         );
 
         $body = $response->json();
 
-        if (!isset($body['success']) || $body['success'] !== true) {
+        if (! isset($body['success']) || $body['success'] !== true) {
             return response()->json([
                 'success' => false,
                 'message' => $body['message'] ?? 'Order gagal',
@@ -334,10 +362,10 @@ class ServiceAPIController extends Controller
         }
 
         return response()->json([
-            'success'  => true,
-            'message'  => $body['message'],
+            'success' => true,
+            'message' => $body['message'],
             'order_id' => $body['data']['order_id'] ?? null,
-            'number'   => $body['data']['number'] ?? null,
+            'number' => $body['data']['number'] ?? null,
         ]);
     }
 
@@ -369,8 +397,8 @@ class ServiceAPIController extends Controller
                 'api_key' => '12c043-0a8591-97da15-8937f4-f11a40',
                 'secret_key' => 'Ikannnnn123',
                 'service_id' => $request->service,
-                "target" => $request->target,
-                "quantity" => $request->quantity,
+                'target' => $request->target,
+                'quantity' => $request->quantity,
             ]);
 
         return response()->json($response->json());

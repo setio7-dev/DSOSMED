@@ -14,7 +14,7 @@ export default function NokosAdaOtpOrder() {
     const [selectedParent, setSelectedParent] = useState<ServicesAdaOtpProps | null>(null);
     const [selectedChild, setSelectedChild] = useState<ServiceCountryAdaOtpProps[]>([]);
     const { customerServicesAdaOtpData } = useAdaOtpHooks();
-    const { handleTransactionAdaOtp } = useTransactionHooks();
+    const { handleTransactionAdaOtp, loadingId, setLoadingId } = useTransactionHooks();
 
     const filteredParents = customerServicesAdaOtpData.filter(parent =>
         parent.text.toLowerCase().includes(searchQuery.toLowerCase())
@@ -133,16 +133,41 @@ export default function NokosAdaOtpOrder() {
                                         </div>
 
                                         <button
-                                            onClick={() => handleTransactionAdaOtp(Number(country.price), String(country.service_id), selectedParent)}
-                                            disabled={Number(country.stock) === 0}
+                                            onClick={async () => {
+                                                setLoadingId(country.id);
+                                                try {
+                                                    await handleTransactionAdaOtp(
+                                                         country.id,
+                                                        Number(country.price),
+                                                        String(country.id),
+                                                        String(selectedParent.id),
+                                                        selectedParent.text
+                                                    );
+                                                } finally {
+                                                    setLoadingId(null);
+                                                }
+                                            }}
+                                            disabled={Number(country.stock) === 0 || loadingId === country.id}
                                             className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all ${Number(country.stock) > 0
-                                                ? 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white'
-                                                : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
+                                                    ? loadingId === country.id
+                                                        ? 'bg-purple-800 text-white cursor-wait'
+                                                        : 'bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white'
+                                                    : 'bg-gray-600/50 text-gray-400 cursor-not-allowed'
                                                 }`}
                                         >
-                                            <ShoppingCart className="w-4 h-4" />
-                                            {Number(country.stock) > 0 ? 'Order' : 'Habis'}
+                                            {loadingId === country.id ? (
+                                                <>
+                                                    <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+                                                    Processing...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <ShoppingCart className="w-4 h-4" />
+                                                    {Number(country.stock) > 0 ? 'Order' : 'Habis'}
+                                                </>
+                                            )}
                                         </button>
+
                                     </div>
                                 </div>
                             ))

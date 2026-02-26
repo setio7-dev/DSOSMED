@@ -48,6 +48,19 @@ export interface ServicesAdaOtpProps {
     children: ServiceCountryAdaOtpProps[];
 }
 
+interface AdaOtpOrderApiProps {
+    id: number;
+    number: string;
+    service: {
+        id: number;
+        name: string;
+    };
+    has_sms: boolean;
+    sms: string | null;
+    status: string;
+    remaining_time: number;
+}
+
 export interface ServiceCountryAdaOtpProps {
     id: number;
     service_id: number;

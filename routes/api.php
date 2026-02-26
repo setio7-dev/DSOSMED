@@ -24,8 +24,9 @@ Route::post("/virtusim/order", [ServiceAPIController::class, "virtusim_api_order
 
 Route::get("/adaotp/services", [ServiceAPIController::class, "adaotp_api_listservice"]);
 Route::get("/adaotp/services/{id}", [ServiceAPIController::class, "adaotp_api_listcountry"]);
-Route::post("/adaotp/order", [ServiceAPIController::class, "adaotp_api_order"])->middleware("auth");
 Route::get("/adaotp/orders/status", [ServiceAPIController::class, "ada_otp_getorders"]);
+Route::delete("/adaotp/orders/cancel/{order_id}", [ServiceAPIController::class, "adaotp_cancel_order"]);
+Route::post("/adaotp/orders/finish/{order_id}", [ServiceAPIController::class, "adaotp_finish_order"]);
 
 Route::get("/medanpedia/services", [ServiceAPIController::class, "medanpedia_api_services"]);
 Route::get("/medanpedia/profile", [ServiceAPIController::class, "medanpedia_api_profile"]);
@@ -46,9 +47,10 @@ Route::post("/iskapay/payments/{merchant_order_id}/cancel", [ServiceAPIControlle
 
 Route::get('/history', [DepositController::class, 'index']);
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
+    Route::post("/adaotp/order", [ServiceAPIController::class, "adaotp_api_order"]);
 
     Route::put('/update/saldo', [UserController::class, 'updateSaldo']);
     Route::get('/history/user', [DepositController::class, 'indexByUser']);

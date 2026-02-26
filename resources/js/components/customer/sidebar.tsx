@@ -17,6 +17,7 @@ import {
     User,
     User2Icon,
     Wallet,
+    KeyRound,
     X,
     Zap,
 } from 'lucide-react';
@@ -56,6 +57,12 @@ export default function Sidebar({
                     label: 'Order Nokos',
                     icon: CreditCard,
                     link: '/customer/nokos/order',
+                },
+                {
+                    id: 'nokos-otp',
+                    label: 'OTP Nokos',
+                    icon: KeyRound,
+                    link: '/customer/nokos/otp',
                 },
                 {
                     id: 'nokos-history',
@@ -146,7 +153,7 @@ export default function Sidebar({
             for (const submenu of item.submenus) {
                 if (url === submenu.link) {
                     setLabel(submenu.label);
-                    setExpandedMenus([item.id]); 
+                    setExpandedMenus([item.id]);
                     return;
                 }
             }
