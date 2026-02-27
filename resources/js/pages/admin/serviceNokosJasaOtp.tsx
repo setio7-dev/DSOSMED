@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
 import useJasaotpHooks from '@/hooks/jasaotpHooks';
-import { JasaOtpCountryProps, JasaOtpServiceDetailProps } from '@/types';
+import useNokosHooks from '@/hooks/nokosHooks';
+import { JasaOtpCountryProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { Plus, Search, X, Globe, Package, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react'
@@ -20,8 +22,8 @@ const ServiceModal = ({ isOpen, onClose, countryName, countryId, serviceDetail, 
 
     if (!isOpen || !serviceDetail) return null;
 
-    const services = serviceDetail?.service?.[countryId] || {};
-    const serviceList = Object.entries(services).map(([key, value]: [string, any]) => ({
+    const rawServices = serviceDetail?.service?.[countryId] || {};
+    const serviceList = Object.entries(rawServices).map(([key, value]: [string, any]) => ({
         code: key,
         ...value
     }));
@@ -42,7 +44,6 @@ const ServiceModal = ({ isOpen, onClose, countryName, countryId, serviceDetail, 
                     <div className="flex items-center justify-between">
                         <div>
                             <h2 className="text-2xl font-bold text-white mb-1 capitalize">{countryName}</h2>
-                            <p className="text-sm text-gray-400">Country ID: {countryId}</p>
                         </div>
                         <button
                             onClick={onClose}
@@ -123,36 +124,48 @@ export default function ServiceNokosJasaOtp() {
     const {
         jasaOtpData,
         jasaOtpDataDetail,
-        handleShowJasaOtpDetail,
-        handleChangeJasaOtpProfit,
-        handleJasaOtpPost,
-        profit
+        handleShowJasaOtpDetail
     } = useJasaotpHooks();
+    const {
+        profit,
+        setProfit,
+        handleNokosPost
+    } = useNokosHooks();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
 
     const [selectedCountry, setSelectedCountry] = useState<JasaOtpCountryProps | null>(null);
-    const [selectedService, setSelectedService] = useState<JasaOtpServiceDetailProps | null>(null);
+    const [selectedService, setSelectedService] = useState<any>(null);
     const [selectedOperator, setSelectedOperator] = useState('');
 
-    const filteredCountries = jasaOtpData?.filter((country: any) =>
+    const [mappingDataService, setMappingDataService] = useState<any>(null);
+    const [mappingCountryService, setMappingCountryService] = useState<any>(null);
+
+    const filteredCountries = jasaOtpData?.filter((country: JasaOtpCountryProps) =>
         country.nama_negara.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
     useEffect(() => {
-        setTimeout(() => {
-            setIsLoading(false);
-        }, 2000);
-
-        if (isLoading) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'auto';
+        if (selectedService) {
+            setMappingDataService({
+                code: selectedService.code,
+                name: selectedService.layanan
+            });
         }
-    }, [isLoading]);
 
-    const handleOpenServiceModal = async (country: any) => {
+        if (selectedCountry) {
+            setMappingCountryService({
+                provider_country_id: selectedCountry.id_negara,
+                type: "jasaotp",
+                country_name: selectedCountry.nama_negara,
+                operator: selectedOperator,
+                price: selectedService?.harga,
+                stock: selectedService?.stok,
+            });
+        }
+    }, [selectedService, selectedCountry, selectedOperator]);
+
+    const handleOpenServiceModal = async (country: JasaOtpCountryProps) => {
         setSelectedCountry(country);
         await handleShowJasaOtpDetail(country.id_negara);
         setIsModalOpen(true);
@@ -168,8 +181,6 @@ export default function ServiceNokosJasaOtp() {
 
     return (
         <AdminDashboard title="Layanan Nokos Jasa Otp">
-            {isLoading && <SpinnerLoader />}
-
             <ServiceModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
@@ -190,7 +201,7 @@ export default function ServiceNokosJasaOtp() {
                                 </label>
                                 <input
                                     type="text"
-                                    value={selectedCountry?.id_negara || ''}
+                                    value={selectedCountry?.nama_negara || ''}
                                     disabled
                                     className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all capitalize"
                                     placeholder="Pilih negara terlebih dahulu"
@@ -216,8 +227,8 @@ export default function ServiceNokosJasaOtp() {
                                 </label>
                                 <input
                                     type="text"
-                                    value={profit ? profit : selectedService?.harga}
-                                    onChange={handleChangeJasaOtpProfit}
+                                    value={profit}
+                                    onChange={(e) => setProfit(e.target.value)}
                                     name='profit'
                                     className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all capitalize"
                                     placeholder="Pilih layanan terlebih dahulu"
@@ -235,7 +246,7 @@ export default function ServiceNokosJasaOtp() {
                                     disabled={!selectedCountry}
                                 >
                                     <option value="">Pilih Operator</option>
-                                    {jasaOtpDataDetail?.operator?.[selectedCountry!.id_negara]?.map((op: string, index: number) => (
+                                    {jasaOtpDataDetail?.operator?.[String(selectedCountry?.id_negara)]?.map((op: string, index: number) => (
                                         <option key={index} value={op} className="capitalize">
                                             {op}
                                         </option>
@@ -245,11 +256,7 @@ export default function ServiceNokosJasaOtp() {
                         </div>
 
                         <button
-                            onClick={() => handleJasaOtpPost({
-                                negara: selectedCountry,
-                                layanan: selectedService,
-                                operator: selectedOperator
-                            })}
+                            onClick={() => handleNokosPost(mappingDataService, mappingCountryService)}
                             disabled={!selectedCountry || !selectedService || !selectedOperator}
                             className="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
                         >
@@ -275,7 +282,7 @@ export default function ServiceNokosJasaOtp() {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        {filteredCountries.map((country: any) => (
+                        {filteredCountries.map((country: JasaOtpCountryProps) => (
                             <div
                                 key={country.id_negara}
                                 className="bg-gray-800/30 border border-gray-700/50 rounded-xl p-4 hover:bg-gray-800/50 hover:border-purple-500/30 transition-all duration-200 group"

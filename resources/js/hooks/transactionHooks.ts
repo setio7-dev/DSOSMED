@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import API from '@/server/API';
 import {
-    JasaOtpServiceChildProps,
-    JasaOtpServiceProps,
-    MedanPediaServiceProps,
+    NokosCountry,
+    NokosService,
+    SuntikServiceProps,
     TransactionProps,
 } from '@/types';
+import SwalLoading from '@/utils/SwalLoading';
 import { SwalMessage } from '@/utils/SwalMessage';
 import { useEffect, useState } from 'react';
 
@@ -20,7 +21,6 @@ export default function useTransactionHooks() {
     const [loadingId, setLoadingId] = useState<number | null>(null);
 
     useEffect(() => {
-        console.log("TOKEN:", token);
         const fetchTransaction = async () => {
             try {
                 const response = await API.get('/customer/transaction', {
@@ -53,213 +53,102 @@ export default function useTransactionHooks() {
         fetchTrasactionAdmin();
     }, [token]);
 
-    const handleTransactionAdaOtp = async (
-        loadingKey: number,
-        price: number,
-        countryId: string,
-        serviceId: string,
-        serviceName: string,
-    ) => {
-        setLoadingId(loadingKey);
-        console.log(token)
-
+    const handleTransactionNokos = async (service: NokosService, country: NokosCountry) => {
         try {
-            const response = await API.post(
-                '/adaotp/order',
-                {
-                    price,
-                    country: countryId,
-                    service_id: serviceId,
-                },
-                {
+            SwalLoading();
+            let saveOrder;
+
+            if (country.type == "adaotp") {
+                const response = await API.post('/adaotp/order', {
+                    price: country.price,
+                    country: country.provider_country_id,
+                    service_id: country.provider_service_id,
+                }, {
                     headers: { Authorization: `Bearer ${token}` },
                 },
-            );
+                );
 
-            const apiResponse = response.data.data;
+                const apiResponse = response?.data?.data;
+                const result = apiResponse?.results?.[0];
+                if (!result || !result.success) {
+                    throw new Error(result?.message || "Order gagal dibuat");
+                }
+                const numberValue = result.order?.number?.value;
+                const orderId = result.order?.id;
 
-            if (!apiResponse?.success) {
-                throw new Error('Gagal membuat order dari ADAOTP');
-            }
 
-            const result = apiResponse.data?.results?.[0];
-
-            if (!result) {
-                throw new Error('Results kosong dari ADAOTP');
-            }
-
-            if (!result.order?.id) {
-                throw new Error('Order ID tidak ditemukan');
-            }
-
-            const numberValue = result.order.number?.value;
-            const orderId = result.order.id;
-
-            if (!numberValue) {
-                throw new Error('Nomor tidak ditemukan');
-            }
-
-            const saveOrder = await API.post(
-                '/customer/transaction',
-                {
-                    service_id: serviceId,
-                    name: serviceName,
-                    order_id: orderId,
-                    type: 'nokos',
-                    price,
-                    quantity: '1',
-                    status: 'berhasil',
-                    result: numberValue,
+                saveOrder = await API.post(
+                    '/customer/transaction',
+                    {
+                        service_id: country.provider_service_id,
+                        name: service.name,
+                        order_id: orderId,
+                        type: 'nokos',
+                        price: country.price,
+                        quantity: '1',
+                        status: 'berhasil',
+                        result: numberValue,
+                        api_type: country.type,
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    },
+                );
+            } else {
+                const response = await API.post('/jasaotp/order', {
+                    price: country.price,
+                    country: country.provider_country_id,
+                    service: service.code,
+                    operator: country.operator,
                 },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                },
-            );
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    },
+                );
+
+                const phone = response.data.number;
+                saveOrder = await API.post(
+                    '/customer/transaction',
+                    {
+                        service_id: "-",
+                        name: service.name,
+                        order_id: "-",
+                        type: 'nokos',
+                        price: country.price,
+                        quantity: '1',
+                        status: 'berhasil',
+                        result: phone,
+                        api_type: country.type,
+                    },
+                    {
+                        headers: { Authorization: `Bearer ${token}` },
+                    },
+                );
+            }
 
             SwalMessage({
                 icon: 'success',
                 title: 'Berhasil!',
-                text: saveOrder.data.message,
-            });
-        } catch (error: any) {
-            SwalMessage({
-                icon: 'error',
-                title: 'Gagal!',
-                text: error?.response?.data?.message || error.message,
-            });
-            console.log(error)
-        } finally {
-            setLoadingId(null);
-        }
-    };
-
-    const handleTransactionVirtusim = async (price: number, service: any) => {
-        try {
-            const response = await API.post(
-                '/virtusim/order',
-                {
-                    price: price,
-                    country: service.country,
-                    service_id: service.service_id,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            );
-
-            localStorage.setItem('order', JSON.stringify(response.data));
-            const phone = response.data.data.number;
-            if (!phone) {
-                SwalMessage({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: response.data.data.msg,
-                });
-
-                return;
-            }
-
-            const saveOrder = await API.post(
-                '/customer/transaction',
-                {
-                    service_id: service.service_id,
-                    name: service.name,
-                    order_id: '-',
-                    type: 'nokos',
-                    price: price,
-                    quantity: '1',
-                    status: 'berhasil',
-                    result: phone,
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                },
-            );
-
-            SwalMessage({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: saveOrder.data.message,
+                text: saveOrder?.data.message,
             });
 
             setTimeout(() => {
                 window.location.reload();
             }, 2000);
         } catch (error: any) {
-            if (error) {
-                SwalMessage({
-                    icon: 'error',
-                    title: 'Gagal!',
-                    text: error?.response?.data.message,
-                });
-            }
-        }
-    };
-
-    const handleTransactionJasaOtp = async (
-        loadingKey: number,
-        country: JasaOtpServiceProps,
-        service: JasaOtpServiceChildProps,
-    ) => {
-        setLoadingId(loadingKey);
-
-        try {
-            const response = await API.post(
-                '/jasaotp/order',
-                {
-                    price: service.price,
-                    country: country.country_id,
-                    service: service.code,
-                    operator: service.operator,
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                },
-            );
-
-            const phone = response.data.number;
-            if (!phone) throw new Error(response.data.msg);
-
-            const saveOrder = await API.post(
-                '/customer/transaction',
-                {
-                    service_id: service.service,
-                    name: country.country,
-                    order_id: response.data.order_id,
-                    type: 'nokos',
-                    price: service.price,
-                    quantity: '1',
-                    status: 'berhasil',
-                    result: phone,
-                },
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                },
-            );
-
-            SwalMessage({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: saveOrder.data.message,
-            });
-        } catch (error: any) {
             SwalMessage({
                 icon: 'error',
                 title: 'Gagal!',
-                text: error?.response?.data?.message || error.message,
+                text: error?.response.data.message,
             });
-        } finally {
-            setLoadingId(null);
+
+            console.error(error);
         }
-    };
+    }
 
     const handleTransactionSuntik = async (
         price: number,
-        service: MedanPediaServiceProps,
+        service: SuntikServiceProps,
         targets: { username: string; quantity: number }[],
     ) => {
         try {
@@ -284,6 +173,7 @@ export default function useTransactionHooks() {
                 };
             }
 
+            SwalLoading();
             const typeApi = service.api_type;
             let saveOrder;
 
@@ -314,10 +204,11 @@ export default function useTransactionHooks() {
                             service_id: service.service_id,
                             order_id: orderId,
                             type: 'suntik',
-                            price: service.price,
+                            price: price,
                             quantity: target.quantity,
                             status: 'berhasil',
                             target: target.username,
+                            api_type: typeApi,
                         },
                         {
                             headers: {
@@ -353,10 +244,11 @@ export default function useTransactionHooks() {
                             service_id: service.service_id,
                             order_id: orderId,
                             type: 'suntik',
-                            price: service.price,
+                            price: price,
                             quantity: target.quantity,
                             status: 'berhasil',
                             target: target.username,
+                            api_type: typeApi,
                         },
                         {
                             headers: {
@@ -391,14 +283,97 @@ export default function useTransactionHooks() {
         }
     };
 
+    const handleTransactionSuntikRefill = async (history: TransactionProps) => {
+        try {
+            const result = await SwalMessage({
+                icon: "question",
+                title: "Pertanyaan",
+                text: `Apakah anda yakin untuk refill order ${history.order_id} dengan tujuan ${history.target} sebanyak ${history.quantity}?`,
+                showCancelButton: true,
+            })
+
+            if (result.isConfirmed) {
+                let savedOrder;
+                SwalLoading();
+
+                if (history.api_type == "medanpedia") {
+                    await API.post("/medanpedia/refill", {
+                        order_id: history.order_id,
+                        price: history.price,
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    savedOrder = await API.post("/customer/transaction", {
+                        name: history.name,
+                        service_id: history.service_id,
+                        order_id: history.order_id,
+                        type: "suntik",
+                        price: history.price,
+                        quantity: history.quantity,
+                        status: "berhasil (isi ulang)",
+                        target: history.target,
+                        api_type: history.api_type,
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                } else {
+                    await API.post("/miraipedia/refill", {
+                        order_id: history.order_id,
+                        price: history.price,
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    savedOrder = await API.post("/customer/transaction", {
+                        name: history.name,
+                        service_id: history.service_id,
+                        order_id: history.order_id,
+                        type: "suntik",
+                        price: history.price,
+                        quantity: history.quantity,
+                        status: "berhasil (isi ulang)",
+                        api_type: history.api_type,
+                        target: history.target,
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+                }
+
+                SwalMessage({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: savedOrder?.data.message,
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        } catch (error: any) {
+            SwalMessage({
+                icon: 'error',
+                title: 'Gagal!',
+                text: error?.response?.data.message,
+            });
+        }
+    }
+
     return {
         transactionData,
-        handleTransactionAdaOtp,
         handleTransactionSuntik,
-        handleTransactionVirtusim,
-        handleTransactionJasaOtp,
         transactionAdminData,
         loadingId,
         setLoadingId,
+        handleTransactionNokos,
+        handleTransactionSuntikRefill
     };
 }

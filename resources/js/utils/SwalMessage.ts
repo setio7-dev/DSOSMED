@@ -1,18 +1,53 @@
-import Swal, { SweetAlertIcon } from 'sweetalert2';
+import Swal, { type SweetAlertIcon } from 'sweetalert2';
 
-interface SwalProps {
-  title: string;
-  text?: string;
-  icon?: SweetAlertIcon;
-  timer?: number;
+interface SwalMessageProps {
+    title: string;
+    text?: string;
+    icon?: SweetAlertIcon;
+    confirmText?: string;
+    cancelText?: string;
+    timer?: number;
+    showConfirmButton?: boolean;
+    showCancelButton?: boolean;
 }
 
-export const SwalMessage = ({ title, text = '', icon = 'info', timer }: SwalProps) => {
-  return Swal.fire({
+export const SwalMessage = ({
     title,
-    text,
-    icon,
+    text = '',
+    icon = 'success',
+    confirmText = 'OK',
+    cancelText = 'Tidak',
     timer,
-    showConfirmButton: !timer,
-  });
+    showConfirmButton = true,
+    showCancelButton = false,
+}: SwalMessageProps) => {
+    return Swal.fire({
+        icon: icon,
+        title,
+        text,
+        confirmButtonText: confirmText,
+        cancelButtonText: cancelText,
+        showConfirmButton,
+        showCancelButton,
+        timer,
+        timerProgressBar: !!timer,
+        allowOutsideClick: false,
+        allowEscapeKey: true,
+        confirmButtonColor:
+            icon === 'success'
+                ? '#16a34a'
+                : icon === 'error'
+                    ? '#dc2626'
+                    : '#00BF50',
+        cancelButtonColor: '#6b7280',
+        showClass: {
+            popup: 'swal2-show',
+        },
+        hideClass: {
+            popup: 'swal2-hide',
+        },
+        customClass: {
+            container: 'swal-z-top',
+        },
+    });
 };

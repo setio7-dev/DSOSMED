@@ -1,43 +1,31 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import API from "@/server/API";
-import { CountryProps, ServicesProps, ServiceVirtusimListCountryProps, ServiceVirtusimListServiceProps } from "@/types";
-import { SwalMessage } from "@/utils/SwalMessage";
-import React, { useEffect, useState } from "react"
+import API from '@/server/API';
+import { NokosCountry, NokosService } from '@/types';
+import SwalLoading from '@/utils/SwalLoading';
+import { SwalMessage } from '@/utils/SwalMessage';
+import { useEffect, useState } from 'react'
 
 export default function useNokosHooks() {
-    const [serviceVirtusimData, setServiceVirtusimData] = useState<ServiceVirtusimListCountryProps[]>([]);
-    const [serviceVirtusimCountryData, setServiceVirtusimCountryData] = useState<ServiceVirtusimListServiceProps[]>([]);
-
-    const [servicesData, setServices] = useState<ServicesProps[]>([]);
-    const [countryData, setCountryData] = useState<CountryProps[]>([]);
-    
-    const [serviceOrderData, setServiceOrderData] = useState<any[]>([]);
-
-    const [serviceId, setServiceId] = useState<any>(null);
-    const [countryId, setCountryId] = useState<any>(null);
-    const [profit, setProfit] = useState<string>("");
     const token = localStorage.getItem("token");
+    const [nokosData, setNokosData] = useState<NokosService[]>([]);
+    const [customerNokosData, setCustomerNokosData] = useState<NokosService[]>([]);
+    const [profit, setProfit] = useState("");
 
     useEffect(() => {
-        const fetchServices = async () => {
+        const fetchNokosAdmin = async () => {
             try {
-                const response = await API.get("/adaotp/services");
-                setServices(response.data.data);
+                const response = await API.get("/admin/service/nokos", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                setNokosData(response.data.data);
             } catch (error) {
                 console.error(error);
             }
         }
 
-        const fetchServicesVirtusim = async() => {
-            try {
-                const response = await API.get("/virtusim/list-countries");
-                setServiceVirtusimData(response.data.data);
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        const fetchServicesOrder = async() => {
+        const fetchNokosCustomer = async () => {
             try {
                 const response = await API.get("/customer/service/nokos", {
                     headers: {
@@ -45,66 +33,34 @@ export default function useNokosHooks() {
                     }
                 });
 
-                setServiceOrderData(response.data.data);
+                setCustomerNokosData(response.data.data);
             } catch (error) {
                 console.error(error);
             }
         }
 
-        fetchServicesVirtusim();
-        fetchServices();
-        fetchServicesOrder();
+        fetchNokosAdmin();
+        fetchNokosCustomer();
     }, [token]);
 
-    const handleShowCountry = async (id: number) => {
+    const handleNokosPost = async (serviceData: NokosService, serviceCountry: NokosCountry) => {
         try {
-            const response = await API.get(`/adaotp/services/${id}`);
-
-            setCountryData(response.data.data.countries);
-        } catch (error: any) {
-            SwalMessage({
-                title: "Gagal!",
-                text: error.message,
-                icon: 'error'
-            })
-        }
-    }
-
-    const handleShowService = async(country: string) => {
-        try {
-            const response = await API.get(`/virtusim/service/${country}`);
-            setServiceVirtusimCountryData(response.data.data);
-        } catch (error: any) {
-            SwalMessage({
-                title: "Gagal!",
-                text: error.message,
-                icon: 'error'
-            })
-        }
-    }
-
-    const handlePostService = async () => {
-        try {
-            if (!serviceId || !countryId) {
-                SwalMessage({
-                    icon: "error",
-                    title: "Gagal!",
-                    text: "Harap isi semua field!"
-                });
-
-                return;
-            }
-
-            const filteringServiceParent = servicesData?.find((item: ServicesProps) => {
-                return item.id === serviceId;
-            });
-
-            const response = await API.post('/admin/service/nokos', {
-                name: filteringServiceParent?.text,
-                image: filteringServiceParent?.icon,
-                country: countryId?.name,
-                stock: countryId?.stock,
-                price: Number(profit) + Number(countryId?.price_formatted.replace(/[^0-9]/g, ""))
+            SwalLoading();
+            const response = await API.post("/admin/service/nokos", {
+                service_id: serviceData.id,
+                name: serviceData.name,
+                code: serviceData.code,
+                icon: serviceData.icon,
+                type: serviceCountry.type,
+                provider_country_id: serviceCountry.provider_country_id,
+                provider_service_id: serviceCountry.provider_service_id,
+                country_name: serviceCountry.country_name,
+                iso: serviceCountry.iso,
+                prefix: serviceCountry.prefix,
+                operator: serviceCountry.operator,
+                price: Number(serviceCountry.price) + Number(profit),
+                stock: serviceCountry.stock,
+                quality_score: serviceCountry.quality_score,
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -121,84 +77,61 @@ export default function useNokosHooks() {
             setTimeout(() => {
                 window.location.reload();
             }, 2000);
-        } catch (error: any) {
-            SwalMessage({
-                title: "Gagal",
-                text: error.message,
-                icon: "error"
-            });
-        }
-    }
-
-    const handlePostServiceVirtusim = async () => {
-        try {
-            if (!serviceId || !countryId) {
+        } catch (error) {
+            if (error) {
                 SwalMessage({
                     icon: "error",
                     title: "Gagal!",
-                    text: "Harap isi semua field!"
-                });
-
-                return;
+                    text: "Terjadi Kesalahan!"
+                })
             }
-
-            const filteringServiceParent = serviceVirtusimData?.find((item: ServiceVirtusimListCountryProps) => {
-                return item.id === serviceId;
-            });
-
-            const response = await API.post('/admin/service/nokos', {
-                name: filteringServiceParent?.country_name,
-                image: filteringServiceParent?.img_link,
-                country: countryId?.name,
-                stock: countryId?.tersedia,
-                price: Number(profit) + Number(countryId?.price)
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            const message = response.data.message;
-            SwalMessage({
-                icon: "success",
-                title: "Berhasil!",
-                text: message
-            });
-
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        } catch (error: any) {
-            SwalMessage({
-                title: "Gagal",
-                text: error.message,
-                icon: "error"
-            });
         }
     }
 
-    const handleChangeService = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        if (name === "service") return setServiceId(value);
-        if (name === "country") return setCountryId(value);
-        if (name === "profit") return setProfit(value);
+    const handleNokosDelete = async (id: number) => {
+        try {
+            const result = await SwalMessage({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: 'Apakah anda yakin untuk menghapus data ini!',
+            });
+            
+            if (result.isConfirmed) {
+                SwalLoading();
+                const response = await API.delete(`/admin/service/nokos/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const message = response.data.message;
+                SwalMessage({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: message
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi Kesalahan!"
+                })
+            }
+        }
     }
 
     return {
-        servicesData,
-        handleShowCountry,
-        countryData,
-        handlePostService,
-        serviceId,
-        countryId,
+        nokosData,
+        customerNokosData,
         profit,
-        setServiceId,
-        setCountryId,
-        handleChangeService,
-        serviceOrderData,
-        serviceVirtusimData,
-        serviceVirtusimCountryData,
-        handleShowService,
-        handlePostServiceVirtusim
+        setProfit,
+        handleNokosPost,
+        handleNokosDelete
     }
 }

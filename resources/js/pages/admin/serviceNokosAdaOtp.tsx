@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AdminDashboard from '@/components/admin/adminDashboard'
 import useAdaOtpHooks from '@/hooks/adaOtpHooks';
+import useNokosHooks from '@/hooks/nokosHooks';
 import { ServiceCountryAdaOtpProps, ServicesAdaOtpProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { RefreshCwIcon, Plus, Search, CheckCircle, Clock, Package, TrendingUp, X, PhoneIcon } from 'lucide-react';
@@ -184,48 +185,69 @@ const CountriesModal = ({ isOpen, onClose, serviceData, selectedServiceCountry }
 };
 
 export default function ServiceNokosAdaOtp() {
+  const { servicesAdaOtpData } = useAdaOtpHooks();
   const {
-    servicesAdaOtpData,
-    handleChangeAdaOtpService,
-    handlePostService,
-    profit
-  } = useAdaOtpHooks();
+    profit,
+    setProfit,
+    handleNokosPost
+  } = useNokosHooks();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
 
   const [selectedService, setSelectedService] = useState<ServicesAdaOtpProps | null>(null);
   const [selectedCountry, setSelectedCountry] = useState<ServiceCountryAdaOtpProps | null>(null);
+
+  const [mappingDataService, setMappingDataService] = useState<any>(null);
+  const [mappingCountryService, setMappingCountryService] = useState<any>(null);
 
   const filteredServices = servicesAdaOtpData.filter(service =>
     service.text.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 4000);
+    const fetchMapping = async() => {
+      if (selectedService) {
+        const mappingData = {
+          code: "",
+          icon: selectedService.icon,
+          name: selectedService.text
+        }
 
-    if (isLoading) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
+        setMappingDataService(mappingData);
+      }
+
+      if (selectedCountry) {
+        const mappingData = {
+          provider_service_id: selectedService?.id,
+          provider_country_id: selectedCountry?.id,
+          type: "adaotp",
+          country_name: selectedCountry.name,
+          iso: selectedCountry.iso,
+          prefix: selectedCountry.prefix,
+          operator: selectedCountry.operator,
+          price: selectedCountry.price,
+          stock: selectedCountry.stock,
+          quality_score: selectedCountry.quality_score,
+        }
+
+        setMappingCountryService(mappingData);
+      }
     }
-  }, [isLoading]);
+
+    fetchMapping();
+  }, [selectedService, selectedCountry]);
 
   const handleOpenServiceModal = async (service: ServicesAdaOtpProps) => {
     setSelectedService(service);
     setIsModalOpen(true);    
   }
 
-  if (filteredServices.length === 0) {
+  if (servicesAdaOtpData.length === 0) {
     return <SpinnerLoader/>
   }
 
   return (
     <AdminDashboard title="Layanan Nokos Ada Otp">
-      {isLoading && <SpinnerLoader />}
-
       <CountriesModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -272,7 +294,7 @@ export default function ServiceNokosAdaOtp() {
                   type="text"
                   name="profit"
                   value={profit}
-                  onChange={handleChangeAdaOtpService}
+                  onChange={(e) => setProfit(e.target.value)}
                   className="w-full px-4 py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
                   placeholder="Masukkan profit"
                 />
@@ -280,7 +302,7 @@ export default function ServiceNokosAdaOtp() {
             </div>
 
             <button
-              onClick={() => handlePostService(selectedService as any, selectedCountry as any)}
+              onClick={() => handleNokosPost(mappingDataService, mappingCountryService)}
               className="w-full md:w-auto px-6 py-2.5 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/20"
             >
               <Plus className="w-5 h-5" />

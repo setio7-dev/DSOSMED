@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_virtusim_parents', function (Blueprint $table) {
+        Schema::create('nokos_services', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('parent_service_id');
-            $table->string('country_code');
-            $table->string('country_name');
-            $table->string('img_link');
+            $table->string("code")->nullable();
+            $table->text("name")->nullable();
+            $table->text("icon")->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('service_virtusim_parents');
+        Schema::dropIfExists('nokos_services');
     }
 };

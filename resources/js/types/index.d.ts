@@ -39,6 +39,15 @@ export interface UserProps {
     updated_at: string;
 }
 
+export interface NewsProps {
+    id: number;
+    title: string;
+    desc: string;
+    image: File | string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface ServicesAdaOtpProps {
     id: number;
     parent_service_id: number;
@@ -117,25 +126,11 @@ export interface ServiceVirtusimListServiceProps {
     category: string;
 }
 
-export interface MedanPediaServiceProps {
-    id: number;
-    service_id: number;
-    api_type: string;
-    name: string;
-    type: string;
-    category: string;
-    price: number;
-    min: number;
-    max: number;
-    description: string;
-    refill: number;
-    average_time: string;
-}
-
 export interface TransactionProps {
     name: string;
     service_id: string;
     type: string;
+    api_type: string;
     user_id: number;
     order_id: number;
     price: number;
@@ -234,21 +229,41 @@ export interface JasaOtpServiceProps {
   updated_at?: string;
 }
 
-export interface MiraiServiceProps {
+export interface NokosService {
   id: number;
-  type: "primary" | "secondary" | string;
-  category: string;
+  code: string; 
   name: string;
+  icon?: string;
+  country: NokosCountry[];
+}
+
+export interface NokosCountry {
+  id: number;
+  service_id: number;
+  type: string;
+  provider_country_id: number; 
+  provider_service_id?: number;
+  country_name: string;
+  iso?: string;
+  prefix?: string;
+  operator?: string;
   price: number;
-  min: number;
-  max: number;
-  refill: boolean;
-  cancel: boolean;
-  refill_days: number;
-  description: string;
-  avg_quantity: number;
-  avg_time_in_seconds: number;
-  avg_time_in_human: string;
-  created_at: string;
-  updated_at: string;
+  stock: number;
+  quality_score?: string;
+}
+
+export interface SuntikServiceProps {
+    id: number;
+    service_id: number;
+    api_type: string;
+    name: string;
+    type: string;
+    category: string;
+    price: number;
+    min: number;
+    max: number;
+    description: string;
+    refill: number;
+    average_time: string;
+    avg_time_in_seconds: string;
 }

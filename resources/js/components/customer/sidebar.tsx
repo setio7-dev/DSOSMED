@@ -162,8 +162,11 @@ export default function Sidebar({
 
     return (
         <aside
-            className={`fixed top-0 left-0 z-50 h-full w-full border-r border-gray-800 bg-gray-900/98 shadow-2xl backdrop-blur-xl transition-transform duration-300 ease-in-out sm:w-80 md:w-72 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} `}
-        >
+            className={`
+        fixed top-0 left-0 h-full w-72 bg-gray-900/95 backdrop-blur-xl border-r border-gray-800
+        transition-transform duration-300 z-50
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+      `}>
             <div className="flex h-full flex-col">
                 <div className="border-b border-gray-800 p-4 sm:p-5 md:p-6">
                     <div className="flex items-center justify-between">

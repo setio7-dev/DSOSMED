@@ -29,7 +29,7 @@ Route::get('/admin/layanan/nokos-virtusim', function () {
 });
 
 Route::get('/admin/layanan/suntik-medanpedia', function () {
-    return Inertia::render('admin/serviceSuntik');
+    return Inertia::render('admin/serviceSuntikMedanPedia');
 });
 
 Route::get('/admin/layanan/suntik-miraipedia', function () {
@@ -50,6 +50,10 @@ Route::get('/admin/layanan/pengaturan', function () {
 
 Route::get("/admin/edit-text", function() {
     return Inertia::render("admin/editText");
+});
+
+Route::get("/admin/news", function() {
+    return Inertia::render("admin/News");
 });
 
 // Customer
@@ -96,4 +100,3 @@ Route::get('/customer/deposit/history', function () {
 Route::get('/customer/customer-service', function () {
     return Inertia::render('customer/customerService');
 });
-

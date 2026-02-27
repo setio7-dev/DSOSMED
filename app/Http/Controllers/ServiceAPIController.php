@@ -70,31 +70,21 @@ class ServiceAPIController extends Controller
 
     public function adaotp_api_order(Request $request)
     {
-        // dd(
-        //     $request->header('Authorization'),
-        //     auth()->user()
-        // );
         $user = Auth::user();
-
-        if (! $user) {
-            return response()->json([
-                'message' => 'User null bro',
-            ], 401);
-        }
-
         if ($user->saldo < $request->price) {
             return response()->json([
                 'message' => 'Saldo Anda Tidak Cukup!',
             ], 422);
         }
 
+        $query = http_build_query([
+            'apikey' => "Wwnpfj17qfJERz7uDhAIC28rTw779RRE",
+            'country' => (int) $request->country,
+            'service_id' => (int) $request->service_id,
+        ]);
+
         $response = Http::asForm()->post(
-            'https://adaotp.com/api/v1/orders',
-            [
-                'apikey' => 'Wwnpfj17qfJERz7uDhAIC28rTw779RRE',
-                'country' => (int) $request->country,
-                'service_id' => (int) $request->service_id,
-            ]
+            "https://adaotp.com/api/v1/orders?$query"
         );
 
         return response()->json($response->json(), $response->status());
@@ -232,6 +222,43 @@ class ServiceAPIController extends Controller
         ], 500);
     }
 
+    public function medanpedia_api_refill(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->saldo < $request->price) {
+            return response()->json([
+                'message' => 'Saldo Anda Tidak Cukup!',
+            ], 422);
+        }
+
+        $request->validate([
+            'order_id' => 'required',
+        ]);
+
+        $response = Http::asForm()->post(
+            'https://api.medanpedia.co.id/refill',
+            [
+                'api_id' => '37461',
+                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'id_order' => $request->order_id,
+            ]
+        );
+
+        $body = $response->json();
+        if (isset($body['data'])) {
+            return response()->json([
+                'success' => true,
+                'message' => $body['msg'],
+                'data' => $body,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Order tidak ditemukan/tidak valid',
+        ], 500);
+    }
+
     // iskapay
     public function iskapay_create_payment(Request $request)
     {
@@ -256,7 +283,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->get('https://wallet.iskapay.com/api/gateway/payments/'.$merchant_order_id);
+        ])->get('https://wallet.iskapay.com/api/gateway/payments/' . $merchant_order_id);
 
         return response()->json($response->json());
     }
@@ -265,7 +292,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->post('https://wallet.iskapay.com/api/gateway/payments/'.$merchant_order_id.'/cancel');
+        ])->post('https://wallet.iskapay.com/api/gateway/payments/' . $merchant_order_id . '/cancel');
 
         return response()->json($response->json());
     }
@@ -351,13 +378,12 @@ class ServiceAPIController extends Controller
                 'operator' => $request->operator,
             ]
         );
-
+        
         $body = $response->json();
-
         if (! isset($body['success']) || $body['success'] !== true) {
             return response()->json([
                 'success' => false,
-                'message' => $body['message'] ?? 'Order gagal',
+                'message' => 'Order gagal. Silahkan hubungi admin untuk info lebih lanjut!',
             ], 422);
         }
 
@@ -399,6 +425,27 @@ class ServiceAPIController extends Controller
                 'service_id' => $request->service,
                 'target' => $request->target,
                 'quantity' => $request->quantity,
+            ]);
+
+        return response()->json($response->json());
+    }
+
+    public function miraipedia_refill(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->saldo < $request->price) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Saldo Anda Tidak Cukup!',
+            ], 422);
+        }
+
+        $response = Http::asForm()
+            ->post('https://api.mirai-pedia.com/order/refill/create', [
+                'api_key' => '12c043-0a8591-97da15-8937f4-f11a40',
+                'secret_key' => 'Ikannnnn123',
+                'ref_id' => $request->order_id,
             ]);
 
         return response()->json($response->json());

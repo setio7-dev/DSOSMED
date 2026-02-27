@@ -7,21 +7,21 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class ServiceJasaOtpParent extends Model
+class NokosService extends Model
 {
-    use HasFactory, HasApiTokens, Notifiable;
-    protected $table = "service_jasa_otp_parents";
+    use HasApiTokens, HasFactory, Notifiable;
+    protected $table = "nokos_services";
     protected $fillable = [
-        "country_id",
-        "country"
+        "code",
+        "name",
+        "icon"
     ];
 
     /**
-     *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function children()
+    public function country()
     {
-        return $this->hasMany(ServiceJasaOtpChildren::class, 'parent_id');
+        return $this->hasMany(NokosCountry::class, 'nokos_service_id');
     }
 }

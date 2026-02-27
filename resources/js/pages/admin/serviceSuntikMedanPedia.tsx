@@ -2,7 +2,7 @@
 import AdminDashboard from '@/components/admin/adminDashboard'
 import { useAuth } from '@/context/authContext';
 import useMedanPediaHooks from '@/hooks/medanPediaHooks';
-import { MedanPediaServiceProps } from '@/types';
+import { SuntikServiceProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { Plus, Search, X, TrendingUp, Clock, Package, Settings } from 'lucide-react';
@@ -11,7 +11,7 @@ import { useState } from 'react'
 interface ServiceSettingsModalProps {
   isOpen: boolean;
   onClose: any;
-  serviceData: MedanPediaServiceProps | null;
+  serviceData: SuntikServiceProps | null;
 }
 
 const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsModalProps) => {
@@ -133,10 +133,10 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsM
   );
 };
 
-export default function ServiceSuntik() {
+export default function ServiceSuntikMedanPedia() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { loading } = useAuth();
-  const [selectedService, setSelectedService] = useState<MedanPediaServiceProps | null>(null);
+  const [selectedService, setSelectedService] = useState<SuntikServiceProps | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { suntikServiceData } = useMedanPediaHooks();
 
@@ -145,7 +145,7 @@ export default function ServiceSuntik() {
     service.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleOpenSettings = (service: MedanPediaServiceProps) => {
+  const handleOpenSettings = (service: SuntikServiceProps) => {
     setSelectedService(service);
     setIsModalOpen(true);
   };

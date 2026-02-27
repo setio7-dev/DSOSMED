@@ -1,10 +1,11 @@
 import API from "@/server/API";
-import { MiraiServiceProps } from "@/types";
+import { SuntikServiceProps } from "@/types";
+import SwalLoading from "@/utils/SwalLoading";
 import { SwalMessage } from "@/utils/SwalMessage";
 import React, { useEffect, useState } from "react";
 
 export default function useMiraiPediaHooks() {
-    const [miraiServiceData, setMiraiServiceData] = useState<MiraiServiceProps[]>([]);
+    const [miraiServiceData, setMiraiServiceData] = useState<SuntikServiceProps[]>([]);
     const [profit, setProfit] = useState("");
     const token = localStorage.getItem("token");
 
@@ -21,8 +22,9 @@ export default function useMiraiPediaHooks() {
         fetchMiraiPedia();
     }, []);
 
-    const handleMiraiPost = async (serviceData: MiraiServiceProps) => {
+    const handleMiraiPost = async (serviceData: SuntikServiceProps) => {
         try {
+            SwalLoading();
             const response = await API.post("/admin/service/suntik", {
                 service_id: serviceData.id,
                 name: serviceData.name,

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react'
-import { X, Zap, Settings, Smartphone, CreditCard, TrendingUp, History, FileText, ChevronRight, LogOut, Server, Phone, TrendingUpIcon } from 'lucide-react';
+import { X, Zap, Settings, Smartphone, CreditCard, TrendingUp, History, FileText, ChevronRight, LogOut, Server, Phone, TrendingUpIcon, Newspaper } from 'lucide-react';
 import { usePage, Link, router } from '@inertiajs/react';
 import useAuthHooks from '@/hooks/authHooks';
 
@@ -16,7 +16,8 @@ export default function Sidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
         { id: 'suntik-miraipedia', label: 'Layanan Suntik MiraiPedia', icon: TrendingUpIcon, color: 'text-purple-400', link: "/admin/layanan/suntik-miraipedia" },
         { id: 'layanan', label: 'Pengaturan Layanan', icon: Server, color: 'text-yellow-400', link: "/admin/layanan/pengaturan" },
         { id: 'riwayat', label: 'Order Layanan', icon: History, color: 'text-yellow-400', link: "/admin/order-layanan" },
-        { id: 'edit-teks', label: 'Edit Teks', icon: FileText, color: 'text-red-400', link: "/admin/edit-text" }
+        { id: 'edit-teks', label: 'Edit Teks', icon: FileText, color: 'text-red-400', link: "/admin/edit-text" },
+        { id: 'berita', label: 'Edit Berita', icon: Newspaper, color: 'text-orange-400', link: "/admin/news" }
     ];
 
     return (

@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('service_ada_otp_parents', function (Blueprint $table) {
+        Schema::create('news', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger("parent_service_id");
-            $table->text("text");
-            $table->text("description")->nullable();
-            $table->text("icon");
+            $table->text('title');
+            $table->text('desc');
+            $table->text('image');
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('service_ada_otp_parents');
+        Schema::dropIfExists('news');
     }
 };

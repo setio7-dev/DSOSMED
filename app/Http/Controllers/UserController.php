@@ -14,23 +14,23 @@ class UserController extends Controller
 {
     public function register(Request $request) {
         try {
-            // $validateData = Validator::make($request->all(), [
-            //     "username" => "required",
-            //     "password" => "required",
-            // ]);
+            $validateData = Validator::make($request->all(), [
+                "username" => "required",
+                "password" => "required",
+            ]);
 
-            // if ($validateData->fails()) {
-            //     return response()->json([
-            //         "message" => "Nama pengguna / kata sandi harus diisi!"
-            //     ], 422);
-            // }
+            if ($validateData->fails()) {
+                return response()->json([
+                    "message" => "Nama pengguna / kata sandi harus diisi!"
+                ], 422);
+            }
 
-            // $userCheck = User::where('username', $request->username)->first();
-            //  if ($userCheck) {
-            //     return response()->json([
-            //         'message' => 'Nama Pegguna sudah digunakan!'
-            //     ], 401);
-            //  }
+            $userCheck = User::where('username', $request->username)->first();
+             if ($userCheck) {
+                return response()->json([
+                    'message' => 'Nama Pegguna sudah digunakan!'
+                ], 401);
+             }
 
              $data = User::create([
                 "username" => $request->username,

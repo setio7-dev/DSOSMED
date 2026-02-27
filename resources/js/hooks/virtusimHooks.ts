@@ -69,36 +69,42 @@ export default function useVirtusimHooks() {
                 return;
             }
 
-            const response = await API.post('/admin/service/virtusim', {
-                parent_service_id: countryData.id,
-                country_code: countryData.country_code,
-                country_name: countryData.country_name,
-                img_link: countryData.img_link,
-
-                service_id: serviceData.id,
-                name: serviceData.name,
-                price: Number(serviceData.price) + Number(profit),
-                is_promo: Number(serviceData.is_promo),
-                tersedia: serviceData.tersedia,
-                country: serviceData.country,
-                status: Number(serviceData.status),
-                category: serviceData.category,
-            }, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-
-            const message = response.data.message;
             SwalMessage({
-                icon: "success",
-                title: "Berhasil!",
-                text: message
-            });
+                icon: "error",
+                title: "Gagal!",
+                text: "API ini sudah tidak tersedia lagi!"
+            })
 
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
+            // const response = await API.post('/admin/service/virtusim', {
+            //     parent_service_id: countryData.id,
+            //     country_code: countryData.country_code,
+            //     country_name: countryData.country_name,
+            //     img_link: countryData.img_link,
+
+            //     service_id: serviceData.id,
+            //     name: serviceData.name,
+            //     price: Number(serviceData.price) + Number(profit),
+            //     is_promo: Number(serviceData.is_promo),
+            //     tersedia: serviceData.tersedia,
+            //     country: serviceData.country,
+            //     status: Number(serviceData.status),
+            //     category: serviceData.category,
+            // }, {
+            //     headers: {
+            //         Authorization: `Bearer ${token}`
+            //     }
+            // });
+
+            // const message = response.data.message;
+            // SwalMessage({
+            //     icon: "success",
+            //     title: "Berhasil!",
+            //     text: message
+            // });
+
+            // setTimeout(() => {
+            //     window.location.reload();
+            // }, 2000);
         } catch (error: any) {
             SwalMessage({
                 title: "Gagal",

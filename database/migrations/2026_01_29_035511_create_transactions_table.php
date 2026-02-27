@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string("status");
             $table->string("target")->nullable();
             $table->string("result")->nullable();
+            $table->string("api_type")->nullable();
             $table->timestamps();
 
             $table->foreign("user_id")->references("id")->on("users")->onDelete("CASCADE");

@@ -22,6 +22,7 @@ class Transaction extends Model
         "status",
         "result",
         "target",
+        "api_type",
     ];
 
     /**

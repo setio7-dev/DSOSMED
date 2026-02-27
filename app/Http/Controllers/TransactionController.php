@@ -37,9 +37,10 @@ class TransactionController extends Controller
             "type" => $request->type,
             "order_id" => $request->order_id,
             "price" => $request->price,
-            "status" => "berhasil",
+            "status" => $request->status ?? "berhasil",
             "target" => $request->target,
             "result" => $request->result,
+            "api_type" => $request->api_type,
         ]);
 
         $updateUser = User::where("id", $user->id)->first();

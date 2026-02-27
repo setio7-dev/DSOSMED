@@ -79,7 +79,7 @@ export default function HistoryNokos() {
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="text-white font-semibold text-sm sm:text-base mb-1 truncate">{order.name}</h3>
                                                 <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                                                    <span className="font-mono truncate">{order.order_id}</span>
+                                                    <span className="font-mono truncate">Order ID: {order.order_id}</span>
                                                     <span>•</span>
                                                     <span className="capitalize">{order.type}</span>
                                                 </div>

@@ -7,16 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-class ServiceJasaOtpChildren extends Model
+class News extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
-    protected $table = "service_jasa_otp_childrens";
+    protected $table = "news";
     protected $fillable = [
-        "parent_id",
-        "code",
-        "price",
-        "service",
-        "operator",
-        "stock"
+        "title",
+        "desc",
+        "image"
     ];
 }

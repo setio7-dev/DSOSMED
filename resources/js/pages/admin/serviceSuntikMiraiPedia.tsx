@@ -2,7 +2,7 @@
 import AdminDashboard from '@/components/admin/adminDashboard'
 import { useAuth } from '@/context/authContext';
 import useMiraiPediaHooks from '@/hooks/miraiPediaHooks';
-import { MiraiServiceProps } from '@/types';
+import { SuntikServiceProps } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { Plus, Search, X, TrendingUp, Clock, Package, Settings } from 'lucide-react';
@@ -11,7 +11,7 @@ import { useState } from 'react'
 interface ServiceSettingsModalProps {
   isOpen: boolean;
   onClose: any;
-  serviceData: MiraiServiceProps | null;
+  serviceData: SuntikServiceProps | null;
 }
 
 const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsModalProps) => {
@@ -92,7 +92,7 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsM
                   <Clock className="w-4 h-4 text-green-400" />
                   <span className="text-xs text-gray-400">Waktu</span>
                 </div>
-                <p className="text-sm font-bold text-white">{serviceData.avg_time_in_human}</p>
+                <p className="text-sm font-bold text-white">{serviceData.avg_time_in_seconds}</p>
               </div>
             </div>
           </div>
@@ -137,7 +137,7 @@ const ServiceSettingsModal = ({ isOpen, onClose, serviceData }: ServiceSettingsM
 export default function ServiceSuntikMiraiPedia() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { loading } = useAuth();
-  const [selectedService, setSelectedService] = useState<MiraiServiceProps | null>(null);
+  const [selectedService, setSelectedService] = useState<SuntikServiceProps | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const { miraiServiceData } = useMiraiPediaHooks();
 
@@ -146,7 +146,7 @@ export default function ServiceSuntikMiraiPedia() {
     service.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleOpenSettings = (service: MiraiServiceProps) => {
+  const handleOpenSettings = (service: SuntikServiceProps) => {
     setSelectedService(service);
     setIsModalOpen(true);
   };
@@ -171,6 +171,8 @@ export default function ServiceSuntikMiraiPedia() {
   if (loading || miraiServiceData?.length === 0) {
     return <SpinnerLoader/>
   }
+
+  console.log(miraiServiceData)
 
   return (
     <AdminDashboard title="Layanan Suntik (MiraiPedia)">

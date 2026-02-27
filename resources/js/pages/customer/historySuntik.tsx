@@ -13,6 +13,8 @@ import {
     XCircle,
     ListOrdered,
     Download,
+    ShoppingBag,
+    CheckCircle2,
 } from 'lucide-react';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { useAuth } from '@/context/authContext';
@@ -23,10 +25,11 @@ import { FormatDate } from '@/utils/FormatDate';
 export default function HistorySuntik() {
     const [searchQuery, setSearchQuery] = useState('');
     const { loading, user } = useAuth();
-    const { transactionData } = useTransactionHooks();
+    const { transactionData, handleTransactionSuntikRefill } = useTransactionHooks();
 
     const statusConfig = {
         berhasil: { label: 'Berhasil', color: 'text-green-400', bg: 'bg-green-400/20', icon: CheckCircle },
+        "berhasil (isi ulang)": { label: 'Berhasil (Isi Ulang)', color: 'text-blue-400', bg: 'bg-blue-400/20', icon: CheckCircle2 },
         gagal: { label: 'Gagal', color: 'text-red-400', bg: 'bg-red-400/20', icon: XCircle },
     };
 
@@ -206,6 +209,8 @@ export default function HistorySuntik() {
                                                     <span className="font-mono truncate">{order.order_id}</span>
                                                     <span>•</span>
                                                     <span className="capitalize">{order.type}</span>
+                                                    <span>•</span>
+                                                    <span className="font-mono truncate">Target: {order.target}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -224,6 +229,14 @@ export default function HistorySuntik() {
                                             >
                                                 <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                                                 <span className="text-xs font-semibold">Resi</span>
+                                            </button>
+                                            <button
+                                                onClick={() => handleTransactionSuntikRefill(order)}
+                                                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 bg-orange-600/20 hover:bg-orange-600/30 text-orange-300 rounded-lg transition-all whitespace-nowrap"
+                                                title="Isi Ulang"
+                                            >
+                                                <ShoppingBag className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                                <span className="text-xs font-semibold">Refill</span>
                                             </button>
                                         </div>
 
