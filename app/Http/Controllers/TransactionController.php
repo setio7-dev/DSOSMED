@@ -41,6 +41,7 @@ class TransactionController extends Controller
             "target" => $request->target,
             "result" => $request->result,
             "api_type" => $request->api_type,
+            "refill_id" => $request->refill_id,
         ]);
 
         $updateUser = User::where("id", $user->id)->first();
@@ -50,6 +51,16 @@ class TransactionController extends Controller
         
         return response()->json([
             "message"=> "Transaksi Berhasil!"
+        ]);
+    }
+
+    public function update(Request $request, string $id)
+    {
+        $data = Transaction::find($id);
+        $data->update($request->all());
+        return response()->json([
+            "data" => $data,
+            "message" => "Ubah data berhasil!"
         ]);
     }
 }

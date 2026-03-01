@@ -107,12 +107,14 @@ export default function useTransactionHooks() {
                 );
 
                 const phone = response.data.number;
+                const orderId = response.data.order_id;
+
                 saveOrder = await API.post(
                     '/customer/transaction',
                     {
-                        service_id: "-",
+                        service_id: null,
                         name: service.name,
-                        order_id: "-",
+                        order_id: orderId,
                         type: 'nokos',
                         price: country.price,
                         quantity: '1',
@@ -297,7 +299,7 @@ export default function useTransactionHooks() {
                 SwalLoading();
 
                 if (history.api_type == "medanpedia") {
-                    await API.post("/medanpedia/refill", {
+                    const response = await API.post("/medanpedia/refill", {
                         order_id: history.order_id,
                         price: history.price,
                     }, {
@@ -306,23 +308,16 @@ export default function useTransactionHooks() {
                         }
                     });
 
-                    savedOrder = await API.post("/customer/transaction", {
-                        name: history.name,
-                        service_id: history.service_id,
-                        order_id: history.order_id,
-                        type: "suntik",
-                        price: history.price,
-                        quantity: history.quantity,
+                    savedOrder = await API.put(`/customer/transaction/${history.id}`, {
                         status: "berhasil (isi ulang)",
-                        target: history.target,
-                        api_type: history.api_type,
+                        refill_id: response.data.refill_id
                     }, {
                         headers: {
                             Authorization: `Bearer ${token}`
                         }
                     });
                 } else {
-                    await API.post("/miraipedia/refill", {
+                    const response = await API.post("/miraipedia/refill", {
                         order_id: history.order_id,
                         price: history.price,
                     }, {
@@ -331,16 +326,9 @@ export default function useTransactionHooks() {
                         }
                     });
 
-                    savedOrder = await API.post("/customer/transaction", {
-                        name: history.name,
-                        service_id: history.service_id,
-                        order_id: history.order_id,
-                        type: "suntik",
-                        price: history.price,
-                        quantity: history.quantity,
+                    savedOrder = await API.put(`/customer/transaction/${history.id}`, {
                         status: "berhasil (isi ulang)",
-                        api_type: history.api_type,
-                        target: history.target,
+                        refill_id: response.data.data.ref_id,
                     }, {
                         headers: {
                             Authorization: `Bearer ${token}`
@@ -364,6 +352,325 @@ export default function useTransactionHooks() {
                 title: 'Gagal!',
                 text: error?.response?.data.message,
             });
+            console.error(error)
+        }
+    }
+
+    const handleCheckNokosOtp = async (orderNokos: TransactionProps) => {
+        try {
+            if (orderNokos.api_type == "adaotp") {
+                const response = await API.get("/adaotp/orders/status", {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = response.data.data.orders;
+                const findData = data?.find((item: TransactionProps) => {
+                    const data = item?.id === orderNokos.order_id;
+                    return data;
+                });
+
+                if (!findData) {
+                    SwalMessage({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: "Order sudah expired, dana sudah direfund!"
+                    });
+
+                    await API.put(`/customer/transaction/${orderNokos.id}`, {
+                        status: "gagal"
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    await API.put("/update/saldo", {
+                        saldo: orderNokos.price
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    window.location.reload();
+                    return;
+                }
+
+                const mappingData = {
+                    order_id: findData.id,
+                    sms: findData?.sms ? findData.sms : "menunggu",
+                    nomor: orderNokos.result
+                }
+
+                return mappingData;
+            } else {
+                const response = await API.post("/jasaotp/orders/status", {
+                    order_id: orderNokos.order_id,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = response.data.data;
+                if (response.data.code == 400) {
+                    SwalMessage({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: "Terjadi Kesalahan, silahkan coba lagi nanti!"
+                    });
+
+                    return;
+                }
+
+                if (!data) {
+                    SwalMessage({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: "Order sudah expired, dana sudah direfund!"
+                    });
+
+                    await API.put(`/customer/transaction/${orderNokos.id}`, {
+                        status: "gagal"
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    await API.put("/update/saldo", {
+                        saldo: orderNokos.price
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    window.location.reload();
+                    return;
+                }
+
+                const mappingData = {
+                    id: orderNokos.order_id,
+                    sms: data.otp != "Menunggu" ? data.otp : "menunggu",
+                    nomor: orderNokos.result
+                }
+
+                return mappingData;
+            }
+        } catch (error: any) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi kesalahan, silahkan coba lagi nanti!",
+                })
+            }
+        }
+    }
+
+    const handleSuntikCheckStatus = async (orderSuntik: TransactionProps) => {
+        try {
+            if (orderSuntik.api_type == "medanpedia") {
+                const response = await API.post("/medanpedia/status", {
+                    order_id: orderSuntik.order_id,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = response.data.data;
+                if (data.status == "Error") {
+                    SwalMessage({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: "Order sudah expired, dana sudah direfund!"
+                    });
+
+                    await API.put(`/customer/transaction/${orderSuntik.id}`, {
+                        status: "gagal"
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    await API.put("/update/saldo", {
+                        saldo: orderSuntik.price
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    window.location.reload();
+                    return;
+                }
+
+                return {
+                    order_id: orderSuntik.order_id,
+                    status: data.status,
+                    jumlah: data.remains,
+                    target: orderSuntik.target,
+                    nama: orderSuntik.name,
+                    harga: orderSuntik.price
+                }
+
+            } else {
+                const response = await API.post("/miraipedia/status", {
+                    order_id: orderSuntik.order_id
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = response.data.data;
+                if (data.status == "canceled") {
+                    SwalMessage({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: "Order sudah expired, dana sudah direfund!"
+                    });
+
+                    await API.put(`/customer/transaction/${orderSuntik.id}`, {
+                        status: "gagal"
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    await API.put("/update/saldo", {
+                        saldo: orderSuntik.price
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    window.location.reload();
+                    return;
+                }
+
+                return {
+                    order_id: orderSuntik.order_id,
+                    jumlah: data.remains,
+                    status: data.status,
+                    target: orderSuntik.target,
+                    nama: orderSuntik.name,
+                    harga: orderSuntik.price
+                }
+            }
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi kesalahan, silahkan coba lagi nanti!"
+                })
+            }
+        }
+    }
+
+    const handleCheckSuntikRefill = async (orderSuntik: TransactionProps) => {
+        try {
+            if (orderSuntik.api_type == "medanpedia") {
+                const response = await API.post("/medanpedia/refill/status", {
+                    refill_id: orderSuntik.refill_id,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = response.data.data;
+                if (!data) {
+                    SwalMessage({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: "Order sudah expired, dana sudah direfund!"
+                    });
+
+                    await API.put(`/customer/transaction/${orderSuntik.id}`, {
+                        status: "gagal"
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    await API.put("/update/saldo", {
+                        saldo: orderSuntik.price
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    window.location.reload();
+                    return;
+                }
+
+                return {
+                    order_id: orderSuntik.order_id,
+                    refill_id: data.refill_id,
+                    status: data.status,
+                }
+            } else {
+                const response = await API.post("/miraipedia/refill/status", {
+                    refill_id: orderSuntik.refill_id,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const data = response.data.data;
+                if (!data) {
+                    SwalMessage({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: "Order sudah expired, dana sudah direfund!"
+                    });
+
+                    await API.put(`/customer/transaction/${orderSuntik.id}`, {
+                        status: "gagal"
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    await API.put("/update/saldo", {
+                        saldo: orderSuntik.price
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        }
+                    });
+
+                    window.location.reload();
+                    return;
+                }
+
+                return {
+                    order_id: orderSuntik.order_id,
+                    refill_id: data.ref_id,
+                    status: data.status,
+                }
+            }
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi kesalahan, silahkan coba lagi nanti!"
+                })
+            }
         }
     }
 
@@ -374,6 +681,9 @@ export default function useTransactionHooks() {
         loadingId,
         setLoadingId,
         handleTransactionNokos,
-        handleTransactionSuntikRefill
+        handleTransactionSuntikRefill,
+        handleCheckNokosOtp,
+        handleSuntikCheckStatus,
+        handleCheckSuntikRefill
     };
 }

@@ -85,6 +85,14 @@ Route::get('/customer/suntik/history', function () {
     return Inertia::render('customer/historySuntik');
 });
 
+Route::get('/customer/suntik/status', function () {
+    return Inertia::render('customer/statusSuntik');
+});
+
+Route::get('/customer/suntik/status/refill', function () {
+    return Inertia::render('customer/statusRefillSuntik');
+});
+
 Route::get('/customer/suntik/guide', function () {
     return Inertia::render('customer/guideSuntik');
 });

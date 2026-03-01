@@ -10,6 +10,8 @@ import {
     CheckCircle,
     XCircle,
     Phone,
+    Copy,
+    Check,
 } from 'lucide-react';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { useAuth } from '@/context/authContext';
@@ -20,6 +22,7 @@ import { FormatPhone } from '@/utils/FormatPhone';
 
 export default function HistoryNokos() {
     const [searchQuery, setSearchQuery] = useState('');
+    const [copiedId, setCopiedId] = useState<string | number | null>(null);
     const { loading } = useAuth();
     const { transactionData } = useTransactionHooks();
 
@@ -35,8 +38,14 @@ export default function HistoryNokos() {
         return matchesSearch && matchesType;
     });
 
+    const handleCopyNumber = (number: string, id: string | number) => {
+        navigator.clipboard.writeText(number);
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
+
     if (loading) {
-        return <SpinnerLoader/> 
+        return <SpinnerLoader/>;
     }
 
     return (
@@ -77,15 +86,15 @@ export default function HistoryNokos() {
                                     <div className="space-y-3">
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-white font-semibold text-sm sm:text-base mb-1 truncate">{order.name}</h3>
+                                                <h3 className="text-white font-semibold text-sm sm:text-base mb-1">{order.name}</h3>
                                                 <div className="flex items-center gap-1.5 text-xs text-gray-400">
-                                                    <span className="font-mono truncate">Order ID: {order.order_id}</span>
+                                                    <span className="font-mono">Order ID: {order.order_id}</span>
                                                     <span>•</span>
                                                     <span className="capitalize">{order.type}</span>
                                                 </div>
                                             </div>
                                             <div className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg ${statusStyle.bg} flex-shrink-0`}>
-                                                <StatusIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${statusStyle.color} ${order.status === 'Diproses' ? 'animate-spin' : ''}`} />
+                                                <StatusIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${statusStyle.color}`} />
                                                 <span className={`text-xs font-semibold ${statusStyle.color}`}>
                                                     {statusStyle.label}
                                                 </span>
@@ -95,7 +104,7 @@ export default function HistoryNokos() {
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 pt-2 border-t border-gray-600/30">
                                             <div className="flex items-center gap-2 text-xs sm:text-sm">
                                                 <Hash className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-400 flex-shrink-0" />
-                                                <span className="text-gray-400">Qty:</span>
+                                                <span className="text-gray-400">Jumlah:</span>
                                                 <span className="text-white font-semibold">{order.quantity}</span>
                                             </div>
                                             <div className="flex items-center gap-2 text-xs sm:text-sm">
@@ -103,14 +112,28 @@ export default function HistoryNokos() {
                                                 <span className="text-gray-400">Harga:</span>
                                                 <span className="text-white font-semibold">{FormatRupiah(order.price)}</span>
                                             </div>
-                                            <div className="flex items-center gap-2 text-xs sm:text-sm">
+                                            <div className="flex items-center w-fit gap-2 text-xs sm:text-sm">
                                                 <Phone className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-400 flex-shrink-0" />
                                                 <span className="text-gray-400">Nomor:</span>
-                                                <span className="text-white font-semibold truncate">{FormatPhone(String(order.result))}</span>
+                                                <span className="text-white font-semibold font-mono flex-1 truncate">
+                                                    {FormatPhone(String(order.result))}
+                                                </span>
+                                                {order.result && (
+                                                    <button
+                                                        onClick={() => handleCopyNumber(String(order.result), order.order_id)}
+                                                        className="flex-shrink-0 text-gray-400 hover:text-purple-400 transition-colors"
+                                                    >
+                                                        {copiedId === order.order_id ? (
+                                                            <Check className="w-3.5 h-3.5 text-green-400" />
+                                                        ) : (
+                                                            <Copy className="w-3.5 h-3.5" />
+                                                        )}
+                                                    </button>
+                                                )}
                                             </div>
                                             <div className="flex items-center gap-2 text-xs sm:text-sm">
                                                 <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-blue-400 flex-shrink-0" />
-                                                <span className="text-gray-400 truncate">
+                                                <span className="text-gray-400">
                                                     {FormatDate(String(order.created_at))}
                                                 </span>
                                             </div>

@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string("target")->nullable();
             $table->string("result")->nullable();
             $table->string("api_type")->nullable();
+            $table->string("refill_id")->nullable();
             $table->timestamps();
 
             $table->foreign("user_id")->references("id")->on("users")->onDelete("CASCADE");

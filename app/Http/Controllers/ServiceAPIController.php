@@ -181,7 +181,7 @@ class ServiceAPIController extends Controller
     public function medanpedia_api_status(Request $request)
     {
         $request->validate([
-            'id' => 'required',
+            'order_id' => 'required',
         ]);
 
         $response = Http::asForm()->post(
@@ -189,7 +189,7 @@ class ServiceAPIController extends Controller
             [
                 'api_id' => '37461',
                 'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
-                'id' => $request->id,
+                'id' => $request->order_id,
             ]
         );
 
@@ -203,17 +203,7 @@ class ServiceAPIController extends Controller
         }
 
         if (isset($body['data'])) {
-            return response()->json([
-                'success' => true,
-                'message' => $body['msg'],
-                'data' => [
-                    'order_id' => $body['data']['id'] ?? null,
-                    'status' => $body['data']['status'] ?? null,
-                    'charge' => $body['data']['charge'] ?? 0,
-                    'start_count' => $body['data']['start_count'] ?? 0,
-                    'remains' => $body['data']['remains'] ?? 0,
-                ],
-            ]);
+            return $body;
         }
 
         return response()->json([
@@ -224,13 +214,6 @@ class ServiceAPIController extends Controller
 
     public function medanpedia_api_refill(Request $request)
     {
-        $user = Auth::user();
-        if ($user->saldo < $request->price) {
-            return response()->json([
-                'message' => 'Saldo Anda Tidak Cukup!',
-            ], 422);
-        }
-
         $request->validate([
             'order_id' => 'required',
         ]);
@@ -241,6 +224,36 @@ class ServiceAPIController extends Controller
                 'api_id' => '37461',
                 'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
                 'id_order' => $request->order_id,
+            ]
+        );
+
+        $body = $response->json();
+        if (isset($body['data'])) {
+            return response()->json([
+                'success' => true,
+                'message' => $body['msg'],
+                'data' => $body,
+            ]);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Order tidak ditemukan/tidak valid',
+        ], 500);
+    }
+
+    public function medanpedia_api_refill_status(Request $request)
+    {
+        $request->validate([
+            'order_id' => 'required',
+        ]);
+
+        $response = Http::asForm()->post(
+            'https://api.medanpedia.co.id/refill_status',
+            [
+                'api_id' => '37461',
+                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'id_refill' => $request->refill_id,
             ]
         );
 
@@ -395,6 +408,17 @@ class ServiceAPIController extends Controller
         ]);
     }
 
+    public function jasaotp_order_status(Request $request)
+    {
+        $orderId = $request->order_id;
+        $response = Http::get('https://api.jasaotp.id/v1/sms.php', [
+            'api_key' => '1bfe748360e3d244b9a76ae0e285860b',
+            'id' => $orderId,
+        ]);
+
+        return response()->json($response->json());
+    }
+
     // MiraiPedia
     public function miraipedia_service()
     {
@@ -430,22 +454,38 @@ class ServiceAPIController extends Controller
         return response()->json($response->json());
     }
 
+    public function miraipedia_orders_status(Request $request)
+    {
+
+        $response = Http::asForm()
+            ->post('https://api.mirai-pedia.com/order/status', [
+                'api_key' => '12c043-0a8591-97da15-8937f4-f11a40',
+                'secret_key' => 'Ikannnnn123',
+                'ref_id' => $request->order_id,
+            ]);
+
+        return response()->json($response->json());
+    }
+
     public function miraipedia_refill(Request $request)
     {
-        $user = Auth::user();
-
-        if ($user->saldo < $request->price) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Saldo Anda Tidak Cukup!',
-            ], 422);
-        }
-
         $response = Http::asForm()
             ->post('https://api.mirai-pedia.com/order/refill/create', [
                 'api_key' => '12c043-0a8591-97da15-8937f4-f11a40',
                 'secret_key' => 'Ikannnnn123',
                 'ref_id' => $request->order_id,
+            ]);
+
+        return response()->json($response->json());
+    }
+
+    public function miraipedia_refill_status(Request $request)
+    {
+        $response = Http::asForm()
+            ->post('https://api.mirai-pedia.com/order/refill/status', [
+                'api_key' => '12c043-0a8591-97da15-8937f4-f11a40',
+                'secret_key' => 'Ikannnnn123',
+                'ref_id' => $request->refill_id,
             ]);
 
         return response()->json($response->json());

@@ -22,7 +22,7 @@ Route::post("/virtusim/order", [ServiceAPIController::class, "virtusim_api_order
 
 Route::get("/adaotp/services", [ServiceAPIController::class, "adaotp_api_listservice"]);
 Route::get("/adaotp/services/{id}", [ServiceAPIController::class, "adaotp_api_listcountry"]);
-Route::get("/adaotp/orders/status", [ServiceAPIController::class, "ada_otp_getorders"]);
+Route::get("/adaotp/orders/status", [ServiceAPIController::class, "ada_otp_getorders"])->middleware("auth");
 Route::post("/adaotp/order", [ServiceAPIController::class, "adaotp_api_order"])->middleware("auth");
 Route::delete("/adaotp/orders/cancel/{order_id}", [ServiceAPIController::class, "adaotp_cancel_order"]);
 Route::post("/adaotp/orders/finish/{order_id}", [ServiceAPIController::class, "adaotp_finish_order"]);
@@ -30,17 +30,21 @@ Route::post("/adaotp/orders/finish/{order_id}", [ServiceAPIController::class, "a
 Route::get("/medanpedia/services", [ServiceAPIController::class, "medanpedia_api_services"]);
 Route::get("/medanpedia/profile", [ServiceAPIController::class, "medanpedia_api_profile"]);
 Route::post("/medanpedia/order", [ServiceAPIController::class, "medanpedia_api_order"])->middleware("auth");
-Route::post("/medanpedia/status", [ServiceAPIController::class, "medanpedia_api_status"]);
+Route::post("/medanpedia/status", [ServiceAPIController::class, "medanpedia_api_status"])->middleware("auth");
 Route::post("/medanpedia/refill", [ServiceAPIController::class, "medanpedia_api_refill"])->middleware("auth");
+Route::post("/medanpedia/refill/status", [ServiceAPIController::class, "medanpedia_api_refill_status"])->middleware("auth");
 
 Route::get("/jasaotp/country", [ServiceAPIController::class, "jasaotp_country"]);
 Route::get("/jasaotp/operator", [ServiceAPIController::class, "jasaotp_operator"]);
 Route::get("/jasaotp/service", [ServiceAPIController::class, "jasaotp_service"]);
 Route::post("/jasaotp/order", [ServiceAPIController::class, "jasaotp_order"])->middleware("auth");
+Route::post("/jasaotp/orders/status", [ServiceAPIController::class, "jasaotp_order_status"])->middleware("auth");
 
 Route::get("/miraipedia/service", [ServiceAPIController::class, "miraipedia_service"]);
 Route::post("/miraipedia/order", [ServiceAPIController::class, "miraipedia_order"])->middleware("auth");
 Route::post("/miraipedia/refill", [ServiceAPIController::class, "miraipedia_refill"])->middleware("auth");
+Route::post("/miraipedia/refill/status", [ServiceAPIController::class, "miraipedia_refill_status"])->middleware("auth");
+Route::post("/miraipedia/status", [ServiceAPIController::class, "miraipedia_orders_status"])->middleware("auth");
 
 Route::post("/iskapay/payments", [ServiceAPIController::class, "iskapay_create_payment"]);
 Route::get("/iskapay/payments/{merchant_order_id}", [ServiceAPIController::class, "iskapay_payment_status"]);
@@ -75,7 +79,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get("/service/suntik", [ServiceSuntikController::class, "index"]);
         Route::get("/service/nokos", [ServiceNokosController::class, "index"]);
         Route::get("/news", [NewsController::class, "index"]);
-
 
         Route::resource("/transaction", TransactionController::class);
         Route::get("/guide/{id}", [GuideController::class,"show"]);

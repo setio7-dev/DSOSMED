@@ -127,6 +127,7 @@ export interface ServiceVirtusimListServiceProps {
 }
 
 export interface TransactionProps {
+    id: number;
     name: string;
     service_id: string;
     type: string;
@@ -139,6 +140,7 @@ export interface TransactionProps {
     result: number;
     user: UserProps;
     target: string;
+    refill_id: number;
     created_at: Date;
 }
 

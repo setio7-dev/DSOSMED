@@ -20,6 +20,8 @@ import {
     KeyRound,
     X,
     Zap,
+    BarChart,
+    ChartBarIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
@@ -95,6 +97,18 @@ export default function Sidebar({
                     label: 'Riwayat Order Suntik',
                     icon: History,
                     link: '/customer/suntik/history',
+                },
+                {
+                    id: 'suntik-status',
+                    label: 'Status Target Suntik',
+                    icon: BarChart,
+                    link: '/customer/suntik/status',
+                },
+                {
+                    id: 'suntik-refill-status',
+                    label: 'Status Refill Target Suntik',
+                    icon: ChartBarIcon,
+                    link: '/customer/suntik/status/refill',
                 },
                 {
                     id: 'suntik-panduan',
