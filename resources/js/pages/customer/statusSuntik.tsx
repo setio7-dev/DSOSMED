@@ -25,7 +25,7 @@ export default function StatusSuntik() {
     const suntikOrders = transactionData.filter((order: TransactionProps) => {
         const typeFilter = order.type === 'suntik';
         const searchFilter = order.name.toLowerCase().includes(searchQuery.toLowerCase()) || order.order_id.toString().includes(searchQuery);
-        const statusFilter = order.status === 'berhasil';
+        const statusFilter = order.status === 'berhasil' || order.status === 'pending';
         return typeFilter && searchFilter && statusFilter;
     })
 

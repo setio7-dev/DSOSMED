@@ -24,7 +24,7 @@ export default function NokosOtp() {
     const nokosOrders = transactionData.filter((order: TransactionProps) => {
         const typeFilter = order.type === 'nokos';
         const searchFilter = order.name.toLowerCase().includes(searchQuery.toLowerCase()) || order.order_id.toString().includes(searchQuery);
-        const statusFilter = order.status === 'berhasil' || 'pending';
+        const statusFilter = order.status === 'berhasil' || order.status === 'pending';
         return typeFilter && searchFilter && statusFilter;
     });
 
