@@ -172,8 +172,6 @@ export default function ServiceSuntikMiraiPedia() {
     return <SpinnerLoader/>
   }
 
-  console.log(miraiServiceData)
-
   return (
     <AdminDashboard title="Layanan Suntik (MiraiPedia)">
       <ServiceSettingsModal
@@ -231,7 +229,7 @@ export default function ServiceSuntikMiraiPedia() {
                       <Clock className="w-3 h-3 text-green-400" />
                       <span className="text-xs text-gray-400">Waktu Pengerjaan</span>
                     </div>
-                    <p className="text-xs font-medium text-white">{service.avg_time_in_human}</p>
+                    <p className="text-xs font-medium text-white">{service.avg_time_in_seconds}</p>
                   </div>
                 </div>
 

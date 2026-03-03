@@ -19,6 +19,10 @@ export default function useTransactionHooks() {
         TransactionProps[]
     >([]);
     const [loadingId, setLoadingId] = useState<number | null>(null);
+    const [serviceForm, setServiceForm] = useState({
+        name: null,
+        description: null
+    });
 
     useEffect(() => {
         const fetchTransaction = async () => {
@@ -674,6 +678,126 @@ export default function useTransactionHooks() {
         }
     }
 
+    const handleDeleteServiceSuntik = async (id: number) => {
+        try {
+            const result = await SwalMessage({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: 'Apakah anda yakin untuk menghapus data ini!',
+            });
+
+            if (result.isConfirmed) {
+                SwalLoading();
+                const response = await API.delete(`/admin/service/suntik/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const message = response.data.message;
+                SwalMessage({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: message
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi Kesalahan!"
+
+                })
+            }
+        }
+    }
+
+    const handleDeleteServiceNokos = async (id: number) => {
+        try {
+            const result = await SwalMessage({
+                icon: 'warning',
+                title: 'Peringatan',
+                text: 'Apakah anda yakin untuk menghapus data ini!',
+            });
+
+            if (result.isConfirmed) {
+                SwalLoading();
+                const response = await API.delete(`/admin/service/nokos/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                const message = response.data.message;
+                SwalMessage({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: message
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi Kesalahan!"
+
+                })
+            }
+        }
+    }
+
+    const handleUpdateServiceSuntik = async (id: number) => {
+        try {
+            SwalLoading();
+            const response = await API.put(`/admin/service/suntik/${id}`, {
+                name: serviceForm.name,
+                description: serviceForm.description
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const message = response.data.message;
+            SwalMessage({
+                icon: "success",
+                title: "Berhasil!",
+                text: message
+            });
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    icon: "error",
+                    title: "Gagal!",
+                    text: "Terjadi Kesalahan!"
+
+                })
+            }
+        }
+    }
+
+    const handleUpdateChangeServiceSuntik = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setServiceForm({
+            ...serviceForm,
+            [name]: value
+        });
+    }
+
     return {
         transactionData,
         handleTransactionSuntik,
@@ -684,6 +808,10 @@ export default function useTransactionHooks() {
         handleTransactionSuntikRefill,
         handleCheckNokosOtp,
         handleSuntikCheckStatus,
-        handleCheckSuntikRefill
+        handleCheckSuntikRefill,
+        handleDeleteServiceNokos,
+        handleDeleteServiceSuntik,
+        handleUpdateServiceSuntik,
+        handleUpdateChangeServiceSuntik
     };
 }

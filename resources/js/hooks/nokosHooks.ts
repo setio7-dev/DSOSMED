@@ -88,50 +88,11 @@ export default function useNokosHooks() {
         }
     }
 
-    const handleNokosDelete = async (id: number) => {
-        try {
-            const result = await SwalMessage({
-                icon: 'warning',
-                title: 'Peringatan',
-                text: 'Apakah anda yakin untuk menghapus data ini!',
-            });
-            
-            if (result.isConfirmed) {
-                SwalLoading();
-                const response = await API.delete(`/admin/service/nokos/${id}`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                });
-
-                const message = response.data.message;
-                SwalMessage({
-                    icon: "success",
-                    title: "Berhasil!",
-                    text: message
-                });
-
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            }
-        } catch (error) {
-            if (error) {
-                SwalMessage({
-                    icon: "error",
-                    title: "Gagal!",
-                    text: "Terjadi Kesalahan!"
-                })
-            }
-        }
-    }
-
     return {
         nokosData,
         customerNokosData,
         profit,
         setProfit,
         handleNokosPost,
-        handleNokosDelete
     }
 }

@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useAuth } from '@/context/authContext';
 import useNokosHooks from '@/hooks/nokosHooks';
+import useTransactionHooks from '@/hooks/transactionHooks';
 import { NokosService } from '@/types';
 import SpinnerLoader from '@/ui/SpinnerLoader';
 import { FormatRupiah } from '@/utils/FormatRupiah';
@@ -9,10 +10,8 @@ import { useEffect, useState } from 'react'
 
 export default function NokosManagement() {
     const [searchQuery, setSearchQuery] = useState("");
-    const {
-        nokosData,
-        handleNokosDelete
-    } = useNokosHooks();
+    const { nokosData } = useNokosHooks();
+    const { handleDeleteServiceNokos } = useTransactionHooks();
     const [filteredServices, setFilteredServices] = useState<NokosService[]>([]);
     const { loading } = useAuth();
 
@@ -114,7 +113,7 @@ export default function NokosManagement() {
                                                 )}
 
                                                 <div className="ml-auto flex items-center gap-2">
-                                                    <button onClick={() => handleNokosDelete(country.id)} className="p-1.5 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-all duration-200">
+                                                    <button onClick={() => handleDeleteServiceNokos(country.id)} className="p-1.5 bg-red-600/20 hover:bg-red-600/30 text-red-400 rounded transition-all duration-200">
                                                         <Trash className="w-3.5 h-3.5" />
                                                     </button>
                                                 </div>

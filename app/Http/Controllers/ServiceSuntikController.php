@@ -50,7 +50,10 @@ class ServiceSuntikController extends Controller
     public function update(Request $request,$id)
     {
         $data = ServiceSuntik::find($id);
-        $data->update($request->only(['name', 'price', 'description']));
+        $data->update([
+            "name" => $request->name ?: $data->name,
+            "description" => $request->description ?: $data->description
+        ]);
 
         return response()->json([
             "message" => "Ubah Layanan Berhaisl!"

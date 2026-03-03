@@ -294,7 +294,16 @@ export default function HistorySuntik() {
                                             <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    if (!refillStyle.disabled) handleTransactionSuntikRefill(order);
+                                                    if (!refillStyle.disabled) {
+                                                        if ((order as any).api_type === 'miraipedia') {
+                                                            window.open(
+                                                                `https://t.me/zyrena13?text=${encodeURIComponent(`REFILL ${order.order_id}`)}`,
+                                                                '_blank'
+                                                            );
+                                                        } else {
+                                                            handleTransactionSuntikRefill(order);
+                                                        }
+                                                    }
                                                 }}
                                                 disabled={refillStyle.disabled}
                                                 className={refillStyle.className}
