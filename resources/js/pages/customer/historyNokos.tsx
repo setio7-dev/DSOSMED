@@ -12,6 +12,7 @@ import {
     Phone,
     Copy,
     Check,
+    Loader2,
 } from 'lucide-react';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { useAuth } from '@/context/authContext';
@@ -28,6 +29,7 @@ export default function HistoryNokos() {
 
     const statusConfig = {
         berhasil: { label: 'Berhasil', color: 'text-green-400', bg: 'bg-green-400/20', icon: CheckCircle },
+        pending: { label: 'Pending', color: 'text-yellow-400', bg: 'bg-yellow-400/20', icon: Loader2 },
         gagal: { label: 'Gagal', color: 'text-red-400', bg: 'bg-red-400/20', icon: XCircle },
     };
 

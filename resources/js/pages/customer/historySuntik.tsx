@@ -218,8 +218,9 @@ export default function HistorySuntik() {
 
     const filteredOrders = transactionData.filter((order: TransactionProps) => {
         const matchesSearch =
-            order.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            order.order_id.toString().toLowerCase().includes(searchQuery.toLowerCase());
+            order?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            order?.order_id?.toString().toLowerCase().includes(searchQuery.toLowerCase()) ||
+            order?.target?.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesSearch && order.type.includes('suntik');
     });
 

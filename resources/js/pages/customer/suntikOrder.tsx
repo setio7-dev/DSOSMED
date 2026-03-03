@@ -42,7 +42,7 @@ export default function SuntikOrder() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderReceipt, setOrderReceipt] = useState<OrderReceipt | null>(null);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(false);
-  const [defaultQuantity, setDefaultQuantity] = useState<string>('100');
+  const [defaultQuantity, setDefaultQuantity] = useState<string>('');
   const [target, setTarget] = useState<string>('');
   const { customerserviceMedanPediaData } = useMedanPediaHooks();
   const { handleTransactionSuntik } = useTransactionHooks();

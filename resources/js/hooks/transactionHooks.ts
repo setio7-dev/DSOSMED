@@ -90,7 +90,6 @@ export default function useTransactionHooks() {
                         type: 'nokos',
                         price: country.price,
                         quantity: '1',
-                        status: 'berhasil',
                         result: numberValue,
                         api_type: country.type,
                     },
@@ -122,7 +121,6 @@ export default function useTransactionHooks() {
                         type: 'nokos',
                         price: country.price,
                         quantity: '1',
-                        status: 'berhasil',
                         result: phone,
                         api_type: country.type,
                     },
@@ -212,7 +210,6 @@ export default function useTransactionHooks() {
                             type: 'suntik',
                             price: price,
                             quantity: target.quantity,
-                            status: 'berhasil',
                             target: target.username,
                             api_type: typeApi,
                         },
@@ -252,7 +249,6 @@ export default function useTransactionHooks() {
                             type: 'suntik',
                             price: price,
                             quantity: target.quantity,
-                            status: 'berhasil',
                             target: target.username,
                             api_type: typeApi,
                         },
@@ -402,9 +398,17 @@ export default function useTransactionHooks() {
                     return;
                 }
 
+                await API.put(`/customer/transaction/${orderNokos.id}`, {
+                    status: "berhasil"
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
                 const mappingData = {
                     order_id: findData.id,
-                    sms: findData?.sms ? findData.sms : "menunggu",
+                    sms: findData?.sms.length > 0 ? findData.sms[findData.sms.length - 1].code : "menunggu",
                     nomor: orderNokos.result
                 }
 
@@ -455,6 +459,14 @@ export default function useTransactionHooks() {
                     window.location.reload();
                     return;
                 }
+
+                await API.put(`/customer/transaction/${orderNokos.id}`, {
+                    status: "berhasil"
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
 
                 const mappingData = {
                     id: orderNokos.order_id,
@@ -514,6 +526,14 @@ export default function useTransactionHooks() {
                     return;
                 }
 
+                await API.put(`/customer/transaction/${orderSuntik.id}`, {
+                    status: "berhasil"
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
                 return {
                     order_id: orderSuntik.order_id,
                     status: data.status,
@@ -559,6 +579,13 @@ export default function useTransactionHooks() {
                     window.location.reload();
                     return;
                 }
+                await API.put(`/customer/transaction/${orderSuntik.id}`, {
+                    status: "berhasil"
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
 
                 return {
                     order_id: orderSuntik.order_id,

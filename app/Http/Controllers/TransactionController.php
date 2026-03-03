@@ -37,7 +37,7 @@ class TransactionController extends Controller
             "type" => $request->type,
             "order_id" => $request->order_id,
             "price" => $request->price,
-            "status" => $request->status ?? "berhasil",
+            "status" => $request->status ?? "pending",
             "target" => $request->target,
             "result" => $request->result,
             "api_type" => $request->api_type,
