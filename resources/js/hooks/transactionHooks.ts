@@ -423,16 +423,6 @@ export default function useTransactionHooks() {
                 });
 
                 const data = response.data.data;
-                if (response.data.code == 400) {
-                    SwalMessage({
-                        icon: "error",
-                        title: "Gagal!",
-                        text: "Terjadi Kesalahan, silahkan coba lagi nanti!"
-                    });
-
-                    return;
-                }
-
                 if (!data) {
                     SwalMessage({
                         icon: "error",
