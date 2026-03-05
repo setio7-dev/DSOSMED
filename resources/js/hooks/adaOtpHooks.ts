@@ -16,7 +16,9 @@ export default function useAdaOtpHooks() {
                 const response = await API.get("/adaotp/services");
                 setServicesAdaotpData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                    console.error("Terjadi Kesalahan!")
+                };
             }
         }
 
@@ -30,7 +32,9 @@ export default function useAdaOtpHooks() {
 
                 setCustomerServicesAdaotpData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                    console.error("Terjadi Kesalahan!")
+                };
             }
         }
 

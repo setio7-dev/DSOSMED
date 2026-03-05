@@ -31,7 +31,9 @@ export default function useNewsHooks() {
 
             setAdminNewsData(response.data);
         } catch (error) {
-            console.error(error);
+            if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
         }
     }
 
@@ -44,7 +46,9 @@ export default function useNewsHooks() {
             });
             setNewsData(response.data.data);
         } catch (error) {
-            console.error(error);
+            if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
         }
     };
 
@@ -57,7 +61,9 @@ export default function useNewsHooks() {
             });
             setCustomerNewsData(response.data.data);
         } catch (error) {
-            console.error(error);
+            if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
         }
     };
 

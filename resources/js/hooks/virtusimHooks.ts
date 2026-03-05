@@ -21,7 +21,9 @@ export default function useVirtusimHooks() {
                 const response = await API.get("/virtusim/list-countries");
                 setServiceCountryVirtusimData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         }
 
@@ -35,7 +37,9 @@ export default function useVirtusimHooks() {
 
                 setCustomerserviceVirtusimData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         }
 
@@ -111,7 +115,9 @@ export default function useVirtusimHooks() {
                 text: error.message,
                 icon: "error"
             });
-            console.error(error)
+            if (error) {
+                console.error("Terjadi Kesalahan!")
+            }
         }
     }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from 'react';
 import CustomerDashboard from '@/components/customer/customerDashboard';
 import {
@@ -13,6 +14,7 @@ import {
     Copy,
     Check,
     Loader2,
+    Ban,
 } from 'lucide-react';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { useAuth } from '@/context/authContext';
@@ -24,8 +26,9 @@ import { FormatPhone } from '@/utils/FormatPhone';
 export default function HistoryNokos() {
     const [searchQuery, setSearchQuery] = useState('');
     const [copiedId, setCopiedId] = useState<string | number | null>(null);
+    const [cancelingId, setCancelingId] = useState<string | number | null>(null);
     const { loading } = useAuth();
-    const { transactionData } = useTransactionHooks();
+    const { transactionData, handleCancelNokos } = useTransactionHooks();
 
     const statusConfig = {
         berhasil: { label: 'Berhasil', color: 'text-green-400', bg: 'bg-green-400/20', icon: CheckCircle },
@@ -46,8 +49,14 @@ export default function HistoryNokos() {
         setTimeout(() => setCopiedId(null), 2000);
     };
 
+    const handleCancel = async (nokosItem: any) => {
+        setCancelingId(nokosItem.order_id);
+        await handleCancelNokos(nokosItem);
+        setCancelingId(null);
+    };
+
     if (loading) {
-        return <SpinnerLoader/>;
+        return <SpinnerLoader />;
     }
 
     return (
@@ -79,6 +88,8 @@ export default function HistoryNokos() {
                         {filteredOrders.map((order) => {
                             const StatusIcon = statusConfig[order.status as keyof typeof statusConfig]?.icon || Clock;
                             const statusStyle = statusConfig[order.status as keyof typeof statusConfig] || statusConfig.berhasil;
+                            const isCanceling = cancelingId === order.order_id;
+                            const canCancel = order.status === 'pending' || order.status === 'berhasil';
 
                             return (
                                 <div
@@ -96,7 +107,7 @@ export default function HistoryNokos() {
                                                 </div>
                                             </div>
                                             <div className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg ${statusStyle.bg} flex-shrink-0`}>
-                                                <StatusIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${statusStyle.color}`} />
+                                                <StatusIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${statusStyle.color} ${order.status === 'pending' ? 'animate-spin' : ''}`} />
                                                 <span className={`text-xs font-semibold ${statusStyle.color}`}>
                                                     {statusStyle.label}
                                                 </span>
@@ -140,6 +151,23 @@ export default function HistoryNokos() {
                                                 </span>
                                             </div>
                                         </div>
+
+                                        {canCancel && (
+                                            <div className="pt-2 border-t border-gray-600/30">
+                                                <button
+                                                    onClick={() => handleCancel(order)}
+                                                    disabled={isCanceling}
+                                                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 hover:border-red-500/40 text-red-400 hover:text-red-300 active:scale-95"
+                                                >
+                                                    {isCanceling ? (
+                                                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                                    ) : (
+                                                        <Ban className="w-3.5 h-3.5" />
+                                                    )}
+                                                    {isCanceling ? 'Membatalkan...' : 'Batalkan Orderan'}
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             );

@@ -24,7 +24,9 @@ export default function useGuideHooks() {
 
                 setGuidesData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         }
 
@@ -39,7 +41,9 @@ export default function useGuideHooks() {
 
                 setGuideData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         }
 

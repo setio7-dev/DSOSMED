@@ -15,7 +15,9 @@ export default function useMiraiPediaHooks() {
                 const response = await API.get("/miraipedia/service");
                 setMiraiServiceData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         }
 

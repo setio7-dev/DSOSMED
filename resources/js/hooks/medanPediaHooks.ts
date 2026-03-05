@@ -18,7 +18,9 @@ export default function useMedanPediaHooks() {
                 const response = await API.get('/medanpedia/services');
                 setSuntikServiceData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         };
 
@@ -31,7 +33,9 @@ export default function useMedanPediaHooks() {
                 });
                 setCustomerserviceMedanPediaData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         };
 

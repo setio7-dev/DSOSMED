@@ -24,7 +24,7 @@ Route::get("/adaotp/services", [ServiceAPIController::class, "adaotp_api_listser
 Route::get("/adaotp/services/{id}", [ServiceAPIController::class, "adaotp_api_listcountry"]);
 Route::get("/adaotp/orders/status", [ServiceAPIController::class, "ada_otp_getorders"])->middleware("auth");
 Route::post("/adaotp/order", [ServiceAPIController::class, "adaotp_api_order"])->middleware("auth");
-Route::delete("/adaotp/orders/cancel/{order_id}", [ServiceAPIController::class, "adaotp_cancel_order"]);
+Route::post("/adaotp/orders/cancel", [ServiceAPIController::class, "adaotp_cancel_order"])->middleware("auth");
 Route::post("/adaotp/orders/finish/{order_id}", [ServiceAPIController::class, "adaotp_finish_order"]);
 
 Route::get("/medanpedia/services", [ServiceAPIController::class, "medanpedia_api_services"]);
@@ -39,6 +39,7 @@ Route::get("/jasaotp/operator", [ServiceAPIController::class, "jasaotp_operator"
 Route::get("/jasaotp/service", [ServiceAPIController::class, "jasaotp_service"]);
 Route::post("/jasaotp/order", [ServiceAPIController::class, "jasaotp_order"])->middleware("auth");
 Route::post("/jasaotp/orders/status", [ServiceAPIController::class, "jasaotp_order_status"])->middleware("auth");
+Route::post("/jasaotp/orders/cancel", [ServiceAPIController::class, "jasaotp_order_cancel"])->middleware("auth");
 
 Route::get("/miraipedia/service", [ServiceAPIController::class, "miraipedia_service"]);
 Route::post("/miraipedia/order", [ServiceAPIController::class, "miraipedia_order"])->middleware("auth");

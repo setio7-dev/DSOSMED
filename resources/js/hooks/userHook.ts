@@ -25,7 +25,7 @@ export default function useUserHook() {
         fetchUsers();
     }, [token]);
 
-    const handleUpdateUserStatus = async(id: number, isActive: boolean) => {
+    const handleUpdateUserStatus = async (id: number, isActive: boolean) => {
         try {
             await API.put(`/admin/users/${id}`, {
                 isAdmin: isActive

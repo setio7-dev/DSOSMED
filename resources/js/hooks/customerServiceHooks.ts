@@ -23,7 +23,9 @@ export default function useCustomerServiceHooks() {
 
                 setCustomerServiceData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         }
 

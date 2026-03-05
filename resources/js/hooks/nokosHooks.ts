@@ -21,7 +21,9 @@ export default function useNokosHooks() {
 
                 setNokosData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                    console.error("Terjadi Kesalahan!")
+                };
             }
         }
 
@@ -35,7 +37,9 @@ export default function useNokosHooks() {
 
                 setCustomerNokosData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                    console.error("Terjadi Kesalahan!")
+                };
             }
         }
 

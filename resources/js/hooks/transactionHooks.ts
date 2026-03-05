@@ -35,7 +35,9 @@ export default function useTransactionHooks() {
 
                 setTransactionData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                    console.error("Terjadi Kesalahan!")
+                };
             }
         };
 
@@ -49,7 +51,9 @@ export default function useTransactionHooks() {
 
                 setTransactionAdminData(response.data.data);
             } catch (error) {
-                console.error(error);
+                if (error) {
+                    console.error("Terjadi Kesalahan!")
+                };
             }
         };
 
@@ -140,13 +144,13 @@ export default function useTransactionHooks() {
                 window.location.reload();
             }, 2000);
         } catch (error: any) {
-            SwalMessage({
-                icon: 'error',
-                title: 'Gagal!',
-                text: error?.response.data.message,
-            });
-
-            console.error(error);
+            if (error) {
+                SwalMessage({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "Terjadi Kesalahan, Silahkan Hubungi Admin!",
+                });
+            };
         }
     }
 
@@ -275,7 +279,7 @@ export default function useTransactionHooks() {
                 SwalMessage({
                     icon: 'error',
                     title: 'Gagal!',
-                    text: error?.response?.data.message,
+                    text: "Terjadi Kesalahan, Silahkan Hubungi Admin!",
                 });
 
                 return {
@@ -352,7 +356,6 @@ export default function useTransactionHooks() {
                 title: 'Gagal!',
                 text: error?.response?.data.message,
             });
-            console.error(error)
         }
     }
 
@@ -371,7 +374,7 @@ export default function useTransactionHooks() {
                     return data;
                 });
 
-                if (!findData) {
+                if (!findData && !orderNokos.target) {
                     SwalMessage({
                         icon: "error",
                         title: "Gagal!",
@@ -399,7 +402,8 @@ export default function useTransactionHooks() {
                 }
 
                 await API.put(`/customer/transaction/${orderNokos.id}`, {
-                    status: "berhasil"
+                    status: "berhasil",
+                    target: findData?.sms?.length > 0 ? findData.sms[findData.sms?.length - 1].code : null,
                 }, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -408,7 +412,7 @@ export default function useTransactionHooks() {
 
                 const mappingData = {
                     order_id: findData.id,
-                    sms: findData?.sms.length > 0 ? findData.sms[findData.sms.length - 1].code : "menunggu",
+                    sms: findData?.sms?.length > 0 ? findData.sms[findData.sms?.length - 1].code : "menunggu",
                     nomor: orderNokos.result
                 }
 
@@ -423,7 +427,7 @@ export default function useTransactionHooks() {
                 });
 
                 const data = response.data.data;
-                if (!data) {
+                if (!data && !orderNokos.target) {
                     SwalMessage({
                         icon: "error",
                         title: "Gagal!",
@@ -451,7 +455,8 @@ export default function useTransactionHooks() {
                 }
 
                 await API.put(`/customer/transaction/${orderNokos.id}`, {
-                    status: "berhasil"
+                    status: "berhasil",
+                    target: data.otp ? data.otp : null
                 }, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -474,6 +479,7 @@ export default function useTransactionHooks() {
                     text: "Terjadi kesalahan, silahkan coba lagi nanti!",
                 })
             }
+            console.error(error)
         }
     }
 
@@ -815,6 +821,92 @@ export default function useTransactionHooks() {
         });
     }
 
+    const handleCancelNokos = async (orderNokos: TransactionProps) => {
+        try {
+            if (orderNokos.api_type == "adaotp") {
+                SwalLoading();
+                const response = await API.post("/adaotp/orders/cancel", {
+                    order_id: orderNokos.order_id,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                await API.put(`/customer/transaction/${orderNokos.id}`, {
+                    status: "gagal"
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+
+                await API.put("/update/saldo", {
+                    saldo: orderNokos.price
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+
+                const message = response.data.message;
+                SwalMessage({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: message
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                SwalLoading();
+                const response = await API.post("/jasaotp/orders/cancel", {
+                    order_id: orderNokos.order_id,
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                await API.put(`/customer/transaction/${orderNokos.id}`, {
+                    status: "gagal"
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+
+                await API.put("/update/saldo", {
+                    saldo: orderNokos.price
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+
+                const message = response.data.message;
+                SwalMessage({
+                    icon: "success",
+                    title: "Berhasil!",
+                    text: message
+                });
+
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    title: "Gagal!",
+                    text: "Terjadi Kesalahan!",
+                    icon: "error"
+                })
+            }
+        }
+    }
+
     return {
         transactionData,
         handleTransactionSuntik,
@@ -829,6 +921,7 @@ export default function useTransactionHooks() {
         handleDeleteServiceNokos,
         handleDeleteServiceSuntik,
         handleUpdateServiceSuntik,
-        handleUpdateChangeServiceSuntik
+        handleUpdateChangeServiceSuntik,
+        handleCancelNokos
     };
 }

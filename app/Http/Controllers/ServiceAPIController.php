@@ -102,8 +102,9 @@ class ServiceAPIController extends Controller
         return response()->json($response->json());
     }
 
-    public function adaotp_cancel_order($order_id)
+    public function adaotp_cancel_order(Request $request)
     {
+        $order_id = $request->order_id;
         $response = Http::withHeaders([
             'Authorization' => 'Bearer Wwnpfj17qfJERz7uDhAIC28rTw779RRE',
             'Accept' => 'application/json',
@@ -414,6 +415,17 @@ class ServiceAPIController extends Controller
     {
         $orderId = $request->order_id;
         $response = Http::get('https://api.jasaotp.id/v1/sms.php', [
+            'api_key' => '1bfe748360e3d244b9a76ae0e285860b',
+            'id' => $orderId,
+        ]);
+
+        return response()->json($response->json());
+    }
+
+    public function jasaotp_order_cancel(Request $request)
+    {
+        $orderId = $request->order_id;
+        $response = Http::get('https://api.jasaotp.id/v1/cancel.php', [
             'api_key' => '1bfe748360e3d244b9a76ae0e285860b',
             'id' => $orderId,
         ]);

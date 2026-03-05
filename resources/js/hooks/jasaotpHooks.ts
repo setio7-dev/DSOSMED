@@ -17,7 +17,9 @@ export default function useJasaotpHooks() {
                 const response = await API.get('/jasaotp/country');
                 setJasaOtpData(response.data.data)
             } catch (error) {
-                console.error(error)
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            }
             }
         }
 
@@ -31,7 +33,9 @@ export default function useJasaotpHooks() {
 
                 setJasaOtpServiceData(response.data.data)
             } catch (error) {
-                console.error(error);
+                if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
             }
         }
 
@@ -51,7 +55,9 @@ export default function useJasaotpHooks() {
 
             setJasaOtpDataDetail(mergeData as any)
         } catch (error) {
-            console.error(error);
+            if (error) {
+                console.error("Terjadi Kesalahan!")
+            };
         }
     }
 
