@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ServiceSuntik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class ServiceAPIController extends Controller
 {
@@ -391,7 +393,7 @@ class ServiceAPIController extends Controller
                 'operator' => $request->operator,
             ]
         );
-        
+
         $body = $response->json();
         if (! isset($body['success']) || $body['success'] !== true) {
             return response()->json([
@@ -489,5 +491,145 @@ class ServiceAPIController extends Controller
             ]);
 
         return response()->json($response->json());
+    }
+
+    // Popup News
+    public function popup_news()
+    {
+        $responseMedanPedia = $this->medanpedia_api_services();
+        $responseMiraiPedia = $this->miraipedia_service();
+
+        $medanData = $responseMedanPedia->getData(true);
+        $miraiData = $responseMiraiPedia->getData(true);
+
+        $medanServices = $medanData['data'] ?? $medanData ?? [];
+        $miraiServices = $miraiData['data'] ?? $miraiData ?? [];
+
+        $apiServices = collect($medanServices)
+            ->merge($miraiServices)
+            ->map(function ($item) {
+
+                return [
+                    "id" => $item['id'] ?? $item['service'] ?? null,
+                    "name" => $item['name'] ?? null,
+                    "price" => $item['price'] ?? $item['rate'] ?? 0,
+                    "min" => $item['min'] ?? 0,
+                    "max" => $item['max'] ?? 0
+                ];
+            })
+            ->filter(fn($v) => $v['id'] !== null)
+            ->values()
+            ->toArray();
+
+        $localServices = ServiceSuntik::all();
+        $localMap = $localServices->keyBy('service_id');
+
+        $price_increase = [];
+        $price_decrease = [];
+        $min_changed = [];
+        $max_changed = [];
+        $others = [];
+        $deactivated = [];
+
+        foreach ($apiServices as $api) {
+
+            $apiId = $api['id'];
+
+            if (!$localMap->has($apiId)) continue;
+
+            $local = $localMap[$apiId];
+
+            $apiPrice = (int) $api['price'];
+            $localPrice = (int) $local->price;
+
+            $apiMin = (int) $api['min'];
+            $localMin = (int) $local->min;
+
+            $apiMax = (int) $api['max'];
+            $localMax = (int) $local->max;
+
+            if ($apiPrice !== $localPrice) {
+
+                $obj = [
+                    "id" => (string) $apiId,
+                    "name" => $api['name'] ?? $local->name,
+                    "local" => $localPrice,
+                    "api" => $apiPrice,
+                    "rowNumber" => $local->id,
+                    "apiSample" => [
+                        "id" => (string) $apiId,
+                        "name" => $api['name'] ?? $local->name,
+                        "price" => $apiPrice
+                    ]
+                ];
+
+                if ($apiPrice > $localPrice) {
+                    $price_increase[] = $obj;
+                } else {
+                    $price_decrease[] = $obj;
+                }
+            }
+
+            if ($apiMin !== $localMin) {
+
+                $min_changed[] = [
+                    "id" => (string) $apiId,
+                    "name" => $api['name'] ?? $local->name,
+                    "local" => $localMin,
+                    "api" => $apiMin,
+                    "rowNumber" => $local->id
+                ];
+            }
+
+            if ($apiMax !== $localMax) {
+
+                $max_changed[] = [
+                    "id" => (string) $apiId,
+                    "name" => $api['name'] ?? $local->name,
+                    "local" => $localMax,
+                    "api" => $apiMax,
+                    "rowNumber" => $local->id
+                ];
+            }
+        }
+
+        $apiIds = collect($apiServices)
+            ->pluck('id')
+            ->map(fn($v) => (string) $v)
+            ->toArray();
+
+        foreach ($localServices as $local) {
+
+            if (!in_array((string) $local->service_id, $apiIds)) {
+
+                $deactivated[] = [
+                    "localRowNumber" => $local->id,
+                    "id" => (string) $local->service_id,
+                    "reason" => "missing_in_api"
+                ];
+            }
+        }
+
+        $summary = [
+            "apiTotal" => count($apiServices),
+            "localTotal" => $localServices->count(),
+            "price_increase" => count($price_increase),
+            "price_decrease" => count($price_decrease),
+            "min_changed" => count($min_changed),
+            "max_changed" => count($max_changed),
+            "deactivated" => count($deactivated),
+            "others" => count($others)
+        ];
+
+        return response()->json([
+            "status" => true,
+            "summary" => $summary,
+            "price_increase" => $price_increase,
+            "price_decrease" => $price_decrease,
+            "min_changed" => $min_changed,
+            "max_changed" => $max_changed,
+            "deactivated" => $deactivated,
+            "others" => $others
+        ]);
     }
 }

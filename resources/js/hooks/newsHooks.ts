@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import API from '@/server/API';
-import { NewsProps } from '@/types';
+import { CompareServicesResponse, NewsProps } from '@/types';
 import SwalLoading from '@/utils/SwalLoading';
 import { SwalMessage } from '@/utils/SwalMessage';
 import React, { useEffect, useState } from 'react';
 
 export default function useNewsHooks() {
     const [newsData, setNewsData] = useState<NewsProps[]>([]);
+    const [adminNewsData, setAdminNewsData] = useState<CompareServicesResponse[]>([]);
     const [customerNewsData, setCustomerNewsData] = useState<NewsProps[]>([]);
     const token = localStorage.getItem("token");
     const [formData, setFormData] = useState<{
@@ -19,6 +20,20 @@ export default function useNewsHooks() {
         desc: '',
         image: null
     });
+
+    const fetchAdminNews = async() => {
+        try {
+            const response = await API.get("/admin/popup-news", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            setAdminNewsData(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const fetchNews = async () => {
         try {
@@ -48,6 +63,7 @@ export default function useNewsHooks() {
 
     useEffect(() => {
         fetchNews();
+        fetchAdminNews();
         fetchCustomerNews();
     }, [token]);
 
@@ -173,6 +189,7 @@ export default function useNewsHooks() {
         handleUpdateNews,
         handleDeleteNews,
         fetchNews,
-        customerNewsData
+        customerNewsData,
+        adminNewsData
     };
 }

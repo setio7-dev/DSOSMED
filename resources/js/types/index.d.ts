@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { InertiaLinkProps } from '@inertiajs/react';
 import { LucideIcon } from 'lucide-react';
 
@@ -268,4 +269,55 @@ export interface SuntikServiceProps {
     refill: number;
     average_time: string;
     avg_time_in_seconds: string;
+}
+
+export interface CompareServicesResponse {
+  status: boolean;
+  summary: CompareSummary;
+  price_increase: PriceCompareItem[];
+  price_decrease: PriceCompareItem[];
+  min_changed: MinMaxChangeItem[];
+  max_changed: MinMaxChangeItem[];
+  deactivated: DeactivatedItem[];
+  others: any[];
+}
+
+export interface CompareSummary {
+  apiTotal: number;
+  localTotal: number;
+  price_increase: number;
+  price_decrease: number;
+  min_changed: number;
+  max_changed: number;
+  deactivated: number;
+  others: number;
+}
+
+export interface PriceCompareItem {
+  id: string;
+  name: string;
+  local: number;
+  api: number;
+  rowNumber: number;
+  apiSample: ApiSample;
+}
+
+export interface ApiSample {
+  id: string;
+  name: string;
+  price: number;
+}
+
+export interface MinMaxChangeItem {
+  id: string;
+  name: string;
+  local: number;
+  api: number;
+  rowNumber: number;
+}
+
+export interface DeactivatedItem {
+  localRowNumber: number;
+  id: string;
+  reason: string;
 }

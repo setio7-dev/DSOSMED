@@ -55,22 +55,22 @@ Route::get('/history', [DepositController::class, 'index']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [UserController::class, 'me']);
     Route::post('/logout', [UserController::class, 'logout']);
-    Route::post("/adaotp/order", [ServiceAPIController::class, "adaotp_api_order"]);
-
+    
     Route::put('/update/saldo', [UserController::class, 'updateSaldo']);
     Route::get('/history/user', [DepositController::class, 'indexByUser']);
     Route::post('/history/user/create', [DepositController::class, 'store']);
     Route::delete('/history/user/delete/{id}', [DepositController::class, 'destroy']);
-
+    
     Route::middleware("role:1")->prefix("/admin")->group(function () {
         Route::get("/users", [UserController::class, "index"]);
         Route::put("/users/{id}", [UserController::class, "update"]);
         Route::get("/transaction", [TransactionController::class, "indexAdmin"]);
         Route::resource("/news", NewsController::class);
-
+        Route::get('/popup-news', [ServiceAPIController::class, 'popup_news']);
+        
         Route::resource('/service/nokos', ServiceNokosController::class);
         Route::resource('/service/suntik', ServiceSuntikController::class);
-
+        
         Route::resource("/guide", GuideController::class);
         Route::resource("/customer-service", CustomerServiceController::class);
     });
