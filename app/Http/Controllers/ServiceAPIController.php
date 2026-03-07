@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PopupNews;
 use App\Models\ServiceSuntik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -644,7 +645,6 @@ class ServiceAPIController extends Controller
     //         "others" => $others
     //     ]);
     // }
-
     public function popup_news()
     {
         $url = "https://t.me/s/medanpediaNOTICE";
@@ -666,8 +666,6 @@ class ServiceAPIController extends Controller
 
         $nodes = $xpath->query("//*[contains(@class,'tgme_widget_message_wrap')]");
 
-        $data = [];
-
         $filterDate = strtotime("2026-03-06");
 
         foreach ($nodes as $node) {
@@ -683,6 +681,7 @@ class ServiceAPIController extends Controller
             $date = $timeNode->item(0)->getAttribute('datetime');
 
             $timestamp = strtotime($date);
+
             if ($timestamp < $filterDate) {
                 continue;
             }
@@ -695,7 +694,6 @@ class ServiceAPIController extends Controller
 
             $keterangan = trim($ket[1] ?? '');
 
-            // DETEKSI KENAIKAN HARGA
             $oldPrice = null;
             $newPrice = null;
 
@@ -704,19 +702,23 @@ class ServiceAPIController extends Controller
                 $newPrice = str_replace('.', '', $price[2]);
             }
 
-            $data[] = [
-                'tanggal' => date('Y-m-d H:i:s', $timestamp),
-                'id_layanan' => $id[1] ?? null,
-                'nama_layanan' => trim($nama[1] ?? ''),
-                'keterangan' => $keterangan,
-                'old_price' => $oldPrice,
-                'new_price' => $newPrice
-            ];
+            $tanggal = date('Y-m-d H:i:s', $timestamp);
+
+            PopupNews::updateOrCreate(
+                [
+                    'tanggal' => $tanggal,
+                    'id_layanan' => $id[1] ?? null
+                ],
+                [
+                    'nama_layanan' => trim($nama[1] ?? ''),
+                    'keterangan' => $keterangan,
+                    'old_price' => $oldPrice,
+                    'new_price' => $newPrice
+                ]
+            );
         }
 
-        usort($data, function ($a, $b) {
-            return strtotime($b['tanggal']) - strtotime($a['tanggal']);
-        });
+        $data = PopupNews::orderBy('tanggal', 'desc')->limit(50)->get();
 
         return response()->json($data);
     }

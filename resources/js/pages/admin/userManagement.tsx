@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, useRef, useMemo } from 'react';
 import { Search, Edit2, User, Shield, Wallet, X, TrendingUp, TrendingDown, Activity, Layers, ChevronRight, Zap, RefreshCw } from 'lucide-react';
@@ -277,6 +277,21 @@ const AdminNewsModal = ({
             setSyncingId(null);
         }
     };
+
+    useEffect(() => {
+        if (!isOpen || priceChanges.length === 0) return;
+        const now = new Date();
+        const stale = priceChanges.filter(item => {
+            const diff = now.getTime() - new Date(item.tanggal).getTime();
+            return diff >= 30 * 24 * 60 * 60 * 1000;
+        });
+        if (stale.length === 0) return;
+        (async () => {
+            for (const item of stale) {
+                await handleUpdatePriceSuntikFromNews(Number(item.id_layanan), item.newPriceNum);
+            }
+        })();
+    }, [isOpen, priceChanges]);
 
     const tabs = [
         { id: 'overview', label: 'Overview', count: null },
