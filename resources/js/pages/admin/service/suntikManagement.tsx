@@ -38,7 +38,7 @@ export default function SuntikManagement() {
     return (
         <div className="px-2 sm:px-0">
             <div className="space-y-4 sm:space-y-8">
-                <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl p-4 sm:p-6">
+                <div className="">
                     <div className="flex flex-col gap-3 mb-5 sm:mb-6">
                         <h2 className="text-lg sm:text-xl font-semibold text-purple-300">Daftar Layanan Suntik</h2>
                         <div className="relative w-full">
@@ -155,14 +155,13 @@ export default function SuntikManagement() {
 
                             <div className="space-y-1.5">
                                 <label className="text-xs font-poppins-medium text-gray-300">Deskripsi</label>
-                                <input
-                                    type="text"
+                                <textarea
                                     name="description"
                                     defaultValue={selectedService.description}
                                     onChange={handleUpdateChangeServiceSuntik}
                                     placeholder="Masukkan deskripsi..."
-                                    className="w-full px-3.5 py-3 sm:py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
-                                />
+                                    className="w-full min-h-60 px-3.5 py-3 sm:py-2.5 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 transition-all"
+                                ></textarea>
                             </div>
 
                             <div className="grid grid-cols-3 gap-2 pt-1">

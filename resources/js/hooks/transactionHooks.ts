@@ -813,7 +813,7 @@ export default function useTransactionHooks() {
         }
     }
 
-    const handleUpdateChangeServiceSuntik = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUpdateChangeServiceSuntik = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setServiceForm({
             ...serviceForm,

@@ -29,7 +29,7 @@ export default function NokosManagement() {
     return (
         <div>
             <div className="space-y-8">
-                <div className="bg-gray-900/50 border border-gray-700/50 rounded-xl p-6">
+                <div className="">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
                         <h2 className="text-xl font-semibold text-purple-300">Daftar Layanan Nokos</h2>
                         <div className="relative">

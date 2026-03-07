@@ -5,6 +5,7 @@ import { CompareServicesResponse, NewsProps } from '@/types';
 import SwalLoading from '@/utils/SwalLoading';
 import { SwalMessage } from '@/utils/SwalMessage';
 import React, { useEffect, useState } from 'react';
+import useMedanPediaHooks from './medanPediaHooks';
 
 export default function useNewsHooks() {
     const [newsData, setNewsData] = useState<NewsProps[]>([]);
@@ -20,6 +21,7 @@ export default function useNewsHooks() {
         desc: '',
         image: null
     });
+    const { customerserviceMedanPediaData } = useMedanPediaHooks();
 
     const fetchAdminNews = async() => {
         try {
@@ -185,6 +187,40 @@ export default function useNewsHooks() {
         }
     };
 
+    const handleUpdatePriceSuntikFromNews = async(serviceId: number, newPrice: number) => {
+        try {
+            const findData = customerserviceMedanPediaData.find(data => data.service_id == serviceId);
+            const profitPrice = findData.price - findData.old_price + newPrice;
+            const response = await API.put(`/admin/service/suntik/${findData.id}`, {
+                old_price: newPrice,
+                price: profitPrice
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            const message = response.data.message;
+            SwalMessage({
+                icon: "success",
+                title: "Berhasil!",
+                text: message
+            });
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        } catch (error) {
+            if (error) {
+                SwalMessage({
+                    title: "Gagal!",
+                    text: "Terjadi Kesalahan!",
+                    icon: "error"
+                })
+            }
+        }
+    }
+
     return {
         newsData,
         formData,
@@ -196,6 +232,7 @@ export default function useNewsHooks() {
         handleDeleteNews,
         fetchNews,
         customerNewsData,
-        adminNewsData
+        adminNewsData,
+        handleUpdatePriceSuntikFromNews
     };
 }

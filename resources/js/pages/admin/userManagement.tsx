@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, useRef } from 'react';
-import { Search, Edit2, User, Shield, Wallet, X, TrendingUp, TrendingDown, Activity, AlertTriangle, Layers, BarChart2, ChevronRight, Zap } from 'lucide-react';
+import { useEffect, useState, useRef, useMemo } from 'react';
+import { Search, Edit2, User, Shield, Wallet, X, TrendingUp, TrendingDown, Activity, Layers, ChevronRight, Zap, RefreshCw } from 'lucide-react';
 import AdminDashboard from '@/components/admin/adminDashboard';
 import useUserHook from '@/hooks/userHook';
 import { FormatRupiah } from '@/utils/FormatRupiah';
 import { FormatDate } from '@/utils/FormatDate';
-import { UserProps } from '@/types';
+import { SuntikServiceProps, UserProps } from '@/types';
 import useNewsHooks from '@/hooks/newsHooks';
+import useMedanPediaHooks from '@/hooks/medanPediaHooks';
 
 const useCountUp = (target: number, duration = 1200, start = false) => {
     const [count, setCount] = useState(0);
@@ -57,13 +58,42 @@ const StatCard = ({ label, value, icon: Icon, color, delay, animate }: any) => {
     );
 };
 
-const ProductRow = ({ item, index, type }: any) => {
-    const isIncrease = type === 'increase';
-    const diff = isIncrease ? item.api - item.local : item.local - item.api;
-    const pct = ((Math.abs(diff) / item.local) * 100).toFixed(1);
+interface NewsItem {
+    tanggal: string;
+    id_layanan: string;
+    nama_layanan: string;
+    keterangan: string;
+    old_price: string | null;
+    new_price: string | null;
+}
+
+interface EnrichedNewsItem extends NewsItem {
+    currentPrice: number;
+    newPriceNum: number;
+    serviceName: string;
+    hasPriceChange: boolean;
+    isPriceIncrease: boolean;
+    suntikService: SuntikServiceProps;
+}
+
+const PriceChangeRow = ({
+    item,
+    index,
+    onSync,
+    syncing,
+}: {
+    item: EnrichedNewsItem;
+    index: number;
+    onSync: (id: string, newPrice: number, suntikService: SuntikServiceProps) => void;
+    syncing: boolean;
+}) => {
+    const diff = item.newPriceNum - item.currentPrice;
+    const pct = ((Math.abs(diff) / item.currentPrice) * 100).toFixed(1);
+    const isIncrease = diff > 0;
+
     return (
         <div
-            className="flex items-start gap-3 p-3 rounded-xl border border-gray-700/40 bg-gray-800/30 hover:bg-gray-800/60 transition-all duration-300 group"
+            className="flex items-start gap-3 p-3 rounded-xl border border-gray-700/40 bg-gray-800/30 hover:bg-gray-800/60 transition-all duration-300"
             style={{ animationDelay: `${index * 80}ms` }}
         >
             <div className={`mt-0.5 flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center ${isIncrease ? 'bg-rose-500/20' : 'bg-emerald-500/20'}`}>
@@ -73,27 +103,82 @@ const ProductRow = ({ item, index, type }: any) => {
                 }
             </div>
             <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-gray-200 leading-snug line-clamp-2">{item.name}</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-xs font-bold text-purple-400 font-mono">#{item.id_layanan}</span>
+                    <p className="text-xs font-medium text-gray-200 leading-snug line-clamp-2">{item.serviceName}</p>
+                </div>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    <span className="text-xs text-gray-500 font-mono">Lokal: {FormatRupiah(item.local)}</span>
+                    <span className="text-xs text-gray-500 font-mono">Lokal: {FormatRupiah(item.currentPrice)}</span>
                     <ChevronRight className="w-3 h-3 text-gray-600" />
                     <span className="text-xs font-mono font-bold" style={{ color: isIncrease ? '#f87171' : '#34d399' }}>
-                        API: {FormatRupiah(item.api)}
+                        API: {FormatRupiah(item.newPriceNum)}
                     </span>
                 </div>
+                {item.keterangan && (
+                    <p className="text-xs text-gray-500 mt-1.5 leading-relaxed italic border-l-2 border-gray-700 pl-2">
+                        {item.keterangan}
+                    </p>
+                )}
+                <p className="text-xs text-gray-600 mt-1">{new Date(item.tanggal).toLocaleString('id-ID')}</p>
             </div>
-            <div className={`flex-shrink-0 px-2 py-1 rounded-md text-xs font-bold tabular-nums ${isIncrease ? 'bg-rose-500/15 text-rose-400' : 'bg-emerald-500/15 text-emerald-400'}`}>
-                {isIncrease ? '+' : '-'}{pct}%
+            <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                <div className={`px-2 py-1 rounded-md text-xs font-bold tabular-nums ${isIncrease ? 'bg-rose-500/15 text-rose-400' : 'bg-emerald-500/15 text-emerald-400'}`}>
+                    {isIncrease ? '+' : '-'}{pct}%
+                </div>
+                <button
+                    onClick={() => onSync(item.id_layanan, item.newPriceNum, item.suntikService)}
+                    disabled={syncing}
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold text-white transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                        background: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
+                        boxShadow: '0 2px 10px rgba(124,58,237,0.4)',
+                    }}
+                >
+                    <RefreshCw className={`w-3 h-3 ${syncing ? 'animate-spin' : ''}`} />
+                    Sesuaikan
+                </button>
             </div>
         </div>
     );
 };
 
-const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: () => void; data: any }) => {
+const OtherChangeRow = ({ item, index }: { item: NewsItem; index: number }) => (
+    <div
+        className="flex items-start gap-3 p-3 rounded-xl border border-gray-700/40 bg-gray-800/30 hover:bg-gray-800/60 transition-all duration-300"
+        style={{ animationDelay: `${index * 80}ms` }}
+    >
+        <div className="mt-0.5 flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center bg-cyan-500/20">
+            <Activity className="w-3.5 h-3.5 text-cyan-400" />
+        </div>
+        <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold text-purple-400 font-mono">#{item.id_layanan}</span>
+                {item.nama_layanan && (
+                    <p className="text-xs font-medium text-gray-200 leading-snug line-clamp-1">{item.nama_layanan}</p>
+                )}
+            </div>
+            <p className="text-xs text-gray-400 mt-1 leading-relaxed">{item.keterangan}</p>
+            <p className="text-xs text-gray-600 mt-1">{new Date(item.tanggal).toLocaleString('id-ID')}</p>
+        </div>
+    </div>
+);
+
+const AdminNewsModal = ({
+    isOpen,
+    onClose,
+    data,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+    data: NewsItem[] | null;
+}) => {
     const [mounted, setMounted] = useState(false);
     const [visible, setVisible] = useState(false);
-    const [activeTab, setActiveTab] = useState<'overview' | 'changes'>('overview');
+    const [activeTab, setActiveTab] = useState<'overview' | 'price' | 'others'>('overview');
+    const [syncingId, setSyncingId] = useState<string | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const { customerserviceMedanPediaData } = useMedanPediaHooks();
+    const { handleUpdatePriceSuntikFromNews } = useNewsHooks();
 
     useEffect(() => {
         if (isOpen) {
@@ -111,13 +196,10 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
         if (!canvas || !isOpen) return;
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
-
         canvas.width = canvas.offsetWidth;
         canvas.height = canvas.offsetHeight;
-
         const particles: { x: number; y: number; vx: number; vy: number; r: number; alpha: number; color: string }[] = [];
         const colors = ['#a855f7', '#6366f1', '#ec4899', '#06b6d4'];
-
         for (let i = 0; i < 40; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
@@ -129,7 +211,6 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
                 color: colors[Math.floor(Math.random() * colors.length)],
             });
         }
-
         let raf: number;
         const draw = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -149,15 +230,61 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
         return () => cancelAnimationFrame(raf);
     }, [isOpen, mounted]);
 
-    if (!mounted || !data) return null;
+    const { priceChanges, otherChanges } = useMemo(() => {
+        if (!data || !customerserviceMedanPediaData) return { priceChanges: [], otherChanges: [] };
 
-    const { summary, price_increase = [], price_decrease = [], deactivated = [], others = [] } = data;
-    const hasChanges = price_increase.length > 0 || price_decrease.length > 0 || deactivated.length > 0 || others.length > 0;
+        const serviceMap = new Map(
+            customerserviceMedanPediaData.map((s: any) => [String(s.service_id), s])
+        );
+
+        const filtered = data.filter(item => serviceMap.has(String(item.id_layanan)));
+
+        const pc: EnrichedNewsItem[] = [];
+        const oc: NewsItem[] = [];
+
+        filtered.forEach(item => {
+            const service = serviceMap.get(String(item.id_layanan));
+            if (item.new_price !== null && item.new_price !== undefined) {
+                const currentPrice = service?.price ?? 0;
+                const newPriceNum = parseFloat(item.new_price);
+                if (currentPrice !== newPriceNum) {
+                    pc.push({
+                        ...item,
+                        currentPrice,
+                        newPriceNum,
+                        serviceName: item.nama_layanan || service?.name || `Layanan #${item.id_layanan}`,
+                        hasPriceChange: true,
+                        isPriceIncrease: newPriceNum > currentPrice,
+                        suntikService: service as SuntikServiceProps,
+                    });
+                }
+            } else {
+                oc.push(item);
+            }
+        });
+
+        return { priceChanges: pc, otherChanges: oc };
+    }, [data, customerserviceMedanPediaData]);
+
+    const priceIncreases = priceChanges.filter(i => i.isPriceIncrease);
+    const priceDecreases = priceChanges.filter(i => !i.isPriceIncrease);
+
+    const handleSync = async (id_layanan: string, newPrice: number) => {
+        setSyncingId(id_layanan);
+        try {
+            await handleUpdatePriceSuntikFromNews(Number(id_layanan), newPrice);
+        } finally {
+            setSyncingId(null);
+        }
+    };
 
     const tabs = [
-        { id: 'overview', label: 'Overview' },
-        { id: 'changes', label: `Perubahan ${hasChanges ? `(${price_increase.length + price_decrease.length})` : ''}` },
+        { id: 'overview', label: 'Overview', count: null },
+        { id: 'price', label: 'Perubahan Harga', count: priceChanges.length },
+        { id: 'others', label: 'Lainnya', count: otherChanges.length },
     ];
+
+    if (!mounted) return null;
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -183,7 +310,6 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
                 }}
             >
                 <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none opacity-60" />
-
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/60 to-transparent" />
 
                 <div className="relative z-10 flex items-start justify-between p-6 pb-4">
@@ -195,11 +321,11 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
                                 style={{ boxShadow: '0 0 20px rgba(124,58,237,0.8)' }} />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-white tracking-tight">Laporan Sinkronisasi</h2>
+                            <h2 className="text-xl font-black text-white tracking-tight">Laporan Perubahan Layanan</h2>
                             <div className="flex items-center gap-1.5 mt-0.5">
-                                <PulsingDot color={data.status ? 'bg-emerald-400' : 'bg-rose-400'} />
+                                <PulsingDot color="bg-emerald-400" />
                                 <span className="text-xs text-gray-400 font-medium">
-                                    {data.status ? 'Sinkronisasi berhasil' : 'Terjadi kesalahan'}
+                                    {priceChanges.length} perlu sinkronisasi · {otherChanges.length} perubahan lain
                                 </span>
                             </div>
                         </div>
@@ -217,7 +343,7 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className="relative px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200"
+                            className="relative px-3 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 flex items-center gap-1.5"
                             style={{
                                 color: activeTab === tab.id ? '#fff' : '#6b7280',
                                 background: activeTab === tab.id ? 'rgba(124,58,237,0.25)' : 'transparent',
@@ -225,6 +351,15 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
                             }}
                         >
                             {tab.label}
+                            {tab.count !== null && tab.count > 0 && (
+                                <span className="px-1.5 py-0.5 rounded-full text-xs font-bold"
+                                    style={{
+                                        background: activeTab === tab.id ? 'rgba(168,85,247,0.4)' : 'rgba(107,114,128,0.3)',
+                                        color: activeTab === tab.id ? '#e9d5ff' : '#9ca3af',
+                                    }}>
+                                    {tab.count}
+                                </span>
+                            )}
                             {activeTab === tab.id && (
                                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-purple-500 rounded-full" />
                             )}
@@ -236,33 +371,29 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
 
                     {activeTab === 'overview' && (
                         <div className="space-y-4">
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                                <StatCard label="Total API" value={summary?.apiTotal ?? 0} icon={Layers} color="#a855f7" delay={0} animate={visible} />
-                                <StatCard label="Lokal" value={summary?.localTotal ?? 0} icon={Activity} color="#6366f1" delay={80} animate={visible} />
-                                <StatCard label="Naik" value={summary?.price_increase ?? 0} icon={TrendingUp} color="#f43f5e" delay={160} animate={visible} />
-                                <StatCard label="Turun" value={summary?.price_decrease ?? 0} icon={TrendingDown} color="#10b981" delay={240} animate={visible} />
-                                <StatCard label="Non-aktif" value={summary?.deactivated ?? 0} icon={AlertTriangle} color="#f59e0b" delay={320} animate={visible} />
-                                <StatCard label="Lainnya" value={summary?.others ?? 0} icon={BarChart2} color="#06b6d4" delay={400} animate={visible} />
+                            <div className="grid grid-cols-3 gap-3">
+                                <StatCard label="Total Berita" value={data?.length ?? 0} icon={Layers} color="#a855f7" delay={0} animate={visible} />
+                                <StatCard label="Harga Naik" value={priceIncreases.length} icon={TrendingUp} color="#f43f5e" delay={80} animate={visible} />
+                                <StatCard label="Harga Turun" value={priceDecreases.length} icon={TrendingDown} color="#10b981" delay={160} animate={visible} />
                             </div>
 
                             <div className="rounded-xl border border-gray-700/40 overflow-hidden">
                                 <div className="px-4 py-3 border-b border-gray-700/40 bg-gray-800/20">
-                                    <p className="text-xs font-bold tracking-widest uppercase text-gray-400">Ringkasan Perubahan</p>
+                                    <p className="text-xs font-bold tracking-widest uppercase text-gray-400">Distribusi Perubahan</p>
                                 </div>
                                 {[
-                                    { label: 'Harga Naik', value: summary?.price_increase ?? 0, color: '#f43f5e', bar: ((summary?.price_increase ?? 0) / Math.max(summary?.apiTotal ?? 1, 1)) * 100 },
-                                    { label: 'Harga Turun', value: summary?.price_decrease ?? 0, color: '#10b981', bar: ((summary?.price_decrease ?? 0) / Math.max(summary?.apiTotal ?? 1, 1)) * 100 },
-                                    { label: 'Min Berubah', value: summary?.min_changed ?? 0, color: '#a855f7', bar: ((summary?.min_changed ?? 0) / Math.max(summary?.apiTotal ?? 1, 1)) * 100 },
-                                    { label: 'Max Berubah', value: summary?.max_changed ?? 0, color: '#6366f1', bar: ((summary?.max_changed ?? 0) / Math.max(summary?.apiTotal ?? 1, 1)) * 100 },
-                                    { label: 'Dinonaktifkan', value: summary?.deactivated ?? 0, color: '#f59e0b', bar: ((summary?.deactivated ?? 0) / Math.max(summary?.apiTotal ?? 1, 1)) * 100 },
+                                    { label: 'Harga Naik', value: priceIncreases.length, color: '#f43f5e', total: priceChanges.length + otherChanges.length },
+                                    { label: 'Harga Turun', value: priceDecreases.length, color: '#10b981', total: priceChanges.length + otherChanges.length },
+                                    { label: 'Perubahan Lain', value: otherChanges.length, color: '#06b6d4', total: priceChanges.length + otherChanges.length },
+                                    { label: 'Tidak Relevan', value: (data?.length ?? 0) - priceChanges.length - otherChanges.length, color: '#f59e0b', total: data?.length ?? 1 },
                                 ].map((item, i) => (
                                     <div key={i} className="flex items-center gap-3 px-4 py-3 border-b border-gray-800/60 last:border-0 hover:bg-gray-800/20 transition-colors">
-                                        <p className="text-sm text-gray-300 w-32 flex-shrink-0">{item.label}</p>
+                                        <p className="text-sm text-gray-300 w-36 flex-shrink-0">{item.label}</p>
                                         <div className="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden">
                                             <div
                                                 className="h-full rounded-full transition-all duration-1000"
                                                 style={{
-                                                    width: visible ? `${Math.max(item.bar, item.value > 0 ? 3 : 0)}%` : '0%',
+                                                    width: visible ? `${Math.max((item.value / Math.max(item.total, 1)) * 100, item.value > 0 ? 3 : 0)}%` : '0%',
                                                     background: item.color,
                                                     boxShadow: `0 0 8px ${item.color}80`,
                                                     transitionDelay: `${i * 120 + 300}ms`,
@@ -273,53 +404,85 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
                                     </div>
                                 ))}
                             </div>
+
+                            {priceChanges.length > 0 && (
+                                <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 p-4 flex items-center gap-3">
+                                    <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+                                        <RefreshCw className="w-4 h-4 text-purple-400" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-semibold text-purple-300">
+                                            {priceChanges.length} layanan perlu disesuaikan harganya
+                                        </p>
+                                        <p className="text-xs text-gray-500 mt-0.5">
+                                            Buka tab "Perubahan Harga" untuk melihat detail dan menyesuaikan satu per satu
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
 
-                    {activeTab === 'changes' && (
+                    {activeTab === 'price' && (
                         <div className="space-y-4">
-                            {price_increase.length > 0 && (
+                            {priceIncreases.length > 0 && (
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <TrendingUp className="w-4 h-4 text-rose-400" />
-                                        <p className="text-sm font-bold text-rose-400 tracking-wide">Harga Naik ({price_increase.length})</p>
+                                        <p className="text-sm font-bold text-rose-400 tracking-wide">Harga Naik ({priceIncreases.length})</p>
                                     </div>
-                                    {price_increase.map((item: any, i: number) => (
-                                        <ProductRow key={item.id} item={item} index={i} type="increase" />
+                                    {priceIncreases.map((item, i) => (
+                                        <PriceChangeRow
+                                            key={`${item.id_layanan}-${item.tanggal}`}
+                                            item={item}
+                                            index={i}
+                                            onSync={handleSync}
+                                            syncing={syncingId === item.id_layanan}
+                                        />
                                     ))}
                                 </div>
                             )}
-                            {price_decrease.length > 0 && (
+                            {priceDecreases.length > 0 && (
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <TrendingDown className="w-4 h-4 text-emerald-400" />
-                                        <p className="text-sm font-bold text-emerald-400 tracking-wide">Harga Turun ({price_decrease.length})</p>
+                                        <p className="text-sm font-bold text-emerald-400 tracking-wide">Harga Turun ({priceDecreases.length})</p>
                                     </div>
-                                    {price_decrease.map((item: any, i: number) => (
-                                        <ProductRow key={item.id} item={item} index={i} type="decrease" />
+                                    {priceDecreases.map((item, i) => (
+                                        <PriceChangeRow
+                                            key={`${item.id_layanan}-${item.tanggal}`}
+                                            item={item}
+                                            index={i}
+                                            onSync={handleSync}
+                                            syncing={syncingId === item.id_layanan}
+                                        />
                                     ))}
                                 </div>
                             )}
-                            {deactivated.length > 0 && (
-                                <div className="space-y-2">
-                                    <div className="flex items-center gap-2">
-                                        <AlertTriangle className="w-4 h-4 text-amber-400" />
-                                        <p className="text-sm font-bold text-amber-400 tracking-wide">Dinonaktifkan ({deactivated.length})</p>
-                                    </div>
-                                    {deactivated.map((item: any, i: number) => (
-                                        <div key={i} className="p-3 rounded-xl border border-amber-500/20 bg-amber-500/5">
-                                            <p className="text-xs text-gray-300">{item.name ?? item.id}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                            {!hasChanges && (
+                            {priceChanges.length === 0 && (
                                 <div className="flex flex-col items-center justify-center py-16 gap-3">
                                     <div className="w-14 h-14 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
                                         <Activity className="w-6 h-6 text-emerald-400" />
                                     </div>
-                                    <p className="text-sm font-semibold text-emerald-400">Tidak ada perubahan</p>
-                                    <p className="text-xs text-gray-500 text-center">Semua produk sudah sinkron dengan API</p>
+                                    <p className="text-sm font-semibold text-emerald-400">Semua harga sudah sinkron</p>
+                                    <p className="text-xs text-gray-500 text-center">Tidak ada perubahan harga yang perlu disesuaikan</p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {activeTab === 'others' && (
+                        <div className="space-y-2">
+                            {otherChanges.length > 0 ? (
+                                otherChanges.map((item, i) => (
+                                    <OtherChangeRow key={`${item.id_layanan}-${item.tanggal}`} item={item} index={i} />
+                                ))
+                            ) : (
+                                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                                    <div className="w-14 h-14 rounded-full bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                                        <Activity className="w-6 h-6 text-cyan-400" />
+                                    </div>
+                                    <p className="text-sm font-semibold text-cyan-400">Tidak ada perubahan lain</p>
                                 </div>
                             )}
                         </div>
@@ -328,7 +491,7 @@ const AdminNewsModal = ({ isOpen, onClose, data }: { isOpen: boolean; onClose: (
 
                 <div className="relative z-10 flex items-center justify-between px-6 py-4 border-t border-gray-800/60 bg-black/20">
                     <p className="text-xs text-gray-600 font-mono">
-                        {summary?.apiTotal?.toLocaleString()} produk tercatat
+                        {data?.length ?? 0} total berita · {priceChanges.length + otherChanges.length} relevan
                     </p>
                     <button
                         onClick={onClose}
@@ -556,7 +719,7 @@ export default function UserManagement() {
             <AdminNewsModal
                 isOpen={isNewsModalOpen}
                 onClose={() => setIsNewsModalOpen(false)}
-                data={adminNewsData}
+                data={adminNewsData as any}
             />
 
             <UserModal

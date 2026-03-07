@@ -18,6 +18,7 @@ class ServiceSuntik extends Model
         'api_type',
         'category',
         'price',
+        'old_price',
         'min',
         'max',
         'description',

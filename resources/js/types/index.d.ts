@@ -262,6 +262,7 @@ export interface SuntikServiceProps {
     name: string;
     type: string;
     category: string;
+    old_price: number;
     price: number;
     min: number;
     max: number;

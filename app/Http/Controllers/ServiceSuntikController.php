@@ -25,6 +25,7 @@ class ServiceSuntikController extends Controller
             'type' => "required",
             'api_type' => "required",
             'category' => "required",
+            'old_price' => "required",
             'price' => "required",
             'min' => "required",
             'max' => "required",
@@ -52,7 +53,9 @@ class ServiceSuntikController extends Controller
         $data = ServiceSuntik::find($id);
         $data->update([
             "name" => $request->name ?: $data->name,
-            "description" => $request->description ?: $data->description
+            "description" => $request->description ?: $data->description,
+            "price" => $request->price ?: $data->price,
+            "old_price" => $request->old_price ?: $data->old_price,
         ]);
 
         return response()->json([

@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('type')->nullable();
             $table->string('api_type')->nullable();
             $table->string('category')->nullable();
+            $table->bigInteger('old_price')->nullable();
             $table->bigInteger('price')->nullable();
             $table->bigInteger('min')->nullable();
             $table->bigInteger('max')->nullable();

@@ -38,6 +38,7 @@ export default function useMiraiPediaHooks() {
                 refill: serviceData.refill,
                 type: serviceData.type,
                 category: serviceData.category,
+                old_price: serviceData.price,
                 price: Number(serviceData.price) + Number(profit),
             }, {
                 headers: {

@@ -52,6 +52,7 @@ Route::get("/iskapay/payments/{merchant_order_id}", [ServiceAPIController::class
 Route::post("/iskapay/payments/{merchant_order_id}/cancel", [ServiceAPIController::class, "iskapay_cancel_payment"]);
 
 Route::get('/history', [DepositController::class, 'index']);
+Route::get('/news', [ServiceAPIController::class, 'popup_news']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/me', [UserController::class, 'me']);

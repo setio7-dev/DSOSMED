@@ -62,6 +62,7 @@ export default function useMedanPediaHooks() {
                     refill: serviceData.refill,
                     type: serviceData.type,
                     category: serviceData.category,
+                    old_price: Number(servicePrice),
                     price: Number(servicePrice) + Number(profit),
                 },
                 {
