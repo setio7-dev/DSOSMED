@@ -16,6 +16,8 @@ export default function AuthProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     const fetchMe = async () => {
       try {
+        if (!token) return setUser(null);
+
         const response = await API.get("/me", {
           headers: {
             Authorization: `Bearer ${token}`

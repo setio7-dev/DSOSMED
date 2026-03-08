@@ -479,7 +479,6 @@ export default function useTransactionHooks() {
                     text: "Terjadi kesalahan, silahkan coba lagi nanti!",
                 })
             }
-            console.error(error)
         }
     }
 
