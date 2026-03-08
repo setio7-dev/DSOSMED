@@ -34,4 +34,11 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    protected $casts = [
+        'service_id' => 'integer',
+        'user_id' => 'integer',
+        'price' => 'integer',
+        'quantity' => 'integer',
+    ];
 }

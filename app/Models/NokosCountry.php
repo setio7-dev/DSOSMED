@@ -24,4 +24,13 @@ class NokosCountry extends Model
         "stock",
         "quality_score"
     ];
+
+    protected $casts = [
+        'nokos_service_id' => 'integer',
+        'provider_country_id' => 'integer',
+        'provider_service_id' => 'integer',
+        'price' => 'integer',
+        'stock' => 'integer',
+        'quality_score' => 'integer',
+    ];
 }

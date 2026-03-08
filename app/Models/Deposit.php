@@ -9,10 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class Deposit extends Model
 {
-    //
     use HasFactory, Notifiable, HasApiTokens;
-
-    // protected $table = "deposits";
     protected $fillable = [
         "merchant_order_id",
         "amount",
@@ -24,4 +21,9 @@ class Deposit extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    protected $casts = [
+        'amount' => 'integer',
+        'user_id' => 'integer',
+    ];
 }

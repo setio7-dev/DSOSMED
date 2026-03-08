@@ -39,12 +39,9 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'two_factor_confirmed_at' => 'datetime',
-        ];
-    }
+    protected $casts = [
+        'password' => 'hidden',
+        'saldo' => 'integer',
+        'isAdmin' => 'boolean',
+    ];
 }

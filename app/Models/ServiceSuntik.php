@@ -25,4 +25,13 @@ class ServiceSuntik extends Model
         'refill',
         'average_time',
     ];
+
+    protected $casts = [
+        'service_id' => 'integer',
+        'price' => 'integer',
+        'old_price' => 'integer',
+        'min' => 'integer',
+        'max' => 'integer',
+        'refill' => 'integer',
+    ];
 }

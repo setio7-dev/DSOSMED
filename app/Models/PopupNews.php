@@ -20,4 +20,10 @@ class PopupNews extends Model
         'old_price',
         'new_price'
     ];
+
+    protected $casts = [
+        'id_layanan' => 'integer',
+        'old_price' => 'integer',
+        'new_price' => 'integer',
+    ];
 }
