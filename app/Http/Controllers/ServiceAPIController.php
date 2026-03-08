@@ -649,13 +649,13 @@ class ServiceAPIController extends Controller
     {
         $url = "https://t.me/s/medanpediaNOTICE";
 
-        $context = stream_context_create([
-            'http' => [
-                'header' => "User-Agent: Mozilla/5.0\r\n"
-            ]
-        ]);
-
-        $html = file_get_contents($url, false, $context);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0");
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $html = curl_exec($ch);
+        curl_close($ch);
 
         libxml_use_internal_errors(true);
 
