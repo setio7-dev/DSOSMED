@@ -40,7 +40,6 @@ class User extends Authenticatable
      * @return array<string, string>
      */
     protected $casts = [
-        'password' => 'hidden',
         'saldo' => 'integer',
         'isAdmin' => 'boolean',
     ];
