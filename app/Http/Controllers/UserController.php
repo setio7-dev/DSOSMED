@@ -34,7 +34,7 @@ class UserController extends Controller
 
              $data = User::create([
                 "username" => $request->username,
-                "password" => $request->password,
+                "password" => Hash::make($request->password),
                 "isAdmin" => false,
                 "saldo" => 0
              ]);
@@ -73,7 +73,7 @@ class UserController extends Controller
 
              $data = User::create([
                 "username" => $request->username,
-                "password" => $request->password,
+                "password" => Hash::make($request->password),
                 "isAdmin" => true,
                 "saldo" => 0
              ]);
