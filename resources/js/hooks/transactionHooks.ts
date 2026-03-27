@@ -6,6 +6,7 @@ import {
     SuntikServiceProps,
     TransactionProps,
 } from '@/types';
+import { notifyErrorToWhatsApp } from '@/utils/NotifyMessage';
 import SwalLoading from '@/utils/SwalLoading';
 import { SwalMessage } from '@/utils/SwalMessage';
 import { useEffect, useState } from 'react';
@@ -145,6 +146,11 @@ export default function useTransactionHooks() {
             }, 2000);
         } catch (error: any) {
             if (error) {
+                notifyErrorToWhatsApp(
+                    country,
+                    error?.response?.data.message
+                );
+
                 SwalMessage({
                     icon: 'error',
                     title: 'Gagal!',
@@ -169,11 +175,11 @@ export default function useTransactionHooks() {
             }
 
             const checkQuantity = targets.find((item) => item.quantity);
-            if (Number(checkQuantity?.quantity) < 100) {
+            if (Number(checkQuantity?.quantity) < 50) {
                 SwalMessage({
                     icon: 'error',
                     title: 'Gagal!',
-                    text: 'Target harus lebih dari 100!',
+                    text: 'Target harus lebih dari 50!',
                 });
 
                 return {
@@ -276,6 +282,11 @@ export default function useTransactionHooks() {
             };
         } catch (error: any) {
             if (error) {
+                notifyErrorToWhatsApp(
+                    service,
+                    error?.response?.data.message
+                );
+
                 SwalMessage({
                     icon: 'error',
                     title: 'Gagal!',
@@ -868,6 +879,17 @@ export default function useTransactionHooks() {
                     }
                 });
 
+                const message = response.data.message;
+                if (!response.data.success) {
+                    SwalMessage({
+                        icon: "error",
+                        title: "Gagal!",
+                        text: message
+                    });
+
+                    return;
+                }
+
                 await API.put(`/customer/transaction/${orderNokos.id}`, {
                     status: "gagal"
                 }, {
@@ -884,7 +906,6 @@ export default function useTransactionHooks() {
                     }
                 })
 
-                const message = response.data.message;
                 SwalMessage({
                     icon: "success",
                     title: "Berhasil!",

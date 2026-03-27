@@ -22,6 +22,7 @@ class Transaction extends Model
         "status",
         "result",
         "target",
+        "refill_id",
         "api_type",
     ];
 

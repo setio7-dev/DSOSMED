@@ -128,8 +128,8 @@ class ServiceAPIController extends Controller
     {
         $response = Http::asForm()
             ->post('https://api.medanpedia.co.id/services', [
-                'api_id' => '37461',
-                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'api_id' => '32973',
+                'api_key' => 'mhluvu-oqiyac-ldpy3o-mbpltp-yoz6ja',
             ]);
 
         return response()->json($response->json());
@@ -139,8 +139,8 @@ class ServiceAPIController extends Controller
     {
         $response = Http::asForm()
             ->post('https://api.medanpedia.co.id/profile', [
-                'api_id' => '37461',
-                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'api_id' => '32973',
+                'api_key' => 'mhluvu-oqiyac-ldpy3o-mbpltp-yoz6ja',
             ]);
 
         return response()->json($response->json());
@@ -158,8 +158,8 @@ class ServiceAPIController extends Controller
         $response = Http::asForm()->post(
             'https://api.medanpedia.co.id/order',
             [
-                'api_id' => '37461',
-                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'api_id' => '32973',
+                'api_key' => 'mhluvu-oqiyac-ldpy3o-mbpltp-yoz6ja',
                 'service' => $request->service,
                 'target' => $request->target,
                 'quantity' => $request->quantity,
@@ -191,8 +191,8 @@ class ServiceAPIController extends Controller
         $response = Http::asForm()->post(
             'https://api.medanpedia.co.id/status',
             [
-                'api_id' => '37461',
-                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'api_id' => '32973',
+                'api_key' => 'mhluvu-oqiyac-ldpy3o-mbpltp-yoz6ja',
                 'id' => $request->order_id,
             ]
         );
@@ -225,8 +225,8 @@ class ServiceAPIController extends Controller
         $response = Http::asForm()->post(
             'https://api.medanpedia.co.id/refill',
             [
-                'api_id' => '37461',
-                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'api_id' => '32973',
+                'api_key' => 'mhluvu-oqiyac-ldpy3o-mbpltp-yoz6ja',
                 'id_order' => $request->order_id,
             ]
         );
@@ -255,8 +255,8 @@ class ServiceAPIController extends Controller
         $response = Http::asForm()->post(
             'https://api.medanpedia.co.id/refill_status',
             [
-                'api_id' => '37461',
-                'api_key' => 'vbsj08-btcidp-bqfnnw-k2hydl-hga8xk',
+                'api_id' => '32973',
+                'api_key' => 'mhluvu-oqiyac-ldpy3o-mbpltp-yoz6ja',
                 'id_refill' => $request->refill_id,
             ]
         );
@@ -282,7 +282,7 @@ class ServiceAPIController extends Controller
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
             'Accept' => 'application/json',
-        ])->post('https://wallet.iskapay.com/api/gateway/payments', [
+        ])->post('https://pg-iskapay.com/api/gateway/payments', [
             'amount' => (int) $request->amount,
             'customer_name' => $request->customer_name,
             'customer_email' => $request->customer_email,
@@ -300,7 +300,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->get('https://wallet.iskapay.com/api/gateway/payments/' . $merchant_order_id);
+        ])->get('https://pg-iskapay.com/api/gateway/payments/' . $merchant_order_id);
 
         return response()->json($response->json());
     }
@@ -309,7 +309,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->post('https://wallet.iskapay.com/api/gateway/payments/' . $merchant_order_id . '/cancel');
+        ])->post('https://pg-iskapay.com/api/gateway/payments/' . $merchant_order_id . '/cancel');
 
         return response()->json($response->json());
     }
@@ -318,7 +318,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->get('https://wallet.iskapay.com/api/gateway/payments', [
+        ])->get('https://pg-iskapay.com/api/gateway/payments', [
             'status' => $request->status,
             'date_from' => $request->date_from,
             'date_to' => $request->date_to,
@@ -333,7 +333,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->get('https://wallet.iskapay.com/api/gateway/balance');
+        ])->get('https://pg-iskapay.com/api/gateway/balance');
 
         return response()->json($response->json());
     }
@@ -342,7 +342,7 @@ class ServiceAPIController extends Controller
     {
         $response = Http::withHeaders([
             'X-API-Key' => 'isk_Z7kyQZMSFYdeMx4iAmISOiseAmflEMHM',
-        ])->get('https://wallet.iskapay.com/api/gateway/payments/statistics');
+        ])->get('https://pg-iskapay.com/api/gateway/payments/statistics');
 
         return response()->json($response->json());
     }

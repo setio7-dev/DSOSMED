@@ -89,7 +89,7 @@ export default function HistoryNokos() {
                             const StatusIcon = statusConfig[order.status as keyof typeof statusConfig]?.icon || Clock;
                             const statusStyle = statusConfig[order.status as keyof typeof statusConfig] || statusConfig.berhasil;
                             const isCanceling = cancelingId === order.order_id;
-                            const canCancel = order.status === 'pending' || order.status === 'berhasil';
+                            const canCancel = order.status === 'pending' && !isCanceling;
 
                             return (
                                 <div
